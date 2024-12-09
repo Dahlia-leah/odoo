@@ -29,10 +29,12 @@
                     <div class="two-columns">
                         <!-- Left Column: Product Information -->
                         <div class="column">
-                            <h2>Product Name: <span t-esc="doc.move_id.product_id.name"/></h2> <!-- Display product name -->
-                            <h2>Batch Number: <span t-esc="doc.move_id.lot_ids"/></h2> <!-- Display batch number -->
-                            <h2>Material Name: <span t-esc="doc.move_id.product_id.name"/></h2> <!-- Display material name -->
-                            <h2>Expiration Date: <span t-field="doc.move_id.expiration_date"/></h2> <!-- Display expiration date -->
+                            <t t-foreach="doc.move_ids" t-as="move">
+                                <h2>Product Name: <span t-esc="move.product_id.name"/></h2>
+                                <h2>Batch Number: <span t-esc="move.lot_ids"/></h2>
+                                <h2>Material Name: <span t-esc="move.product_id.name"/></h2>
+                                <h2>Expiration Date: <span t-field="move.expiration_date"/></h2>
+                            </t>
                             <h2>Actual Weight:
                                 <!-- Display external weight and unit if they exist -->
                                 <span t-esc="doc.external_weight" t-if="doc.external_weight"/>
