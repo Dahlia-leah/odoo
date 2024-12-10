@@ -1,21 +1,34 @@
-from odoo.addons.iot.models.iot_device import IoTDeviceDriver
-import requests
+from odoo.addons.hw_drivers.driver import Driver
+import serial
 import logging
 
 _logger = logging.getLogger(__name__)
 
-class AdamScaleDriver(IoTDeviceDriver):
-    def __init__(self, device):
-        super().__init__(device)
-        self.endpoint = f"http://{device.connection['ip']}:5000/balance"
+class AdamScaleDriver(Driver):
+    connection_type = 'serial'
 
-    def read(self):
+    def __init__(self, identifier, device):
+        super(AdamScaleDriver, self).__init__(identifier, device)
+        self.device_type = 'scale'
+        self.device_connection = device.get('port')
+        self.device_name = device.get('device_name')
+
+    @classmethod
+    def supported(cls, device):
+        """
+        Check if the device is an Adam scale connected via serial.
+        """
+        return device.get('manufacturer') == 'Adam' and device.get('device_type') == 'scale'
+
+    def read_weight(self):
+        """
+        Read weight data from the scale over serial connection.
+        """
         try:
-            _logger.info(f"Fetching data from scale at {self.endpoint}")
-            response = requests.get(self.endpoint, timeout=5)
-            response.raise_for_status()
-            data = response.json()
-            return {'value': data['value'], 'unit': data['unit']}
-        except Exception as e:
-            _logger.error(f"Failed to read from scale: {e}")
-            raise
+            ser = serial.Serial(self.device_connection, 9600, timeout=5)
+            data = ser.readline().decode('utf-8').strip()  # Read the data from the scale
+            weight, unit = data.split()  # Assuming data format: "5.0 kg"
+            return {'weight': weight, 'unit': unit}
+        except serial.SerialException as e:
+            _logger.error(f"Error communicating with the scale on {self.device_connection}: {e}")
+            return None
