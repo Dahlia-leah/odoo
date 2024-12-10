@@ -1,6 +1,8 @@
 {
     'name': 'Stock Picking Report',
     'version': '1.0',
+    'license': 'LGPL-3',  # Specify the license here
+    'category': 'Inventory',
     'summary': 'Add a button to print reports in stock picking forms',
     'depends': ['stock', 'iot'],  # This module depends on the stock module
     'data': [
