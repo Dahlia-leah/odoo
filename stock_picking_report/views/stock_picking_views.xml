@@ -18,6 +18,7 @@
                     <button name="fetch_data_from_device"
                             icon="fa-tag"
                             type="object"
+                            title="Fetch weight from IoT device"
                             class="btn-primary"/>
                     <!--  invisible="picking_type_id !=  6 or location_id != 203 or location_dest_id != 17 or state != 'assigned'"
  -->
