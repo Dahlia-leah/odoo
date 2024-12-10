@@ -1,21 +1,21 @@
 import logging
+import requests
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
-
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    external_weight = fields.Char(string='External Weight', readonly=True)
+    external_weight = fields.Float(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
     time_printing = fields.Datetime(
         string="Time of Printing",
         default=fields.Datetime.now
     )
 
-        def fetch_data_from_device(self):
+    def fetch_data_from_device(self):
         """
         Fetch data from the scale device via HTTP and update the stock picking record.
         """
@@ -36,7 +36,7 @@ class StockMove(models.Model):
 
             # Update the stock picking record with fetched data
             self.write({
-                'external_weight': weight,
+                'external_weight': float(weight),  # Ensure weight is converted to a float
                 'external_unit': unit,
             })
 
