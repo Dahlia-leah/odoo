@@ -15,12 +15,12 @@ class StockMove(models.Model):
         string="Time of Printing",
         default=fields.Datetime.now
     )
-    expiration_time = fields.Integer(
-        string="Expiration Time",
-        related='product_id.product_tmpl_id.expiration_time',
-        readonly=True,
-        help="Expiration time of the product as specified in the product template."
-    )
+    #expiration_time = fields.Integer(
+    #    string="Expiration Time",
+    #    related='product_id.product_tmpl_id.expiration_time',
+    #    readonly=True,
+    #    help="Expiration time of the product as specified in the product template."
+    #)
 
     def fetch_data_from_iot_box(self):
         """
