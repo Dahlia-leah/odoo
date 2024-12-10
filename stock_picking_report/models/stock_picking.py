@@ -1,5 +1,5 @@
 import logging
-import requests
+import serial
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
@@ -8,48 +8,55 @@ _logger = logging.getLogger(__name__)
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    external_weight = fields.Float(string='External Weight', readonly=True)
+    external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
     time_printing = fields.Datetime(
         string="Time of Printing",
         default=fields.Datetime.now
     )
 
+    @api.model
     def fetch_data_from_device(self):
         """
-        Fetch data from the scale device via HTTP and update the stock picking record.
+        Fetch data from the scale via COM port (e.g., COM5) and update the stock picking record.
         """
-        url = 'http://192.168.1.23:5000/balance'  # URL of the scale's API
+        com_port = 'COM5'  # Change this to your actual COM port
+        baud_rate = 9600    # Adjust the baud rate according to your device
+        timeout = 5         # Timeout in seconds for the serial communication
 
         try:
-            _logger.info(f"Fetching data from scale at {url}")
-            response = requests.get(url)
-            if response.status_code != 200:
-                raise UserError(f"Failed to fetch data from scale, HTTP status code: {response.status_code}")
-
-            data = response.json()  # Assuming the response is in JSON format, like {"value": "5.0", "unit": "kg"}
-            weight = data.get('value')
-            unit = data.get('unit')
-
+            # Initialize the serial connection
+            ser = serial.Serial(com_port, baud_rate, timeout=timeout)
+            
+            # Read the data from the scale (assuming the scale sends data in a known format)
+            data = ser.readline().decode('utf-8').strip()  # Read a line and decode it to string
+            
+            # For example, the scale sends data in the format: "5.0 kg"
+            weight, unit = data.split()  # Split the data into weight and unit
+            
             if not weight or not unit:
                 raise UserError("Invalid data received from the scale.")
-
-            # Update the stock picking record with fetched data
+            
+            # Update the stock picking record with the fetched data
             self.write({
-                'external_weight': float(weight),  # Ensure weight is converted to a float
+                'external_weight': weight,
                 'external_unit': unit,
             })
 
-            _logger.info(f"Weight data fetched: {weight} {unit}")
+            _logger.info(f"Weight data fetched from COM5: {weight} {unit}")
             return True
 
+        except serial.SerialException as e:
+            _logger.error(f"Error communicating with scale on {com_port}: {e}")
+            raise UserError(f"Failed to fetch data from scale: {e}")
+
         except Exception as e:
-            _logger.error(f"Failed to fetch weight data from scale: {e}")
-            raise UserError(f"Failed to fetch weight data from scale: {e}")
+            _logger.error(f"Failed to fetch weight data: {e}")
+            raise UserError(f"Failed to fetch weight data: {e}")
 
     def action_print_report(self):
         """
-        Fetch data from the IoT device, update the record, and print the report.
+        Fetch data from the scale, update the record, and print the report.
         """
         # Fetch weight data before printing the report
         self.fetch_data_from_device()
