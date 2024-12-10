@@ -1,9 +1,9 @@
 import logging
-import requests
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -15,30 +15,40 @@ class StockMove(models.Model):
         default=fields.Datetime.now
     )
 
-    @api.model
-   def fetch_data_from_device(self):
+    def fetch_data_from_device(self):
+        """
+        Fetch weight data using the IoT device.
+        """
+        self.ensure_one()  # Ensure only one record is being processed at a time
         device_identifier = 'DESKTOP-9C193ML'
 
         _logger.info(f"Fetching data from IoT device with identifier: {device_identifier}")
+        # Search for the IoT device
         device = self.env['iot.device'].search([
             ('identifier', '=', device_identifier),
             ('type', '=', 'scale')
         ], limit=1)
 
         if not device:
+            _logger.warning(f"No IoT device found for identifier: {device_identifier}")
             raise UserError(f"No IoT device found for identifier: {device_identifier}")
 
         try:
-            data = device.iot_device_call('read')
+            # Call the IoT device's driver to fetch weight data
+            data = device.iot_device_call('read', {})
             _logger.info(f"Weight data received: {data}")
-            self.write({
-                'external_weight': data['value'],
-                'external_unit': data['unit'],
-            })
-        except Exception as e:
-            _logger.error(f"Failed to fetch weight data: {e}")
-            raise UserError("Failed to fetch weight data from IoT device.")
 
+            # Validate and update the fields
+            if 'value' in data and 'unit' in data:
+                self.write({
+                    'external_weight': data['value'],
+                    'external_unit': data['unit'],
+                })
+            else:
+                raise ValueError("Invalid data format received from IoT device.")
+        except Exception as e:
+            _logger.error(f"Error while fetching weight data: {e}")
+            raise UserError("Failed to fetch weight data from IoT device.")
 
     def action_print_report(self):
         """
