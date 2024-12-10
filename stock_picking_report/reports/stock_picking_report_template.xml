@@ -32,7 +32,7 @@
                             <h2>Product Name: <span t-esc="doc.product_id.name"/></h2> <!-- Display product name -->
                             <h2>Batch Number: <span t-esc="doc.lot_ids"/></h2> <!-- Display batch number -->
                             <h2>Material Name: <span t-esc="doc.product_id.name"/></h2> <!-- Display material name -->
-                            <h2>Expiration Date: <span t-field="doc.expiration_date"/></h2> <!-- Display expiration date -->
+                            <h2>Expiration Date: </h2> <!--<span t-field="doc.expiration_date"/> Display expiration date -->
                             <h2>Actual Weight:
                                 <!-- Display external weight and unit if they exist -->
                                 <span t-esc="doc.external_weight" t-if="doc.external_weight"/>
