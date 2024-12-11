@@ -2,6 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import logging
 
+# Set up logger
 _logger = logging.getLogger(__name__)
 
 class StockMove(models.Model):
