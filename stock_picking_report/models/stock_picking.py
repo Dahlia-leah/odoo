@@ -9,36 +9,30 @@ class StockMove(models.Model):
 
     external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
+    time_printing = fields.Datetime(string="Time Printing", default=lambda self: fields.Datetime.now())
+    @api.model
+    def fetch_data_from_device(self, **kwargs):
+        """
+        Fetch weight data from the connected IoT device and update the picking.
+        """
+        device = self.env['iot.device'].search([
+            ('identifier', '=', 'scale_com5')
+        ], limit=1)
 
-@api.model
-def fetch_data_from_device(self, **kwargs):
-    """
-    Fetch weight data from the Adam Scale connected via the IoT Box.
-    """
-    # Locate the scale device
-    device = self.env['iot.device'].search([
-        ('identifier', '=', 'scale_com5')
-    ], limit=1)
+        if not device:
+            raise UserError(_("No scale device found. Check IoT configuration."))
 
-    if not device:
-        raise UserError("No scale device found. Ensure the IoT Box is configured correctly.")
+        driver = device.get_driver()
+        data = driver.read_weight()
 
-    # Get the driver for the device
-    driver = device.get_driver()
+        if not data:
+            raise UserError(_("Failed to retrieve weight data."))
 
-    # Read weight data
-    data = driver.read_weight()
-    if not data:
-        raise UserError("Failed to fetch weight data from the scale.")
-
-    # Update the record
-    self.write({
-        'external_weight': data['weight'],
-        'external_unit': data['unit']
-    })
-    _logger.info(f"Fetched weight: {data['weight']} {data['unit']}")
-    return True
-
+        self.write({
+            'external_weight': data['weight'],
+            'external_unit': data['unit']
+        })
+        return True
 
     def action_print_report(self):
         """
