@@ -1,8 +1,11 @@
-from odoo.addons.hw_drivers.driver import Driver
-import serial
 import logging
+import serial
+from odoo.addons.hw_drivers.driver import Driver
+import websocket
 
+# Set up logger
 _logger = logging.getLogger(__name__)
+_logger.setLevel(logging.DEBUG)  # Set your desired log level
 
 class AdamScaleDriver(Driver):
     connection_type = 'serial'
@@ -32,3 +35,6 @@ class AdamScaleDriver(Driver):
         except serial.SerialException as e:
             _logger.error(f"Error communicating with the scale on {self.device_connection}: {e}")
             return None
+
+# Enable WebSocket trace logging
+websocket.enableTrace(True)
