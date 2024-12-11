@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import logging
 
@@ -9,12 +9,16 @@ class StockMove(models.Model):
 
     external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
-    time_printing = fields.Datetime(string="Time Printing", default=lambda self: fields.Datetime.now())
-    @api.model
-    def fetch_data_from_device(self, **kwargs):
-        """
-        Fetch weight data from the connected IoT device and update the picking.
-        """
+    time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
+
+def fetch_data_from_device(self, *args, **kwargs):
+    """
+    Fetch weight data from the connected IoT device and update the stock move.
+    """
+    for record in self:
+        _logger.info("Fetching data for record: %s", record.id)
+
+        # Find the IoT device (e.g., a scale)
         device = self.env['iot.device'].search([
             ('identifier', '=', 'scale_com5')
         ], limit=1)
@@ -22,18 +26,25 @@ class StockMove(models.Model):
         if not device:
             raise UserError(_("No scale device found. Check IoT configuration."))
 
-        driver = device.get_driver()
-        data = driver.read_weight()
+        # Fetch driver and data
+        try:
+            driver = device.get_driver()
+            data = driver.read_weight()
+        except Exception as e:
+            _logger.error("Error fetching weight data: %s", str(e))
+            raise UserError(_("Failed to connect to the scale device."))
 
-        if not data:
-            raise UserError(_("Failed to retrieve weight data."))
+        if not data or 'weight' not in data or 'unit' not in data:
+            raise UserError(_("Failed to retrieve valid weight data."))
 
-        self.write({
+        # Update the record
+        record.write({
             'external_weight': data['weight'],
             'external_unit': data['unit']
         })
-        return True
 
+    return True
+    
     def action_print_report(self):
         """
         Fetch weight data and trigger the stock picking report.
