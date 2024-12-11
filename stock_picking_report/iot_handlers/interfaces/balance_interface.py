@@ -1,4 +1,8 @@
 from odoo.addons.hw_drivers.interface import Interface
+from serial.tools import list_ports
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class SerialInterface(Interface):
     connection_type = 'serial'
@@ -7,14 +11,14 @@ class SerialInterface(Interface):
         """
         Detect devices connected via serial ports and return their details.
         """
-        # Example device detection logic (replace with actual implementation)
-        devices = {
-            'scale_com5': {
-                'identifier': 'scale_com5',
-                'device_name': 'Adam Scale',
-                'device_type': 'scale',
-                'port': 'COM5',  # Update with the detected COM port
-                'manufacturer': 'Adam',
-            }
-        }
+        devices = {}
+        for port in list_ports.comports():
+            if "Adam" in port.description:  # Replace with accurate detection logic
+                devices[port.device] = {
+                    'identifier': port.device,
+                    'device_name': 'Adam Scale',
+                    'device_type': 'scale',
+                    'port': port.device,
+                    'manufacturer': 'Adam',
+                }
         return devices
