@@ -4,7 +4,6 @@ from odoo.addons.hw_drivers.driver import Driver
 
 # Set up logger
 _logger = logging.getLogger(__name__)
-_logger.setLevel(logging.DEBUG)  # Set your desired log level
 
 class AdamScaleDriver(Driver):
     connection_type = 'serial'
