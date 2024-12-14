@@ -1,24 +1,36 @@
-from odoo.addons.hw_drivers.interface import Interface
-from serial.tools import list_ports
+from odoo.addons.iot.models.device import AbstractDevice
+from ..drivers.scale_driver import ScaleDriver
 import logging
 
 _logger = logging.getLogger(__name__)
 
-class SerialInterface(Interface):
-    connection_type = 'serial'
+class ScaleInterface(AbstractDevice):
+    """
+    Interface for integrating the scale with Odoo's IoT framework.
+    """
 
-    def get_devices(self):
-        """
-        Detect devices connected via serial ports and return their details.
-        """
-        devices = {}
-        for port in list_ports.comports():
-            if "Adam" in port.description:  # Replace with accurate detection logic
-                devices[port.device] = {
-                    'identifier': port.device,
-                    'device_name': 'Adam Scale',
-                    'device_type': 'scale',
-                    'port': port.device,
-                    'manufacturer': 'Adam',
-                }
-        return devices
+    def __init__(self, device, params):
+        super().__init__(device, params)
+        self.driver = ScaleDriver(
+            serial_port=params.get('serial_port', '/dev/ttyUSB0'),
+            baudrate=params.get('baudrate', 9600),
+            timeout=params.get('timeout', 5)
+        )
+
+    def connect(self):
+        """Connect to the scale."""
+        self.driver.connect()
+
+    def disconnect(self):
+        """Disconnect from the scale."""
+        self.driver.disconnect()
+
+    def get_data(self):
+        """Retrieve weight data from the scale."""
+        try:
+            data = self.driver.get_weight()
+            _logger.info("Weight data retrieved: %s", data)
+            return data
+        except Exception as e:
+            _logger.error("Error in ScaleInterface: %s", e)
+            raise Exception("Failed to retrieve data from the scale.")
