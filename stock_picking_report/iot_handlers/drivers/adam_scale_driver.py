@@ -9,7 +9,7 @@ class ScaleDriver:
     A driver for managing communication with a serial-connected scale.
     """
 
-    def __init__(self, serial_port='/dev/ttyUSB0', baudrate=9600, timeout=5):
+    def __init__(self, serial_port='com4', baudrate=9600, timeout=5):
         self.serial_port = serial_port
         self.baudrate = baudrate
         self.timeout = timeout
