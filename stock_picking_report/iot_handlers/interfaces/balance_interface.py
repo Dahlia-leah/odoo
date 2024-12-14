@@ -1,36 +1,45 @@
+# iot_handlers/interfaces/scale_interface.py
 from odoo.addons.hw_drivers.interface import Interface
 from ..drivers.adam_scale_driver import ScaleDriver
 import logging
+import serial
+import serial.tools.list_ports
 
 _logger = logging.getLogger(__name__)
 
-class ScaleInterface(AbstractDevice):
-    """
-    Interface for integrating the scale with Odoo's IoT framework.
-    """
+class ScaleInterface(Interface):
+    connection_type = 'serial'  # Use serial connection type to detect connected devices
 
-    def __init__(self, device, params):
-        super().__init__(device, params)
-        self.driver = ScaleDriver(
-            serial_port=params.get('serial_port', 'com4'),
-            baudrate=params.get('baudrate', 9600),
-            timeout=params.get('timeout', 5)
-        )
+    def get_devices(self):
+        """Detect connected scale devices and return their details."""
+        devices = {}
 
-    def connect(self):
-        """Connect to the scale."""
-        self.driver.connect()
+        # List available serial ports
+        available_ports = serial.tools.list_ports.comports()
 
-    def disconnect(self):
-        """Disconnect from the scale."""
-        self.driver.disconnect()
+        for port in available_ports:
+            # Try to communicate with the scale on each port
+            try:
+                # Create a ScaleDriver instance and try to connect
+                scale_driver = ScaleDriver(identifier=port.device, device=None)
+                scale_driver.serial_port = port.device
+                scale_driver.connect()
 
-    def get_data(self):
-        """Retrieve weight data from the scale."""
-        try:
-            data = self.driver.get_weight()
-            _logger.info("Weight data retrieved: %s", data)
-            return data
-        except Exception as e:
-            _logger.error("Error in ScaleInterface: %s", e)
-            raise Exception("Failed to retrieve data from the scale.")
+                # If connection is successful, add to devices dictionary
+                devices[port.device] = {
+                    'serial_port': port.device,
+                    'baudrate': 9600,  # Use default baudrate for communication
+                    'timeout': 5       # Timeout for serial communication
+                }
+                _logger.info("Detected scale on port: %s", port.device)
+
+                # Disconnect after detection
+                scale_driver.serial_connection.close()
+
+            except Exception as e:
+                _logger.warning("No scale detected on port %s: %s", port.device, str(e))
+
+        if not devices:
+            _logger.warning("No scale devices detected.")
+        
+        return devices
