@@ -6,7 +6,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class StockMove(models.Model):
-    _inherit = 'stock.move'
+    _inherit = 'stock.move' 
 
     external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
