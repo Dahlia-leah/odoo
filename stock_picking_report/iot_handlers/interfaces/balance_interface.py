@@ -1,4 +1,4 @@
-from odoo.addons.iot.models.device import AbstractDevice
+from odoo.addons.hw_drivers.interface import Interface
 from ..drivers.adam_scale_driver import ScaleDriver
 import logging
 
