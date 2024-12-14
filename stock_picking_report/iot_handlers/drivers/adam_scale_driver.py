@@ -1,4 +1,3 @@
-# iot_handlers/drivers/scale_driver.py
 from odoo.addons.hw_drivers.driver import Driver
 import serial
 import logging
@@ -11,13 +10,13 @@ class ScaleDriver(Driver):
     device_connection = 'serial_connection'
     device_name = 'Adam Equipment Serial'
 
-    def __init__(self, identifier, device, serial_port='com5', baudrate=9600, timeout=5):
+    def __init__(self, identifier, device, serial_port='COM5', baudrate=9600, timeout=5):
         super().__init__(identifier, device)
         self.serial_port = serial_port
         self.baudrate = baudrate
         self.timeout = timeout
         self.serial_connection = None
-        self.status = "Disconnected"  # Initial status is disconnected
+        self.status = "Disconnected"
 
     def connect(self):
         """Establish a serial connection to the scale."""
@@ -44,6 +43,7 @@ class ScaleDriver(Driver):
             try:
                 raw_data = self.serial_connection.readline().decode('utf-8').strip()
                 _logger.info("Raw data from scale: %s", raw_data)
+                # Assuming the data is in JSON format
                 data = json.loads(raw_data)
                 return {
                     'value': data.get('value', '0.0'),
