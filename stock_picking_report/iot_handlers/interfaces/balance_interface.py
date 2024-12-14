@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 class ScaleInterface(Interface):
     connection_type = 'serial'
 
-    def get_devices(self):
+    def get_devices(self): 
         """Detect connected scale devices."""
         devices = []
         ports = serial.tools.list_ports.comports()
