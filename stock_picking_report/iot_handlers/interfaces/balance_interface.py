@@ -12,7 +12,7 @@ class ScaleInterface(AbstractDevice):
     def __init__(self, device, params):
         super().__init__(device, params)
         self.driver = ScaleDriver(
-            serial_port=params.get('serial_port', '/dev/ttyUSB0'),
+            serial_port=params.get('serial_port', 'com4'),
             baudrate=params.get('baudrate', 9600),
             timeout=params.get('timeout', 5)
         )
