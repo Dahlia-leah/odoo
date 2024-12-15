@@ -1,2 +1,2 @@
 from . import models
-from . import iot_handlers
+#from . import iot_handlers

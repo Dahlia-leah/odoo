@@ -11,7 +11,7 @@ class ScaleDriver(Driver):
     device_connection = 'serial_connection'
     device_name = 'Adam Equipment Serial'
 
-    def __init__(self, identifier, device, serial_port='COM5', baudrate=9600, timeout=5):
+    def __init__(self, identifier, device, serial_port='COM6', baudrate=9600, timeout=5):
         """
         Initialize the scale driver with serial connection parameters.
         """
