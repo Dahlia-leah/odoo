@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import logging
 
@@ -13,7 +13,7 @@ class StockMove(models.Model):
 
     def fetch_data_from_device(self):
         """
-        Use the IoT interface to fetch data from the scale.
+        Fetch weight data from IoT device via the configured interface.
         """
         iot_device = self.env['iot.device'].search([('type', '=', 'scale')], limit=1)
         if not iot_device:
@@ -23,14 +23,14 @@ class StockMove(models.Model):
             data = iot_device.device_proxy.get_data()
             self.external_weight = data.get('value')
             self.external_unit = data.get('unit')
-            _logger.info("Successfully fetched weight: %s %s", self.external_weight, self.external_unit)
+            _logger.info("Fetched weight: %s %s", self.external_weight, self.external_unit)
         except Exception as e:
-            _logger.error("Error fetching data from scale: %s", e)
+            _logger.error("Error fetching data from IoT scale: %s", e)
             raise UserError(_("Failed to fetch data from the scale. Please check the connection."))
 
     def action_print_report(self):
         """
-        Fetch weight data and trigger the stock picking report.
+        Fetch weight data and trigger the stock picking report generation.
         """
         self.fetch_data_from_device()
         return self.env.ref('stock_picking_report.action_report_stock_picking').report_action(self)
