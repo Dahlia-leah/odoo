@@ -1,3 +1,4 @@
+import requests  # Add this import
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo import http
@@ -90,6 +91,7 @@ class StockMove(models.Model):
             return report_action.report_action(self)
         else:
             raise UserError("Report action not found.")
+
 
    # def fetch_data_from_device(self):
    #     """
