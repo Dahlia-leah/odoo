@@ -37,7 +37,7 @@ class StockMove(models.Model):
             else:
                 # Fallback if no IoT Box is found (use a default IP address)
                 _logger.warning("No IoT Box found. Using default IP address.")
-                default_ip = "192.168.1.100"  # Example fallback IP address
+                default_ip = "192.168.1.108"  # Example fallback IP address
                 url = f"http://{default_ip}:5000/balance"
                 _logger.info(f"Fetching data from fallback IoT Box at {url}...")
                 response = requests.get(url, timeout=5)
