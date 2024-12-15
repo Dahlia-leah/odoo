@@ -20,7 +20,7 @@ class StockMove(models.Model):
             # Try to get the iot.box model
             iot_box = self.env['iot.box'].search([], limit=1)  # Adjust the search criteria as needed
             if iot_box:
-                ip = iot_box.ip  #  the field is named 'ip'
+                ip = iot_box.ip_url  #  the field is named 'ip'
                 url = f"http://{ip}:5000/balance"  # Construct the URL using the IP address
                 _logger.info(f"Fetching data from IoT Box at {url}...")
                 response = requests.get(url, timeout=5)
