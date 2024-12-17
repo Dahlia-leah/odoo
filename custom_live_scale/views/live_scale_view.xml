@@ -1,31 +1,28 @@
 <odoo>
-    <record id="view_live_scale_form" model="ir.ui.view">
-        <field name="name">live.scale.form</field>
-        <field name="model">live.scale</field>
-        <field name="arch" type="xml">
-            <form string="Live Scale">
-                <sheet>
+    <data>
+        <!-- Define a simple view to show live scale data -->
+        <record id="view_live_scale" model="ir.ui.view">
+            <field name="name">live.scale.view</field>
+            <field name="model">live.scale</field>
+            <field name="arch" type="xml">
+                <form string="Live Scale">
                     <group>
-                        <!-- Add the live scale widget -->
-                        <div class="oe_title">
-                            <h2>Live Scale Data</h2>
-                        </div>
-                        <div id="live_scale_widget" class="o_live_scale_widget">
-                            <span class="o_live_scale_weight">Fetching weight...</span> 
-                            <span class="o_live_scale_unit">kg</span>
-                        </div>
+                        <field name="weight"/>
+                        <field name="unit"/>
                     </group>
-                    <footer>
-                        <button string="Fetch Data" type="object" name="fetch_scale_data" class="btn-primary"/>
-                    </footer>
-                </sheet>
-            </form>
-        </field>
-    </record>
+                </form>
+            </field>
+        </record>
 
-    <menuitem id="live_scale_menu" name="Live Scale" sequence="10"/>
+        <!-- Define an action for the view -->
+        <record id="action_live_scale" model="ir.actions.act_window">
+            <field name="name">Live Scale</field>
+            <field name="res_model">live.scale</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_live_scale"/>
+        </record>
 
-    <act_window id="action_live_scale" name="Live Scale"
-                res_model="live.scale" view_mode="form"
-                menu_id="live_scale_menu"/>
+        <!-- Menu item to access the live scale view -->
+        <menuitem id="menu_live_scale" name="Live Scale" parent="base.menu_custom" action="action_live_scale"/>
+    </data>
 </odoo>

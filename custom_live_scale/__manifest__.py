@@ -1,18 +1,17 @@
 {
-    'name': 'Live Scale Weight Display',
+    'name': 'Live Scale Integration',
     'version': '1.0',
-    'category': 'Custom',
-    'summary': 'Fetch and display live scale weight and unit from an API',
-    'depends': ['web'],
+    'category': 'Tools',
+    'summary': 'Integration with Live Scale for Weight Data',
+    'description': """
+        A custom Odoo module to integrate with a live scale via an API, exposing data on the Odoo system.
+    """,
+
+    'depends': ['base'],
     'data': [
         'views/live_scale_view.xml',
-        'security/ir.model.access.csv',
     ],
-    'assets': {
-        'web.assets_backend': [
-            'custom_live_scale/static/src/js/live_scale.js',
-        ],
-    },
-    'application': True,
+    'qweb': [],
     'installable': True,
+    'application': True,
 }
