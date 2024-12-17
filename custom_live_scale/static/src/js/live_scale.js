@@ -1,20 +1,33 @@
 odoo.define('custom_live_scale.live_scale', function (require) {
     "use strict";
 
-    var ajax = require('web.ajax');
-    
-    // Function to get live scale data
-    function getScaleData() {
-        ajax.jsonRpc('/get_scale_data', 'call', {})
-            .then(function (data) {
-                console.log('Scale data:', data);
-                alert('Weight: ' + data.weight + ' ' + data.unit);
-            })
-            .catch(function (error) {
-                console.error('Error fetching scale data:', error);
-            });
-    }
+    var rpc = require('web.rpc');
+    var core = require('web.core');
+    var Widget = require('web.Widget');
 
-    // Call the function
-    getScaleData();
+    var LiveScaleWidget = Widget.extend({
+        template: 'LiveScaleWidget',
+        start: function () {
+            this._updateScaleData();
+        },
+        _updateScaleData: function () {
+            var self = this;
+            setInterval(function () {
+                rpc.query({
+                    route: '/get_weight',
+                }).then(function (data) {
+                    if (data.error) {
+                        console.error("Error fetching scale data:", data.error);
+                    } else {
+                        self.$('.weight').text(data.weight + " " + data.unit);
+                    }
+                }).catch(function (err) {
+                    console.error("RPC Error:", err);
+                });
+            }, 3000);  // Fetch every 3 seconds
+        },
+    });
+
+    core.action_registry.add('live_scale_widget', LiveScaleWidget);
+    return LiveScaleWidget;
 });

@@ -1,28 +1,24 @@
 from odoo import http
 from odoo.http import request
 import requests
-import logging
 
-_logger = logging.getLogger(__name__)
+class ScaleAPIController(http.Controller):
 
-class ScaleIntegrationController(http.Controller):
-    @http.route('/get_live_weight', type='json', auth='public', methods=['GET'], csrf=False)
-    def fetch_live_weight(self):
+    @http.route('/get_weight', type='json', auth='public', methods=['GET'])
+    def get_weight(self, **kwargs):
         """
-        Calls the Flask API to get live weight data.
+        Endpoint to fetch weight from the scale API.
+        The scale API is running locally (http://localhost:5000/get_weight).
         """
-        flask_api_url = "http://127.0.0.1:5000/read_weight"  # Flask API endpoint
-
         try:
-            # Make a request to the local Flask API
-            response = requests.get(flask_api_url, timeout=3)
+            # Fetch the weight data from the external API
+            response = requests.get("http://localhost:5000/get_weight", timeout=5)
             if response.status_code == 200:
-                scale_data = response.json()
-                _logger.info(f"Scale data: {scale_data}")
-                return scale_data
-            else:
-                _logger.error(f"Failed to fetch data: {response.status_code}")
-                return {"error": "Unable to fetch scale data"}
+                data = response.json()
+                return {
+                    'weight': data.get('weight', 0.0),
+                    'unit': data.get('unit', 'kg'),
+                }
+            return {'error': 'Failed to fetch data from scale API'}
         except Exception as e:
-            _logger.error(f"Error connecting to scale API: {e}")
-            return {"error": "Connection failed"}
+            return {'error': f"Error: {str(e)}"}

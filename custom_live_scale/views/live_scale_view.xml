@@ -1,28 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data>
-        <!-- Define a simple view to show live scale data -->
-        <record id="view_live_scale" model="ir.ui.view">
-            <field name="name">live.scale.view</field>
-            <field name="model">live.scale</field>
-            <field name="arch" type="xml">
-                <form string="Live Scale">
-                    <group>
-                        <field name="weight"/>
-                        <field name="unit"/>
-                    </group>
-                </form>
-            </field>
-        </record>
+    <template id="live_scale_template" name="Live Scale Display">
+        <div class="o_live_scale">
+            <h3>Live Scale Data</h3>
+            <div>
+                <span class="weight">Fetching...</span>
+            </div>
+        </div>
+    </template>
 
-        <!-- Define an action for the view -->
-        <record id="action_live_scale" model="ir.actions.act_window">
-            <field name="name">Live Scale</field>
-            <field name="res_model">live.scale</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_live_scale"/>
-        </record>
+    <record id="action_live_scale_widget" model="ir.actions.client">
+        <field name="name">Live Scale</field>
+        <field name="tag">live_scale_widget</field>
+    </record>
 
-        <!-- Menu item to access the live scale view -->
-        <menuitem id="menu_live_scale" name="Live Scale" parent="base.menu_custom" action="action_live_scale"/>
-    </data>
+    <menuitem name="Live Scale" id="menu_live_scale" action="action_live_scale_widget" parent="base.menu_administration" />
 </odoo>

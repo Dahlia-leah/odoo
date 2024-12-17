@@ -1,19 +1,20 @@
 {
-    'name': 'Live Scale Integration',
+    'name': 'Custom Live Scale',
     'version': '1.0',
-    'category': 'Tools',
+    'summary': 'Module for Live Scale Integration',
+    'category': 'Custom',
     'license': 'LGPL-3',
-    'summary': 'Integration with Live Scale for Weight Data',
-    'description': """
-        A custom Odoo module to integrate with a live scale via an API, exposing data on the Odoo system.
-    """,
-
-    'depends': ['base'],
+    'depends': ['base', 'web'],
     'data': [
         'security/ir.model.access.csv',
         'views/live_scale_view.xml',
     ],
-    'qweb': [],
+    'assets': {
+        'web.assets_backend': [
+            'custom_live_scale/static/src/js/live_scale.js',
+        ],
+    },
     'installable': True,
     'application': True,
+    'auto_install': False,
 }
