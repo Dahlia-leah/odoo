@@ -10,6 +10,7 @@
 
     'depends': ['base'],
     'data': [
+        'security/ir.model.access.csv',
         'views/live_scale_view.xml',
     ],
     'qweb': [],
