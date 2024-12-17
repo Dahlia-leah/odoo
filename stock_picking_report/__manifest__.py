@@ -8,7 +8,11 @@
     'data': [
         'views/stock_picking_views.xml',
         'reports/stock_picking_report_template.xml',
-    ],
+    ],'assets': {
+        'web.assets_backend': [
+            'your_module/static/src/js/live_weight_bus.js',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,
