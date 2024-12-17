@@ -45,8 +45,8 @@ class StockMove(models.Model):
                 data = response.json()
                 _logger.info(f"Data received from fallback IoT Box: {data}")
                 return {
-                    'weight': data.get('value', 'N/A'),
-                    'unit': data.get('unit', 'N/A')
+                    'weight': data.get('value', ''),
+                    'unit': data.get('unit', '')
                 }
         except requests.exceptions.RequestException as e:
             # Catch specific exception related to network or HTTP issues
