@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_live_scale_user,access_live_scale_user,model_live_scale,,1,1,1,1
+access_live_scale_user,access_live_scale,model_live_scale,base.group_user,1,0,0,0
+access_live_scale_manager,access_live_scale_manager,model_live_scale,base.group_system,1,1,1,1
