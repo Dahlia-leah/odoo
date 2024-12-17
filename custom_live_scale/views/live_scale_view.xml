@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <template id="live_scale_template" name="Live Scale Display">
+    <template id="live_scale_template" name="Live Scale Template">
         <div class="o_live_scale">
             <h3>Live Scale Data</h3>
             <div>
@@ -14,5 +14,5 @@
         <field name="tag">live_scale_widget</field>
     </record>
 
-    <menuitem name="Live Scale" id="menu_live_scale" action="action_live_scale_widget" parent="base.menu_administration" />
+    <menuitem name="Live Scale" id="menu_live_scale" action="action_live_scale_widget" parent="base.menu_administration"/>
 </odoo>

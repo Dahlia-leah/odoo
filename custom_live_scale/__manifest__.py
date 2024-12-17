@@ -6,8 +6,8 @@
     'license': 'LGPL-3',
     'depends': ['base', 'web'],
     'data': [
-        'security/ir.model.access.csv',
         'views/live_scale_view.xml',
+        'security/ir.model.access.csv',
     ],
     'assets': {
         'web.assets_backend': [
