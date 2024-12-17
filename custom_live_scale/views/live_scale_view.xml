@@ -1,0 +1,32 @@
+<odoo>
+    <data>
+        <!-- Form View to Display Live Weight -->
+        <record id="view_live_scale_form" model="ir.ui.view">
+            <field name="name">live.scale.form</field>
+            <field name="model">live.scale</field>
+            <field name="arch" type="xml">
+                <form string="Live Scale">
+                    <sheet>
+                        <group>
+                            <field name="weight" readonly="1" />
+                            <field name="unit" readonly="1" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem name="Live Scale" id="menu_live_scale_root" sequence="10" />
+        <menuitem name="Live Scale Weight" id="menu_live_scale_weight"
+                  parent="menu_live_scale_root" action="action_live_scale" />
+
+        <!-- Action -->
+        <record id="action_live_scale" model="ir.actions.act_window">
+            <field name="name">Live Scale</field>
+            <field name="res_model">live.scale</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>
