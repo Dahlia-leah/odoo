@@ -3,27 +3,30 @@ from odoo import models, fields, api
 
 class LiveScale(models.Model):
     _name = 'live.scale'
-    _description = 'Live Scale Weight'
+    _description = 'Live Scale Data'
 
-    weight = fields.Float(string="Weight", readonly=True)
-    unit = fields.Char(string="Unit", readonly=True)
+    weight = fields.Float(string='Weight')
+    unit = fields.Char(string='Unit')
 
     @api.model
-    def fetch_live_weight(self):
-        """
-        Fetch live weight from the API.
-        Replace 'http://api.example.com' with your actual API endpoint.
-        """
+    def fetch_scale_data(self):
+        """Fetch live data from the scale API"""
         try:
-            url = "http://api.example.com/get_weight"  # Replace with your API
-            response = requests.get(url, timeout=5)
-            response.raise_for_status()
-            data = response.json()
+            # Adjust the Flask API URL (assuming Flask API is running on localhost:5000)
+            api_url = 'http://localhost:5000/get_weight'
+            response = requests.get(api_url)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.weight = data.get('weight', 0.0)
+                self.unit = data.get('unit', 'kg')
+            else:
+                self.weight = 0.0
+                self.unit = 'kg'
+        except requests.exceptions.RequestException as e:
+            # Handle connection errors
+            self.weight = 0.0
+            self.unit = 'kg'
+            _logger.error(f"Error fetching scale data: {e}")
 
-            weight = data.get('weight', 0.0)
-            unit = data.get('unit', 'kg')
-
-            return {'weight': weight, 'unit': unit}
-
-        except Exception as e:
-            return {'weight': 0.0, 'unit': 'error'}
+        return True
