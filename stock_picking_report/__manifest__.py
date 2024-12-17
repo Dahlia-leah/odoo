@@ -10,7 +10,7 @@
         'reports/stock_picking_report_template.xml',
     ],'assets': {
         'web.assets_backend': [
-            'your_module/static/src/js/live_weight_bus.js',
+            'static/src/js/live_weight_bus.js',
         ],
     },
     'installable': True,
