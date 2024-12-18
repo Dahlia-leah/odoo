@@ -1,4 +1,4 @@
-odoo.define('custom_live_scale.live_scale', ['web.rpc', 'web.core', 'web.Widget'], function (require) {
+odoo.define('custom_live_scale.live_scale', function (require) {
     "use strict";
 
     var rpc = require('web.rpc');
@@ -24,7 +24,7 @@ odoo.define('custom_live_scale.live_scale', ['web.rpc', 'web.core', 'web.Widget'
                 }).catch(function (err) {
                     console.error("RPC Error:", err);
                 });
-            }, 3000);  // Fetch data every 3 seconds
+            }, 3000); // Fetch data every 3 seconds
         },
     });
 
