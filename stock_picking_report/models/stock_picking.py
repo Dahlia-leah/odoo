@@ -1,9 +1,7 @@
+import logging
 import requests
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from odoo import http
-from odoo.http import request
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -14,60 +12,33 @@ class StockMove(models.Model):
     external_unit = fields.Char(string='External Unit', readonly=True)
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
-    def fetch_data_from_iot_box(self):
-        """
-        Attempt to fetch weight data from the IoT Box using the IP address stored in the iot.box model.
-        If the model is not found, fallback to a default IP address.
-        """
-        try:
-            # Assuming the reverse SSH tunnel is set up and forwards localhost:5000 to the scale's API
-            url = "http://localhost:5000/read-scale"  # Corrected URL to fetch the scale data
-
-            _logger.info(f"Fetching data from IoT Box at {url}...")
-            response = requests.get(url, timeout=5)
-            response.raise_for_status()  # Raise an exception for HTTP errors
-            data = response.json()  # Extract JSON data from response
-
-            # Checking if the response has the expected structure
-            _logger.info(f"Data received from IoT Box: {data}")
-            if 'weight' in data and 'unit' in data:
-                return {
-                    'weight': data['weight'],
-                    'unit': data['unit']
-                }
-            else:
-                _logger.error("Unexpected response structure from IoT Box.")
-                self.write({'external_weight': 'N/A', 'external_unit': 'N/A'})
-                return None
-
-        except requests.exceptions.RequestException as e:
-            # Catch specific exception related to network or HTTP issues
-            _logger.error(f"Request error while fetching data from IoT Box: {e}")
-            self.write({'external_weight': 'N/A', 'external_unit': 'N/A'})
-            return None
-        except Exception as e:
-            # Catch all other exceptions
-            _logger.error(f"Unexpected error while fetching data from IoT Box: {e}")
-            self.write({'external_weight': 'N/A', 'external_unit': 'N/A'})
-            return None
-
     def fetch_and_update_scale_data(self):
         """
-        Fetch data from the IoT Box and update the record.
-        Log a warning and proceed without halting execution if fetching fails.
+        Fetches scale data from the external source (e.g., reversed proxy).
+        Updates stock move with weight and unit.
         """
         self.ensure_one()
 
-        # Fetch data from the IoT Box
-        scale_data = self.fetch_data_from_iot_box()
-        if scale_data:
-            weight = scale_data.get('weight', 'N/A')
-            unit = scale_data.get('unit', 'N/A')
-            self.write({'external_weight': weight, 'external_unit': unit})
-            _logger.info(f"Updated fields with weight: {weight} and unit: {unit}")
-        else:
-            _logger.warning("Failed to fetch data from the IoT Box. Proceeding without weight data.")
-            self.write({'external_weight': 'N/A', 'external_unit': 'N/A'})
+        try:
+            # Sending GET request to the scale proxy
+            url = "http://localhost:5000/read-scale"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                # Parse the response data (assuming JSON format)
+                data = response.json()
+                weight = data.get("weight", "0.0")  # Default to 0 if weight is not found
+                unit = data.get("unit", "g")  # Default to 'g' if unit is not found
+
+                # Update stock move with the fetched data
+                self.write({'external_weight': str(weight), 'external_unit': unit})
+                _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
+
+            else:
+                raise UserError(f"Failed to fetch scale data: {response.status_code}")
+
+        except requests.exceptions.RequestException as e:
+            raise UserError(f"Error connecting to the scale service: {str(e)}")
 
     def action_print_report(self):
         """
