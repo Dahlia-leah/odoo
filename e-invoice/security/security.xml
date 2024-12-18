@@ -1,0 +1,11 @@
+<odoo>
+      <record id="group_einvoice_user" model="res.groups">
+            <field name="name">E-invoice User</field>
+        </record>
+    <record id="group_einvoice_v9" model="res.groups">
+            <field name="name">E-invoice V 0.9</field>
+        </record>
+    <record id="group_einvoice_v1" model="res.groups">
+            <field name="name">E-invoice V 1.0</field>
+        </record>
+</odoo>

@@ -1,0 +1,154 @@
+<odoo>
+    <data>
+<template id="assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/e-invoice/static/src/js/my_javascript.js"></script>
+            </xpath>
+       </template>
+        <record id="action_attachment_accounting" model="ir.actions.act_window">
+            <field name="name">Attachments</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.attachment</field>
+            <field name="view_id" eval="False"/>
+            <field name="view_mode" >kanban,tree,form</field>
+            <field name="domain" >[("res_model", "=", "account.move")]</field>
+            <field name="search_view_id" ref="base.view_attachment_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new document
+                </p>
+                <p>
+                    Also you will find here all the related documents and download it by clicking on any individual document.
+                </p>
+            </field>
+        </record>
+        <menuitem action="action_attachment_accounting" id="menu_action_attachment" parent="account.menu_finance_receivables"/>
+
+        <record forcecreate="True" id="einvoice_automatic" model="ir.cron">
+            <field name="name">E-invoice Automatic </field>
+            <field name="user_id" ref="base.group_system"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">1</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">model.api_get_recent()</field>
+        </record>
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_tax_form_inherit" model="ir.ui.view">
+            <field name="name">account.tax</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//group[1]" position="after">
+                    <group>
+                        <group>
+                            <field name="tax_code"/>
+                            <field name="subtype"/>
+                        </group>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="product_template_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.template</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="account.product_template_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//page[@name='invoicing']" position="after">
+                    <page string="Tax Information" name="tax_info" groups="account.group_account_readonly">
+                        <group name="Tax System">
+                            <group>
+                                <field name="item_pricing"/>
+                                <field name="item_type"/>
+                                <field name="item_code"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_company_form_inherit" model="ir.ui.view">
+            <field name="name">res.company</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='vat']" position="before">
+                    <field name="type"/>
+                    <field name="taxpayerActivityCode"/>
+
+                </xpath>
+                <xpath expr="//notebook[1]" position="inside">
+                    <page id="taxes" name="E-invoice Data" string="E-Invoice Data">
+
+                        <group>
+                            <group>
+                                <field name="api_url"/>
+                                <field name="api_id_url"/>
+                                <field name="client_id"/>
+                                <field name="client_secret"/>
+                                <field name="token" invisible="1"/>
+                                <field name="token_expiry"/>
+<!--                                <field name="signature_key_file"/>-->
+<!--                                <field name="signature_pass_phrase"/>-->
+
+
+                            </group>
+                        </group>
+
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_partner_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='street2']" position="after">
+                    <field name="room" placeholder="room..." class="o_address_street"
+                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                    <field name="floor" placeholder="floor..." class="o_address_street"
+                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                    <field name="building_number" placeholder="Building Number..." class="o_address_street"
+                           attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="tax_type"/>
+                    <field name="branchId"/>
+
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="replace">
+                    <field name="vat" placeholder="e.g. BE0477472701" attrs="{'readonly': [('parent_id','!=',False)],'required': [('tax_type','=','B')]}"/>
+
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="product_uom_form_view_inherit" model="ir.ui.view">
+            <field name="name">uom.uom</field>
+            <field name="model">uom.uom</field>
+            <field name="inherit_id" ref="uom.product_uom_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="unitCode"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>
