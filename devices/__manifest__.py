@@ -1,14 +1,16 @@
 {
-    'name': 'devices',
+    'name': 'Real Estate Advertisement',
     'version': '1.0',
-    'summary': 'Manage devices',
-    'category': 'Tools',
-    'license': 'LGPL-3',
-    'description': 'manage devices.',
+    'summary': 'Module for managing real estate advertisements',
+    'description': """
+        This module allows users to manage real estate advertisements.
+    """,
+    'author': 'Your Name',
+    'category': 'Real Estate',
     'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
-        'views/devices_views.xml',
+        'views/real_estate_view.xml',
     ],
     'installable': True,
     'application': True,
