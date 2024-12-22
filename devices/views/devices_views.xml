@@ -1,12 +1,52 @@
-
 <odoo>
     <data>
-        <!-- Adding the Devices menu icon with a smile emoji -->
-        <record id="devices_module_category" model="ir.module.category">
+
+        <!-- Menu item for Devices -->
+        <menuitem id="menu_my_devices"
+                  name="Devices"
+                  parent="base.menu_custom"
+                  action="action_devices"
+                  sequence="10"
+                  icon="fa-smile-o" />
+
+        <!-- Action to open the device list -->
+        <record id="action_devices" model="ir.actions.act_window">
             <field name="name">Devices</field>
-            <field name="description">Manage your devices</field>
-            <field name="sequence">10</field>
-            <field name="icon">😊</field>
+            <field name="res_model">my.devices</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
         </record>
+
+        <!-- Tree view for Devices -->
+        <record id="view_devices_tree" model="ir.ui.view">
+            <field name="name">my.devices.tree</field>
+            <field name="model">my.devices</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="brand"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for Devices -->
+        <record id="view_devices_form" model="ir.ui.view">
+            <field name="name">my.devices.form</field>
+            <field name="model">my.devices</field>
+            <field name="arch" type="xml">
+                <form string="Device">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="type"/>
+                            <field name="brand"/>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
     </data>
 </odoo>

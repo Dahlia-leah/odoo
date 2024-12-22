@@ -1,10 +1,10 @@
 from odoo import models, fields
 
-class Devices(models.Model):
-    _name = 'devices'
-    _description = 'Devices'
+class Device(models.Model):
+    _name = 'my.devices'
+    _description = 'Device Model'
 
-    name = fields.Char(string='Device Name', required=True)
-    description = fields.Text(string='Description')
-    price = fields.Float(string='Price')
-    is_available = fields.Boolean(string='Is Available', default=True)
+    name = fields.Char('Device Name', required=True)
+    type = fields.Char('Device Type')
+    brand = fields.Char('Brand')
+    description = fields.Text('Description')
