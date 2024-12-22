@@ -1,16 +1,35 @@
 import os
-import usb.core
-import usb.util
-import serial
-import re
 import subprocess
 import sys
-import requests
-from flask import Flask, jsonify
 import time
+from flask import Flask, jsonify
+import re
+import serial
 
 app = Flask(__name__)
 
+def start_serveo():
+    """
+    Starts Serveo and retrieves the public URL.
+    """
+    try:
+        serveo_process = subprocess.Popen(
+            ["ssh", "-R", "80:localhost:5000", "serveo.net"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        print("Starting Serveo tunnel...")
+        time.sleep(5)  # Wait for Serveo to establish the connection
+
+        output = serveo_process.stdout.readline().decode('utf-8').strip()
+        url_match = re.search(r'https://[a-zA-Z0-9.-]+\.serveo\.net', output)
+        if url_match:
+            return url_match.group(0)
+        else:
+            raise Exception("Failed to retrieve Serveo URL.")
+    except Exception as e:
+        print(f"Error starting Serveo: {e}")
+        sys.exit(1)
 
 def find_usb_scale():
     """
@@ -29,7 +48,7 @@ def find_usb_scale():
                     return ser
             except serial.SerialException:
                 continue
-    else:  # Linux or Mac
+    else:  # Linux or macOS
         for dev in os.listdir('/dev'):
             if dev.startswith('ttyUSB'):
                 try:
@@ -89,6 +108,21 @@ def read_scale():
     result, status = read_usb_scale_data()
     return jsonify(result), status
 
+def start_flask():
+    """
+    Starts the Flask app in a separate thread.
+    """
+    from threading import Thread
+
+    def run():
+        app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+
+    flask_thread = Thread(target=run)
+    flask_thread.start()
+
 if __name__ == '__main__':
-    print("Starting Flask app on port 5000...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    print("Starting Flask app...")
+    start_flask()
+
+    public_url = start_serveo()
+    print(f"Your Flask app is now exposed to the internet at: {public_url}")
