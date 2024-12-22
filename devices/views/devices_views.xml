@@ -1,48 +1,53 @@
 <odoo>
-    <!-- Menu item for Devices -->
-    <menuitem id="menu_my_devices"
-              name="Devices"
-              parent="base.menu_custom"
-              action="action_devices"
-              sequence="10"
-              icon="fa-smile-o" />
-
-    <!-- Action to open the device list -->
-    <record id="action_devices" model="ir.actions.act_window">
-        <field name="name">Devices</field>
-        <field name="res_model">my.devices</field>
-        <field name="view_mode">tree,form</field>
-        <field name="context">{}</field>
-    </record>
-
-    <!-- Tree view for Devices -->
-    <record id="view_devices_tree" model="ir.ui.view">
-        <field name="name">my.devices.tree</field>
-        <field name="model">my.devices</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
-                <field name="type"/>
-                <field name="brand"/>
-            </tree>
-        </field>
-    </record>
-
-    <!-- Form view for Devices -->
-    <record id="view_devices_form" model="ir.ui.view">
-        <field name="name">my.devices.form</field>
-        <field name="model">my.devices</field>
-        <field name="arch" type="xml">
-            <form string="Device">
-                <sheet>
+<record id="Record_action" model="ir.actions.act_window">
+    <field name="name">Name of Record</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">model.record</field>
+    <field name="view_mode">tree,form</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            Create a new record!
+        </p>
+    </field>
+ </record>
+ <menuitem id="menu_id"
+         name="Menu Name"
+         parent="parent_menu_root"
+         action="record_action"
+         sequence="10"/>
+         <record id="record_view_form" model="ir.ui.view">
+    <field name="name">record.name.form</field>
+    <field name="model">record.model</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <div class="oe_title">
+                    <h1>
+                        <field name="reference_no" readonly="1"/>
+                    </h1>
+                </div>
+                <group>
                     <group>
-                        <field name="name"/>
-                        <field name="type"/>
-                        <field name="brand"/>
-                        <field name="description"/>
+                        <field name="name_id"/>
+                        <field name="date"/>
+                        <field name="age"/>
+                        <field name="gender"/>
+                        <field name="note"/>
                     </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
+                </group>
+            </sheet>
+        </form>
+    </field>
+ </record>
+ <record id="record_view_tree" model="ir.ui.view">
+   <field name="name">record.name.tree</field>
+   <field name="model">record.model</field>
+   <field name="arch" type="xml">
+       <tree>
+           <field name="name_id"/>
+           <field name="age"/>
+           <field name="gender"/>
+       </tree>
+   </field>
+</record>
 </odoo>
