@@ -1,0 +1,12 @@
+
+<odoo>
+    <data>
+        <!-- Adding the Devices menu icon with a smile emoji -->
+        <record id="devices_module_category" model="ir.module.category">
+            <field name="name">Devices</field>
+            <field name="description">Manage your devices</field>
+            <field name="sequence">10</field>
+            <field name="icon">😊</field>
+        </record>
+    </data>
+</odoo>
