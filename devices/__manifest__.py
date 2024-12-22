@@ -7,6 +7,7 @@
     'description': 'manage devices.',
     'depends': ['base'],
     'data': [
+        'security/ir.model.access.csv',
         'views/devices_views.xml',
     ],
     'installable': True,

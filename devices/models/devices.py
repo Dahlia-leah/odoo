@@ -1,10 +1,11 @@
+# real_estate/models/real_estate.py
 from odoo import models, fields
 
-class Device(models.Model):
-    _name = 'my.devices'
-    _description = 'Device Model'
+class RealEstateProperty(models.Model):
+    _name = 'real.estate.property'
+    _description = 'Real Estate Property'
 
-    name = fields.Char('Device Name', required=True)
-    type = fields.Char('Device Type')
-    brand = fields.Char('Brand')
-    description = fields.Text('Description')
+    name = fields.Char(string='Title', required=True)
+    description = fields.Text()
+    offer_ids = fields.One2many('real.estate.offer', 'property_id', string='Offers')
+    other_info = fields.Text(string='Other Info')
