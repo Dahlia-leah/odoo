@@ -12,7 +12,7 @@
     </record>
 
     <!-- Define the menuitems -->
-    <menuitem id="menu_devices_root" name="Devices" sequence="10"/>
+    <menuitem id="menu_devices_root" name="Devices" sequence="10" parent="base.menu_app"/>
     <menuitem id="menu_devices" name="Manage Devices" parent="menu_devices_root" action="odoo_device.action_devices"/>
     
     <!-- Define the views -->
