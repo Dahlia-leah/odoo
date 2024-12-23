@@ -12,8 +12,8 @@
     </record>
 
     <!-- Define the menuitems -->
-    <!-- Root menu under App Switcher -->
-    <menuitem id="devices_menu_root" name="Devices" parent="base.menu_root" sequence="9525"/>
+    <!-- Root menu under the App menu (app_menu) -->
+    <menuitem id="devices_menu_root" name="Devices" parent="apps.menu_app" sequence="9525"/>
 
     <!-- Submenu linking to the action -->
     <menuitem id="devices_menu_action" 
