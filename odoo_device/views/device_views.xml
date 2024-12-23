@@ -17,7 +17,7 @@
         <menuitem id="devices_menu_root" 
                   name="Devices"  
                   web_icon="devices,static/description/icon.png" 
-                  parent="apps.menu_app" 
+                  parent="base.menu_custom"  <!-- Change the parent menu if needed -->
                   sequence="9525"/>
 
         <menuitem id="devices_menu_action" 
