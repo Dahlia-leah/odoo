@@ -6,7 +6,7 @@
     'description': """
         This module helps you manage devices in the Odoo system.
     """,
-    'depends': [''],  
+    'depends': ['point_of_sale'],  
     'data': [
         'views/device_views.xml',
     ],
