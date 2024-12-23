@@ -12,8 +12,8 @@
     </record>
 
     <!-- Define the menuitems -->
-    <menuitem id="menu_devices_root" name="Devices" sequence="10" >
-            <menuitem id="menu_devices_action" action="action_devices" name="Devices List"/>
+    <menuitem id="devices_menu_root" name="Devices" sequence="10" >
+            <menuitem id="devices_menu_action" action="action_devices" name="Devices List"/>
     </menuitem>
 
     <!-- Define the views -->
