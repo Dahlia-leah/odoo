@@ -12,8 +12,7 @@
     </record>
 
     <!-- Define the menuitems -->
-    <!-- Root menu under the App menu (app_menu) -->
-    <menuitem id="devices_menu_root" 
+    <menuitem id="menu_devices_root" 
               name="Devices"  
               web_icon="devices,static/description/icon.png" 
               parent="apps.menu_app" 
