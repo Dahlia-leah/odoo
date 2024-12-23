@@ -12,8 +12,10 @@
     </record>
 
     <!-- Define the menuitems -->
-    <menuitem id="devices_menu_root" name="Devices" sequence="10"/>
+    <!-- Root menu under App Switcher -->
+    <menuitem id="devices_menu_root" name="Devices" parent="base.menu_root" sequence="9525"/>
 
+    <!-- Submenu linking to the action -->
     <menuitem id="devices_menu_action" 
               parent="devices_menu_root" 
               action="action_devices" 
@@ -21,6 +23,7 @@
               sequence="1"/>
 
     <!-- Define the views -->
+    <!-- Tree view -->
     <record id="view_device_tree" model="ir.ui.view">
         <field name="name">device.tree</field>
         <field name="model">device</field>
@@ -35,6 +38,7 @@
         </field>
     </record>
 
+    <!-- Form view -->
     <record id="view_device_form" model="ir.ui.view">
         <field name="name">device.form</field>
         <field name="model">device</field>

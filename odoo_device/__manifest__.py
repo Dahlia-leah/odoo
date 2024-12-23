@@ -6,8 +6,7 @@
     'description': """
         This module helps you manage devices in the Odoo system.
     """,
-    'author': 'Your Company',
-    'depends': ['base'],  # Add dependencies if necessary
+    'depends': [''],  
     'data': [
         'views/device_views.xml',
     ],
