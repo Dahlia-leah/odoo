@@ -1,13 +1,12 @@
 <odoo>
     <data>
 
-        <!-- Record Definitions -->
-        <!-- Action to open device views -->
+        <!-- Action Definition -->
         <record id="action_devices" model="ir.actions.act_window">
             <field name="name">Devices</field>
-            <field name="res_model">device</field> <!-- Ensure the model 'device' is correct -->
+            <field name="res_model">device</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_device_tree"/> <!-- Explicitly reference the tree view -->
+            <field name="view_id" ref="view_device_tree"/>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Create the first device.
@@ -15,13 +14,17 @@
             </field>
         </record>
 
-        <!-- Menu Definitions under Inventory -->
+        <!-- Menu Definitions -->
         <menuitem id="devices_menu_root" 
                   name="Devices"  
                   parent="stock.menu_stock_root" 
                   sequence="9525"/>
 
-       
+        <menuitem id="devices_menu_action" 
+                  parent="devices_menu_root" 
+                  action="action_devices" 
+                  name="Devices List" 
+                  sequence="1"/>
 
         <!-- Views Definitions -->
         <record id="view_device_tree" model="ir.ui.view">
