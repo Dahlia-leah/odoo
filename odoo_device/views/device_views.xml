@@ -3,31 +3,30 @@
 
         <!-- Action Definition -->
         <record id="action_devices" model="ir.actions.act_window">
-            <field name="name">device</field>
+            <field name="name">Devices</field>
             <field name="res_model">device</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_device_tree"/>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
-                    Create the first device.
+                    Create your first device record.
                 </p>
             </field>
         </record>
 
-        <!-- Menu Definitions -->
-        <menuitem id="devices_menu_root" 
-                  name="Devices"  
+        <!-- Menu Definition -->
+        <menuitem id="menu_devices_root" 
+                  name="Devices" 
+                  sequence="10" 
                   web_icon="devices,static/description/icon.png" 
-                  groups="base.group_user"
-                  sequence="525"/>
+                  groups="base.group_user"/>
 
-        <menuitem id="devices_menu_action" 
-                  parent="devices_menu_root" 
+        <menuitem id="menu_devices_action" 
+                  parent="menu_devices_root" 
                   action="action_devices" 
-                  name="device" 
+                  name="Manage Devices" 
                   sequence="1"/>
 
-        <!-- Views Definitions -->
+        <!-- Tree View Definition -->
         <record id="view_device_tree" model="ir.ui.view">
             <field name="name">device.tree</field>
             <field name="model">device</field>
@@ -42,6 +41,7 @@
             </field>
         </record>
 
+        <!-- Form View Definition -->
         <record id="view_device_form" model="ir.ui.view">
             <field name="name">device.form</field>
             <field name="model">device</field>
@@ -59,13 +59,16 @@
                 </form>
             </field>
         </record>
-        
+
+        <!-- Security Groups -->
         <record id="group_device_manager" model="res.groups">
             <field name="name">Device Manager</field>
+            <field name="category_id" ref="base.module_category_administration"/>
         </record>
-        
+
         <record id="group_device_user" model="res.groups">
             <field name="name">Device User</field>
+            <field name="category_id" ref="base.module_category_administration"/>
         </record>
 
     </data>
