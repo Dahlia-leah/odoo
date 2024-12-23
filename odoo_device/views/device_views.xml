@@ -84,12 +84,12 @@
                         </group>
                     </sheet>
                     <footer>
-                        <!-- Connect and Delete Buttons -->
-                        <div class="oe_button_box" name="button_box">
-                            <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
-                            <button name="action_remove_device" string="Delete" type="object" class="btn btn-danger"/>
+                        <!-- Container for buttons to manage alignment and spacing -->
+                        <div class="oe_button_box" name="button_box" style="display: flex; gap: 15px; justify-content: space-between;">
+                            <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary" style="width: 48%;"/>
+                            <button name="action_remove_device" string="Delete" type="object" class="btn btn-danger" style="width: 48%;"/>
                         </div>
-                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel" style="width: 100%; margin-top: 10px;"/>
                     </footer>
                 </form>
             </field>
