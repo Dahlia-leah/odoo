@@ -13,7 +13,11 @@
 
     <!-- Define the menuitems -->
     <!-- Root menu under the App menu (app_menu) -->
-    <menuitem id="devices_menu_root" name="Devices" parent="apps.menu_app" sequence="9525"/>
+    <menuitem id="devices_menu_root" 
+              name="Devices"  
+              web_icon="devices,static/description/icon.png" 
+              parent="apps.menu_app" 
+              sequence="9525"/>
 
     <!-- Submenu linking to the action -->
     <menuitem id="devices_menu_action" 
