@@ -21,11 +21,7 @@
                   parent="stock.menu_stock_root" 
                   sequence="9525"/>
 
-        <menuitem id="devices_menu_action" 
-                  parent="devices_menu_root" 
-                  action="action_devices" 
-                  name="Devices List" 
-                  sequence="1"/>
+       
 
         <!-- Views Definitions -->
         <record id="view_device_tree" model="ir.ui.view">
