@@ -26,7 +26,6 @@
                   name="Manage Devices" 
                   sequence="1"/>
 
-
         <!-- Kanban View Definition -->
         <record id="view_device_kanban" model="ir.ui.view">
             <field name="name">device.kanban</field>
@@ -34,15 +33,29 @@
             <field name="arch" type="xml">
                 <kanban>
                     <field name="name"/>
-                    <field name="device_type"/>
-                    <field name="serial_number"/>
+                    <field name="status"/>
+                    <field name="url"/>
 
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_details">
+                                <!-- Device Name -->
                                 <strong><field name="name"/></strong>
-                                <div><field name="device_type"/></div>
-                                <div><field name="serial_number"/></div>
+                                
+                                <!-- Status with Color -->
+                                <div>
+                                    <span t-att-class="
+                                        'badge ' + 
+                                        (record.status.raw_value === 'active' ? 'badge-success' : 
+                                         record.status.raw_value === 'out_of_service' ? 'badge-danger' : 'badge-secondary')">
+                                        <field name="status"/>
+                                    </span>
+                                </div>
+
+                                <!-- URL Display -->
+                                <div>
+                                    <small><field name="url"/></small>
+                                </div>
                             </div>
 
                             <!-- Connect Button -->
@@ -55,6 +68,26 @@
                         </t>
                     </templates>
                 </kanban>
+            </field>
+        </record>
+
+        <!-- Form View for Name and URL -->
+        <record id="view_device_form_url_input" model="ir.ui.view">
+            <field name="name">device.form.url.input</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <form string="Connect Device">
+                    <sheet>
+                        <group>
+                            <field name="name" string="Device Name" required="1"/>
+                            <field name="url" string="URL" required="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
             </field>
         </record>
 

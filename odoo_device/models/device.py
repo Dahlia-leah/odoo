@@ -2,6 +2,9 @@ from odoo import models, fields, api
 from odoo.exceptions import UserError
 import requests
 import json
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class Device(models.Model):
     _name = 'device'
@@ -9,27 +12,12 @@ class Device(models.Model):
 
     # Fields for the Device Model
     name = fields.Char(string='Device Name', required=True)
-    device_type = fields.Selection([
-        ('mobile', 'Mobile'),
-        ('laptop', 'Laptop'),
-        ('tablet', 'Tablet'),
-        ('other', 'Other'),
-    ], string='Device Type', default='other')
-    serial_number = fields.Char(string='Serial Number')
-    purchase_date = fields.Date(string='Purchase Date')
-    warranty_expiry = fields.Date(string='Warranty Expiry')
-
-    # New Field: Status of Device (Active, Out of Service, etc.)
     status = fields.Selection([
         ('active', 'Active'),
         ('out_of_service', 'Out of Service'),
         ('inactive', 'Inactive'),
     ], string='Status', default='active')
-
-    # Field to store JSON Data fetched from the URL
     json_data = fields.Text(string="JSON Data")
-
-    # Field to input the URL in the form
     url = fields.Char(string="URL to fetch JSON from")
 
     @api.model
@@ -39,7 +27,7 @@ class Device(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'device',
             'view_mode': 'form',
-            'view_id': self.env.ref('your_module.view_device_form_url_input').id,
+            'view_id': self.env.ref('device.view_device_form_url_input').id,
             'target': 'new',
         }
 
@@ -56,7 +44,7 @@ class Device(models.Model):
             return False  # URL is not valid or request failed
 
     def action_submit_url(self):
-        """Handles the URL input, validates the JSON, and stores it"""
+        """Handles the URL input, validates the JSON, stores it, and prints it"""
         url = self.url
         data = self.validate_json(url)
 
@@ -66,9 +54,13 @@ class Device(models.Model):
             raise UserError("The URL does not return valid JSON.")
         else:
             # Store the JSON response in the json_data field
-            self.json_data = json.dumps(data)
+            self.json_data = json.dumps(data, indent=4)
 
-            # Optionally, you can process the JSON data further
+            # Log the JSON data
+            _logger.info(f"Fetched JSON Data from URL ({url}): {self.json_data}")
+
+            # Print the JSON data to the console (for debugging purposes)
+            print(f"Fetched JSON Data from URL ({url}):\n{self.json_data}")
 
             # Close the modal after submission
             return {'type': 'ir.actions.act_window_close'}
