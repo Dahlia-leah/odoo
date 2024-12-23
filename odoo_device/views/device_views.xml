@@ -56,11 +56,7 @@
                                 <div>
                                     <small><field name="url"/></small>
                                 </div>
-                            </div>
-
-                            <!-- Connect and Delete Buttons -->
-                            <footer>
-                                <button name="action_connect" 
+                                 <button name="action_connect" 
                                         string="Connect" 
                                         type="object" 
                                         class="btn btn-primary"/>
@@ -68,7 +64,7 @@
                                         string="Delete" 
                                         type="object" 
                                         class="btn btn-danger"/>
-                            </footer>
+                            </div>                 
                         </t>
                     </templates>
                 </kanban>
