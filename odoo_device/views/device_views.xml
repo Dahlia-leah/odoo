@@ -1,48 +1,106 @@
 <odoo>
-    <record id="view_device_form" model="ir.ui.view">
-        <field name="name">device.form</field>
-        <field name="model">device</field>
-        <field name="arch" type="xml">
-            <form string="Device">
-                <sheet>
-                    <group>
-                        <field name="name" string="Device Name" required="1"/>
-                        <field name="url" string="Device URL" required="1"/>
-                        <field name="status" string="Device Status" readonly="1"/>
-                    </group>
-                    <group>
-                        <field name="json_data" string="Fetched JSON Data" readonly="1" widget="text"/>
-                    </group>
+    <data>
+
+        <!-- Action Definition -->
+        <record id="action_devices" model="ir.actions.act_window">
+            <field name="name">Devices</field>
+            <field name="res_model">device</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Create your first device record.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Definition -->
+        <menuitem id="menu_devices_root" 
+                  name="Devices" 
+                  sequence="10" 
+                  web_icon="devices,static/description/icon.png" 
+                  groups="base.group_user"/>
+
+        <menuitem id="menu_devices_action" 
+                  parent="menu_devices_root" 
+                  action="action_devices" 
+                  name="Manage Devices" 
+                  sequence="1"/>
+
+        <!-- Kanban View Definition -->
+        <record id="view_device_kanban" model="ir.ui.view">
+            <field name="name">device.kanban</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <field name="status"/>
+                    <field name="url"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_details">
+                                <!-- Device Name -->
+                                <strong><field name="name"/></strong>
+                                
+                                <!-- Status with Color -->
+                                <div>
+                                    <span t-att-class="
+                                        'badge ' + 
+                                        (record.status.raw_value === 'active' ? 'badge-success' : 
+                                         record.status.raw_value === 'out_of_service' ? 'badge-danger' : 'badge-secondary')">
+                                        <field name="status"/>
+                                    </span>
+                                </div>
+
+                                <!-- URL Display -->
+                                <div>
+                                    <small><field name="url"/></small>
+                                </div>
+                            </div>
+
+                            <!-- Connect Button -->
+                            <footer>
+                                <button name="action_connect" 
+                                        string="Connect" 
+                                        type="object" 
+                                        class="btn btn-primary"/>
+                            </footer>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Form View for Name and URL -->
+        <record id="view_device_form_url_input" model="ir.ui.view">
+            <field name="name">device.form.url.input</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <form string="Connect Device">
+                    <sheet>
+                        <group>
+                            <field name="name" string="Device Name" required="1"/>
+                            <field name="url" string="URL" required="1"/>
+                        </group>
+                    </sheet>
                     <footer>
-                        <button string="Submit URL" type="object" name="action_submit_url" class="btn btn-primary"/>
-                        <button string="Remove Device" type="object" name="action_remove_device" class="btn btn-danger" 
-                            attrs="{'invisible': [('id', '=', False)]}"/>
-                        <button string="Close" class="btn btn-secondary" special="cancel"/>
+                        <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                     </footer>
-                </sheet>
-            </form>
-        </field>
-    </record>
+                </form>
+            </field>
+        </record>
 
-    <record id="view_device_tree" model="ir.ui.view">
-        <field name="name">device.tree</field>
-        <field name="model">device</field>
-        <field name="arch" type="xml">
-            <tree string="Devices">
-                <field name="name"/>
-                <field name="status"/>
-                <field name="url"/>
-            </tree>
-        </field>
-    </record>
+        <!-- Security Groups -->
+        <record id="group_device_manager" model="res.groups">
+            <field name="name">Device Manager</field>
+            <field name="category_id" ref="base.module_category_administration"/>
+        </record>
 
-    <record id="action_device" model="ir.actions.act_window">
-        <field name="name">Devices</field>
-        <field name="res_model">device</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_device_tree"/>
-    </record>
+        <record id="group_device_user" model="res.groups">
+            <field name="name">Device User</field>
+            <field name="category_id" ref="base.module_category_administration"/>
+        </record>
 
-    <menuitem id="menu_device_root" name="Devices" sequence="10"/>
-    <menuitem id="menu_device" name="Manage Devices" parent="menu_device_root" action="action_device"/>
+    </data>
 </odoo>
