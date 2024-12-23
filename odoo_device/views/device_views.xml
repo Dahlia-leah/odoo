@@ -12,7 +12,7 @@
     </record>
 
     <!-- Define the menuitems -->
-    <menuitem id="menu_devices_root" name="Devices" sequence="10" parent="base.menu_settings">
+    <menuitem id="menu_devices_root" name="Devices" sequence="10" >
             <menuitem id="menu_devices_action" action="action_devices" name="Devices List"/>
     </menuitem>
 
