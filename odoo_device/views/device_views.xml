@@ -26,7 +26,7 @@
                   name="Manage Devices" 
                   sequence="1"/>
 
-        <!-- Kanban View Definition -->
+        <!-- Kanban View Definition with Delete Capability -->
         <record id="view_device_kanban" model="ir.ui.view">
             <field name="name">device.kanban</field>
             <field name="model">device</field>
@@ -58,12 +58,16 @@
                                 </div>
                             </div>
 
-                            <!-- Connect Button -->
+                            <!-- Connect and Delete Buttons -->
                             <footer>
                                 <button name="action_connect" 
                                         string="Connect" 
                                         type="object" 
                                         class="btn btn-primary"/>
+                                <button name="action_delete" 
+                                        string="Delete" 
+                                        type="object" 
+                                        class="btn btn-danger"/>
                             </footer>
                         </t>
                     </templates>
