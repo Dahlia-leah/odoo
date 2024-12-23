@@ -84,7 +84,11 @@
                         </group>
                     </sheet>
                     <footer>
-                        <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
+                        <!-- Connect and Delete Buttons -->
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
+                            <button name="action_remove_device" string="Delete" type="object" class="btn btn-danger"/>
+                        </div>
                         <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                     </footer>
                 </form>
