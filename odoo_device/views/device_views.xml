@@ -64,7 +64,7 @@
                                         string="Connect" 
                                         type="object" 
                                         class="btn btn-primary"/>
-                                <button name="action_delete" 
+                                <button name="action_remove_device" 
                                         string="Delete" 
                                         type="object" 
                                         class="btn btn-danger"/>
