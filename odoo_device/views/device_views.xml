@@ -12,8 +12,11 @@
     </record>
 
     <!-- Define the menuitems -->
-    <menuitem id="menu_devices_root" name="Devices" sequence="10" parent="base.menu_settings"/>
-    <menuitem id="menu_devices" name="Manage Devices" parent="menu_devices_root" action="action_devices"/>
+    <menuitem id="menu_devices_root" name="Devices" sequence="10" parent="base.menu_settings">
+        <menuitem id="menu_devices_first_level" name="Manage">
+            <menuitem id="menu_devices_action" action="action_devices" name="Devices List"/>
+        </menuitem>
+    </menuitem>
 
     <!-- Define the views -->
     <record id="view_device_form" model="ir.ui.view">
