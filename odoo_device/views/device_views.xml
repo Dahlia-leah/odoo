@@ -1,5 +1,5 @@
 <odoo>
-    <!-- Define the action -->
+    <!-- Record Definitions -->
     <record id="action_devices" model="ir.actions.act_window">
         <field name="name">Devices</field>
         <field name="res_model">device</field>
@@ -11,7 +11,7 @@
         </field>
     </record>
 
-    <!-- Define the menu items -->
+    <!-- Menu Definitions -->
     <menuitem id="devices_menu_root" 
               name="Devices"  
               web_icon="devices,static/description/icon.png" 
@@ -24,8 +24,7 @@
               name="Devices List" 
               sequence="1"/>
 
-    <!-- Define the views -->
-    <!-- Tree view -->
+    <!-- Views Definitions -->
     <record id="view_device_tree" model="ir.ui.view">
         <field name="name">device.tree</field>
         <field name="model">device</field>
@@ -40,7 +39,6 @@
         </field>
     </record>
 
-    <!-- Form view -->
     <record id="view_device_form" model="ir.ui.view">
         <field name="name">device.form</field>
         <field name="model">device</field>
