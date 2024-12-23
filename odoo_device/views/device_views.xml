@@ -11,14 +11,13 @@
         </field>
     </record>
 
-    <!-- Define the menuitems -->
-    <menuitem id="menu_devices_root" 
+    <!-- Define the menu items -->
+    <menuitem id="devices_menu_root" 
               name="Devices"  
               web_icon="devices,static/description/icon.png" 
               parent="apps.menu_app" 
               sequence="9525"/>
 
-    <!-- Submenu linking to the action -->
     <menuitem id="devices_menu_action" 
               parent="devices_menu_root" 
               action="action_devices" 
