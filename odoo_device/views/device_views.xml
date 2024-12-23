@@ -2,10 +2,12 @@
     <data>
 
         <!-- Record Definitions -->
+        <!-- Action to open device views -->
         <record id="action_devices" model="ir.actions.act_window">
             <field name="name">Devices</field>
-            <field name="res_model">device</field>
+            <field name="res_model">device</field> <!-- Ensure the model 'device' is correct -->
             <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_device_tree"/> <!-- Explicitly reference the tree view -->
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Create the first device.
