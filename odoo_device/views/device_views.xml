@@ -3,8 +3,8 @@
 
         <!-- Action Definition -->
         <record id="action_devices" model="ir.actions.act_window">
-            <field name="name">Devices</field>
-            <field name="res_model">device</field>
+            <field name="name">device</field>
+            <field name="res_model">device.device</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_device_tree"/>
             <field name="help" type="html">
@@ -17,13 +17,14 @@
         <!-- Menu Definitions -->
         <menuitem id="devices_menu_root" 
                   name="Devices"  
-                  parent="stock.menu_stock_root" 
-                  sequence="9525"/>
+                  web_icon="devices,static/description/icon.png" 
+                  groups="base.group_user"
+                  sequence="525"/>
 
         <menuitem id="devices_menu_action" 
                   parent="devices_menu_root" 
                   action="action_devices" 
-                  name="Devices List" 
+                  name="device" 
                   sequence="1"/>
 
         <!-- Views Definitions -->
