@@ -59,6 +59,14 @@
                 </form>
             </field>
         </record>
+        
+        <record id="group_device_manager" model="res.groups">
+            <field name="name">Device Manager</field>
+        </record>
+        
+        <record id="group_device_user" model="res.groups">
+            <field name="name">Device User</field>
+        </record>
 
     </data>
 </odoo>

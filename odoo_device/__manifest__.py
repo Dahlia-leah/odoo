@@ -9,6 +9,7 @@
     'depends': ['base', 'stock'],  
     'data': [
         'views/device_views.xml',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': True,
