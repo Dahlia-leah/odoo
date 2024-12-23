@@ -16,7 +16,7 @@
         <!-- Menu Definitions under Inventory -->
         <menuitem id="devices_menu_root" 
                   name="Devices"  
-                  parent="stock.menu_stock_root"  
+                  parent="stock.menu_inventory_root"  <!-- Correct parent menu for Inventory -->
                   sequence="9525"/>
 
         <menuitem id="devices_menu_action" 
