@@ -1,11 +1,3 @@
-from odoo import models, fields, api
-from odoo.exceptions import UserError
-import requests
-import json
-import logging
-
-_logger = logging.getLogger(__name__)
-
 class XDeviceConnection(models.Model):
     _name = 'x.device.connection'
     _description = 'Device Connection'
@@ -22,7 +14,7 @@ class XDeviceConnection(models.Model):
             if not connection.url:
                 raise UserError("The URL cannot be empty.")
             
-            data = self._validate_json(connection.url)
+            data = self._fetch_json_data(connection.url)
             if data is False:
                 raise UserError("The URL is invalid or the request failed.")
             elif data is None:
@@ -30,8 +22,8 @@ class XDeviceConnection(models.Model):
             else:
                 connection.connection_status = 'connected'
                 _logger.info(f"Connection to device {connection.device_id.name} established successfully.")
-    
-    def _validate_json(self, url):
+
+    def _fetch_json_data(self, url):
         try:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -69,23 +61,11 @@ class XDevice(models.Model):
         string='Device Connections'
     )
 
-    def validate_json(self, url):
-        try:
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
-            return response.json()
-        except ValueError:
-            _logger.error(f"Invalid JSON response from {url}")
-            return None
-        except requests.exceptions.RequestException as e:
-            _logger.error(f"Error while requesting {url}: {e}")
-            return False
-
     def action_submit_url(self):
         if not self.url:
             raise UserError("The URL cannot be empty.")
 
-        data = self.validate_json(self.url)
+        data = self._fetch_json_data(self.url)
 
         if data is False:
             raise UserError("The URL is invalid or the request failed.")
@@ -121,10 +101,14 @@ class XDevice(models.Model):
                 }
             }
 
-class XDeviceParameter(models.Model):
-    _name = 'x.device.parameter'
-    _description = 'Device Parameter'
-
-    device_id = fields.Many2one('x.device', string='Device', required=True, ondelete='cascade')
-    parameter_name = fields.Char(string='Parameter Name', required=True)
-    parameter_value = fields.Char(string='Parameter Value')
+    def _fetch_json_data(self, url):
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            return response.json()
+        except ValueError:
+            _logger.error(f"Invalid JSON response from {url}")
+            return None
+        except requests.exceptions.RequestException as e:
+            _logger.error(f"Error while requesting {url}: {e}")
+            return False

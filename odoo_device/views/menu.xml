@@ -1,0 +1,10 @@
+<odoo>
+    <!-- Parent Device Menu -->
+    <menuitem id="menu_parent_device" name="Devices" sequence="1"/>
+
+    <!-- Device Connections Menu -->
+    <menuitem id="menu_device_connection" name="Device Connections" parent="menu_parent_device" sequence="1"/>
+
+    <!-- Devices Menu -->
+    <menuitem id="menu_device" name="Devices" parent="menu_parent_device" sequence="2"/>
+</odoo>
