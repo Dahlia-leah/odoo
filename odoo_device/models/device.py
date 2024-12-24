@@ -1,12 +1,12 @@
 from odoo import models, fields
 
-class XDevice(models.Model):
+class Device(models.Model):
     _name = 'x.device'
     _description = 'Device'
 
     name = fields.Char(string="Device Name", required=True)
 
-class XDeviceConnection(models.Model):
+class DeviceConnection(models.Model):
     _name = 'x.device.connection'
     _description = 'Device Connection'
 

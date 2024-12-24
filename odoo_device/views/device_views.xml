@@ -1,5 +1,6 @@
 <odoo>
     <data>
+
         <!-- View for device connection -->
         <record id="view_x_device_connection_form" model="ir.ui.view">
             <field name="name">x.device.connection.form</field>
@@ -35,5 +36,6 @@
         <menuitem id="menu_device_root" name="Device Management" sequence="10" app="true"/>
         <menuitem id="menu_x_device" name="Devices" parent="menu_device_root" sequence="10"/>
         <menuitem id="menu_x_device_connection" name="Connections" parent="menu_device_root" sequence="20"/>
+
     </data>
 </odoo>

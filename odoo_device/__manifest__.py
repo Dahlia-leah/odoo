@@ -1,17 +1,13 @@
 {
-    'name': 'Odoo Device',
+    'name': 'Device Management',
     'version': '1.0',
-    'category': 'Inventory',
-    'summary': 'Manage Devices in the System',
-    'description': """
-        This module helps you manage devices and their connections.
-    """,
-    'depends': ['base', 'stock'],
+    'category': 'Tools',
+    'author': 'Your Company',
+    'depends': ['base'],
     'data': [
-        'views/device_views.xml',
         'security/ir.model.access.csv',
+        'views.xml',
     ],
     'installable': True,
-    'application': True,
     'auto_install': False,
 }
