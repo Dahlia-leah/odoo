@@ -17,20 +17,29 @@ class Device(models.Model):
         ('out_of_service', 'Out of Service'),
         ('inactive', 'Inactive'),
     ], string='Status', default='active')
-    json_data = fields.Text(string="Raw JSON Data")
-    json_preview = fields.Text(string="JSON Preview", readonly=True)
+    json_data = fields.Text(string="JSON Data")
     url = fields.Char(string="URL to fetch JSON from", required=True)
 
     def validate_json(self, url):
-        """Validate if the URL returns valid JSON and return it."""
+        """Validate if the URL returns valid JSON"""
         try:
             response = requests.get(url)
-            response.raise_for_status()  # Raise an error if the request fails
-            return response.json()  # Return parsed JSON
+            response.raise_for_status()  # Raise an error if request fails
+            data = response.json()  # Try parsing response as JSON
+            return data
         except ValueError:
             return None  # Invalid JSON
         except requests.exceptions.RequestException:
             return False  # Invalid URL or request failed
+
+    def action_connect(self):
+        """Open the form to input the URL."""
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'device',
+            'view_mode': 'form',
+            'target': 'new',
+        }
 
     def action_submit_url(self):
         """Handles the URL input, validates the JSON, stores it, or raises an error."""
@@ -44,9 +53,8 @@ class Device(models.Model):
         elif data is None:
             raise UserError("The URL does not return valid JSON.")
         else:
-            # Store the JSON response in the json_data and json_preview fields
+            # Store the JSON response in the json_data field
             self.json_data = json.dumps(data, indent=4)
-            self.json_preview = json.dumps(data, indent=4)
             self.status = 'active'
 
             # Log the JSON data
@@ -63,3 +71,20 @@ class Device(models.Model):
                     'sticky': False,
                 }
             }
+
+    def action_remove_device(self):
+        """Allows removing a device record."""
+        self.ensure_one()  # Ensure only one record is being processed
+        device_name = self.name
+        self.unlink()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': "Device Removed",
+                'message': f"The device '{device_name}' has been removed successfully.",
+                'type': 'success',
+                'sticky': False,
+            }
+        }
