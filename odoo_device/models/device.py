@@ -19,20 +19,17 @@ class Device(models.Model):
     json_data = fields.Text(string="JSON Data", readonly=True)
     url = fields.Char(string="URL to fetch JSON from", required=True)
 
-    # One2many relationship, using 'device_id' to link to the correct field
     device_parameter_ids = fields.One2many(
         comodel_name='device.parameter',
-        inverse_name='device_id',  # Should reference the 'device_id' field in 'DeviceParameter'
+        inverse_name='device_id',
         string='Device Parameters'
     )
 
-    # Methods to validate JSON data and handle the device status
     def validate_json(self, url):
         try:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
-            data = response.json()
-            return data
+            return response.json()
         except ValueError:
             _logger.error(f"Invalid JSON response from {url}")
             return None
@@ -59,7 +56,7 @@ class Device(models.Model):
                 self.device_parameter_ids.unlink()
                 for param in parameters:
                     self.device_parameter_ids.create({
-                        'device_id': self.id,  # Correctly reference the 'id' of the 'device'
+                        'device_id': self.id,
                         'parameter_name': param.get('name'),
                         'parameter_value': param.get('value'),
                     })
