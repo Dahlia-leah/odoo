@@ -1,68 +1,102 @@
 <odoo>
-<record id="model_x_device_connection" model="ir.model">
-    <field name="name">x.device.connection</field>
-    <field name="model">x.device.connection</field>
-</record>
+    <!-- Device Connection Model -->
+    <record id="model_x_device_connection" model="ir.model">
+        <field name="name">x.device.connection</field>
+        <field name="model">x.device.connection</field>
+    </record>
 
-<record id="view_x_device_connection_form" model="ir.ui.view">
-    <field name="name">x.device.connection.form</field>
-    <field name="model">x.device.connection</field>
-    <field name="arch" type="xml">
-        <form string="Device Connection">
-            <sheet>
-                <group>
-                    <field name="device_id" string="Device" required="1"/>
-                    <field name="url" string="URL to Fetch JSON From" required="1"/>
-                </group>
-            </sheet>
-            <footer>
-                <button name="action_submit_url" string="Submit" type="object" class="btn-primary"/>
-                <button string="Cancel" class="btn-secondary" special="cancel"/>
-            </footer>
-        </form>
-    </field>
-</record>
+    <!-- Device Connection Form View -->
+    <record id="view_x_device_connection_form" model="ir.ui.view">
+        <field name="name">x.device.connection.form</field>
+        <field name="model">x.device.connection</field>
+        <field name="arch" type="xml">
+            <form string="Device Connection">
+                <sheet>
+                    <group>
+                        <field name="device_id" string="Device" required="1"/>
+                        <field name="url" string="URL to Fetch JSON From" required="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_submit_url" string="Submit" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
-<record id="view_x_device_connection_tree" model="ir.ui.view">
-    <field name="name">x.device.connection.tree</field>
-    <field name="model">x.device.connection</field>
-    <field name="arch" type="xml">
-        <tree string="Device Connections">
-            <field name="device_id"/>
-            <field name="url"/>
-            <field name="connection_status"/>
-        </tree>
-    </field>
-</record>
+    <!-- Device Connection Tree View -->
+    <record id="view_x_device_connection_tree" model="ir.ui.view">
+        <field name="name">x.device.connection.tree</field>
+        <field name="model">x.device.connection</field>
+        <field name="arch" type="xml">
+            <tree string="Device Connections">
+                <field name="device_id"/>
+                <field name="url"/>
+                <field name="connection_status"/>
+            </tree>
+        </field>
+    </record>
 
-<record id="model_x_device" model="ir.model">
-    <field name="name">x.device</field>
-    <field name="model">x.device</field>
-</record>
+    <!-- Device Model -->
+    <record id="model_x_device" model="ir.model">
+        <field name="name">x.device</field>
+        <field name="model">x.device</field>
+    </record>
 
-<record id="view_x_device_form" model="ir.ui.view">
-    <field name="name">x.device.form</field>
-    <field name="model">x.device</field>
-    <field name="arch" type="xml">
-        <form string="Device">
-            <sheet>
-                <group>
-                    <field name="name" string="Device Name" required="1"/>
-                    <field name="status" string="Status"/>
-                </group>
-            </sheet>
-        </form>
-    </field>
-</record>
+    <!-- Device Form View -->
+    <record id="view_x_device_form" model="ir.ui.view">
+        <field name="name">x.device.form</field>
+        <field name="model">x.device</field>
+        <field name="arch" type="xml">
+            <form string="Device">
+                <sheet>
+                    <group>
+                        <field name="name" string="Device Name" required="1"/>
+                        <field name="status" string="Status"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-<record id="view_x_device_tree" model="ir.ui.view">
-    <field name="name">x.device.tree</field>
-    <field name="model">x.device</field>
-    <field name="arch" type="xml">
-        <tree string="Devices">
-            <field name="name"/>
-            <field name="status"/>
-        </tree>
-    </field>
-</record>
+    <!-- Device Tree View -->
+    <record id="view_x_device_tree" model="ir.ui.view">
+        <field name="name">x.device.tree</field>
+        <field name="model">x.device</field>
+        <field name="arch" type="xml">
+            <tree string="Devices">
+                <field name="name"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_parent_device" name="Devices"/>
+    
+    <!-- Device Menu -->
+    <menuitem id="menu_device_connection" name="Device Connections" parent="menu_parent_device"/>
+    
+    <!-- Device Connections Action -->
+    <record id="action_device_connection" model="ir.actions.act_window">
+        <field name="name">Device Connections</field>
+        <field name="res_model">x.device.connection</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <menuitem id="menu_device_connections_action" name="Device Connections" parent="menu_device_connection" action="action_device_connection"/>
+
+    <!-- Device Menu -->
+    <menuitem id="menu_device" name="Devices" parent="menu_parent_device"/>
+    
+    <!-- Device Action -->
+    <record id="action_device" model="ir.actions.act_window">
+        <field name="name">Devices</field>
+        <field name="res_model">x.device</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <menuitem id="menu_device_action" name="Devices" parent="menu_device" action="action_device"/>
+
 </odoo>
