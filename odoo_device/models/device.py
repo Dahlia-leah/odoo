@@ -10,12 +10,12 @@ class Device(models.Model):
     _name = 'device'
     _description = 'Device'
 
-    # Removed 'name' field
     status = fields.Selection([
         ('active', 'Active'),
         ('out_of_service', 'Out of Service'),
         ('inactive', 'Inactive'),
     ], string='Status', default='inactive')
+
     json_data = fields.Text(string="JSON Data", readonly=True)
     url = fields.Char(string="URL to fetch JSON from", required=True)
 
@@ -24,6 +24,13 @@ class Device(models.Model):
         comodel_name='device.parameter',
         inverse_name='device_id',
         string='Device Parameters'
+    )
+
+    # One2many relationship to device connections
+    device_connection_ids = fields.One2many(
+        comodel_name='device.connection',
+        inverse_name='device_id',
+        string='Device Connections'
     )
 
     def validate_json(self, url):
@@ -84,7 +91,7 @@ class Device(models.Model):
                     'sticky': False,
                 }
             }
-
+        
 class DeviceParameter(models.Model):
     _name = 'device.parameter'
     _description = 'Device Parameter'

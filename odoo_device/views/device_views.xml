@@ -1,96 +1,55 @@
 <odoo>
-    <!-- Device Model Views -->
-    <record id="view_device_form" model="ir.ui.view">
-        <field name="name">device.form</field>
-        <field name="model">device</field>
+    <!-- Device Connection Model -->
+    <record id="model_device_connection" model="ir.model">
+        <field name="name">device.connection</field>
+        <field name="model">device.connection</field>
+    </record>
+
+    <!-- Form View for Device Connection -->
+    <record id="view_device_connection_form" model="ir.ui.view">
+        <field name="name">device.connection.form</field>
+        <field name="model">device.connection</field>
         <field name="arch" type="xml">
-            <form string="Device">
+            <form string="Device Connection">
                 <sheet>
                     <group>
-                        <!-- Removed 'name' field -->
-                        <field name="status" string="Status" />
-                        <field name="url" string="URL to Fetch JSON From" />
-                        <field name="json_data" string="JSON Data" readonly="1" />
+                        <field name="device_id" string="Device" required="1"/>
+                        <field name="url" string="URL to Fetch JSON From" required="1"/>
                     </group>
-
-                    <notebook>
-                        <page string="Parameters">
-                            <field name="device_parameter_ids" context="{'default_device_id': active_id}">
-                                <tree editable="bottom">
-                                    <field name="parameter_name" />
-                                    <field name="parameter_value" />
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
                 </sheet>
                 <footer>
-                    <button name="action_submit_url" string="Submit URL" type="object" class="btn-primary" />
+                    <button name="action_submit_url" string="Submit" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
-    <record id="view_device_tree" model="ir.ui.view">
-        <field name="name">device.tree</field>
-        <field name="model">device</field>
+    <!-- Tree View for Device Connections -->
+    <record id="view_device_connection_tree" model="ir.ui.view">
+        <field name="name">device.connection.tree</field>
+        <field name="model">device.connection</field>
         <field name="arch" type="xml">
-            <tree string="Devices">
-                <!-- Removed 'name' field -->
-                <field name="status" />
+            <tree string="Device Connections">
+                <field name="device_id"/>
+                <field name="url"/>
+                <field name="connection_status"/>
             </tree>
         </field>
     </record>
 
-    <!-- Device Parameter Model Views -->
-    <record id="view_device_parameter_form" model="ir.ui.view">
-        <field name="name">device.parameter.form</field>
-        <field name="model">device.parameter</field>
-        <field name="arch" type="xml">
-            <form string="Device Parameter">
-                <sheet>
-                    <group>
-                        <field name="device_id" invisible="1"/>
-                        <field name="parameter_name" string="Parameter Name" />
-                        <field name="parameter_value" string="Parameter Value" />
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record id="view_device_parameter_tree" model="ir.ui.view">
-        <field name="name">device.parameter.tree</field>
-        <field name="model">device.parameter</field>
-        <field name="arch" type="xml">
-            <tree string="Device Parameters">
-                <field name="parameter_name" />
-                <field name="parameter_value" />
-            </tree>
-        </field>
-    </record>
-
-    <!-- Action for Devices -->
-    <record id="action_device" model="ir.actions.act_window">
-        <field name="name">Devices</field>
-        <field name="res_model">device</field>
-        <field name="view_mode">tree,form</field>
-        <field name="target">current</field>
-    </record>
-
-    <!-- Action for Connected Devices (for the Connection menu) -->
+    <!-- Action for Connected Devices -->
     <record id="action_connection_devices" model="ir.actions.act_window">
         <field name="name">Connected Devices</field>
-        <field name="res_model">device</field>
-        <field name="view_mode">tree</field>
-        <field name="domain">[('status', '=', 'active')]</field>  <!-- Only active devices -->
+        <field name="res_model">device.connection</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('device_id.status', '=', 'active')]</field>
         <field name="target">current</field>
     </record>
 
     <!-- Menu Items -->
     <menuitem id="menu_device_management" name="Device Management" />
+    <menuitem id="menu_connection" name="Connection" parent="menu_device_management" action="action_connection_devices" />
     <menuitem id="menu_device" name="Devices" parent="menu_device_management" action="action_device" />
 
-    <!-- New Connection Menu Item with action to show connected devices -->
-    <menuitem id="menu_connection" name="Connection" parent="menu_device_management" action="action_connection_devices" />
 </odoo>
