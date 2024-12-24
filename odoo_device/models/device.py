@@ -11,12 +11,12 @@ class Device(models.Model):
     _description = 'Device'
 
     # Fields for the Device Model
-    name = fields.Many2one('device', string='Device Name', required=True, domain="[('status', '=', 'active')]")
+    name = fields.Char(string='Device Name', required=True)
     status = fields.Selection([
         ('active', 'Active'),
         ('out_of_service', 'Out of Service'),
         ('inactive', 'Inactive'),
-    ], string='Status', default='active')
+    ], string='Status', default='inactive')
     json_data = fields.Text(string="JSON Data", readonly=True)
     url = fields.Char(string="URL to fetch JSON from", required=True)
 
@@ -30,13 +30,15 @@ class Device(models.Model):
     def validate_json(self, url):
         """Validate if the URL returns valid JSON"""
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=10)  # Added timeout for better error handling
             response.raise_for_status()  # Raise an error if request fails
             data = response.json()  # Try parsing response as JSON
             return data
         except ValueError:
+            _logger.error(f"Invalid JSON response from {url}")
             return None  # Invalid JSON
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            _logger.error(f"Error while requesting {url}: {e}")
             return False  # Invalid URL or request failed
 
     def action_submit_url(self):
@@ -60,13 +62,14 @@ class Device(models.Model):
 
             # Optionally, update device parameters from JSON data
             parameters = data.get('parameters', [])
-            self.device_parameter_ids.unlink()  # Clear existing parameters
-            for param in parameters:
-                self.device_parameter_ids.create({
-                    'device_id': self.id,
-                    'parameter_name': param.get('name'),
-                    'parameter_value': param.get('value'),
-                })
+            if parameters:
+                self.device_parameter_ids.unlink()  # Clear existing parameters
+                for param in parameters:
+                    self.device_parameter_ids.create({
+                        'device_id': self.id,
+                        'parameter_name': param.get('name'),
+                        'parameter_value': param.get('value'),
+                    })
 
             # Success message
             return {
@@ -79,7 +82,6 @@ class Device(models.Model):
                     'sticky': False,
                 }
             }
-
 
 class DeviceParameter(models.Model):
     _name = 'device.parameter'
