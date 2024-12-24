@@ -1,4 +1,4 @@
-import json
+import requests
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
@@ -20,10 +20,15 @@ class Connection(models.Model):
     def _check_json_in_url(self):
         for record in self:
             try:
-                # Simulate validating the URL's content (assume local server simulation)
-                json_data = json.loads(record.url)  # Replace with actual URL fetching logic
+                # Fetch the content from the URL
+                response = requests.get(record.url, timeout=10)
+                response.raise_for_status()  # Raise an error for bad HTTP status codes
+
+                # Attempt to parse the response as JSON
+                json_data = response.json()
                 record.status = 'valid'
                 record.json_data = json.dumps(json_data, indent=4)
-            except (json.JSONDecodeError, TypeError):
+            except (requests.exceptions.RequestException, ValueError) as e:
+                # Handle connection errors and invalid JSON
                 record.status = 'invalid'
-                raise ValidationError('The URL does not contain valid JSON data.')
+                raise ValidationError(f'The URL does not contain valid JSON data: {e}')
