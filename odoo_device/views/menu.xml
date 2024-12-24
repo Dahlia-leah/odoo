@@ -1,6 +1,6 @@
 <odoo>
     <!-- Main menu -->
-    <menuitem id="menu_x_device_root" name="Device Management" sequence="10" app="true"/>
+    <menuitem id="menu_device_root" name="Device Management" sequence="10" app="true"/>
 
     <!-- Submenu for devices -->
     <menuitem id="menu_x_device" name="Devices" parent="menu_x_device_root" sequence="10"/>
