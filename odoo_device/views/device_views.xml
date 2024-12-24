@@ -78,7 +78,19 @@
         <field name="target">current</field>
     </record>
 
+    <!-- Action for Connected Devices (for the Connection menu) -->
+    <record id="action_connection_devices" model="ir.actions.act_window">
+        <field name="name">Connected Devices</field>
+        <field name="res_model">device</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('status', '=', 'active')]</field>  <!-- Only active devices -->
+        <field name="target">current</field>
+    </record>
+
     <!-- Menu Items -->
     <menuitem id="menu_device_management" name="Device Management" />
     <menuitem id="menu_device" name="Devices" parent="menu_device_management" action="action_device" />
+
+    <!-- New Connection Menu Item with action to show connected devices -->
+    <menuitem id="menu_connection" name="Connection" parent="menu_device_management" action="action_connection_devices" />
 </odoo>
