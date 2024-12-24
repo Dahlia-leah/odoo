@@ -9,8 +9,8 @@
     'depends': ['base', 'stock'],
     'data': [
         'security/ir.model.access.csv',
-        'views/device_views.xml',
         'views/connection_views.xml',
+        'views/device_views.xml',
     ],
     'installable': True,
     'application': True,
