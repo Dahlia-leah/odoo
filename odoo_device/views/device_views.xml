@@ -73,10 +73,10 @@
     </record>
 
     <!-- Menus -->
-    <menuitem id="menu_parent_device" name="Devices"/>
+    <menuitem id="menu_parent_device" name="Devices" sequence="1"/>
 
     <!-- Device Connections Menu -->
-    <menuitem id="menu_device_connection" name="Device Connections" parent="menu_parent_device"/>
+    <menuitem id="menu_device_connection" name="Device Connections" parent="menu_parent_device" sequence="1"/>
 
     <!-- Device Connections Action -->
     <record id="action_device_connection" model="ir.actions.act_window">
@@ -85,10 +85,10 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_device_connections_action" name="Device Connections" parent="menu_device_connection" action="action_device_connection"/>
+    <menuitem id="menu_device_connections_action" name="Device Connections" parent="menu_device_connection" action="action_device_connection" sequence="1"/>
 
     <!-- Devices Menu -->
-    <menuitem id="menu_device" name="Devices" parent="menu_parent_device"/>
+    <menuitem id="menu_device" name="Devices" parent="menu_parent_device" sequence="2"/>
 
     <!-- Devices Action -->
     <record id="action_device" model="ir.actions.act_window">
@@ -97,5 +97,5 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_device_action" name="Devices" parent="menu_device" action="action_device"/>
+    <menuitem id="menu_device_action" name="Devices" parent="menu_device" action="action_device" sequence="1"/>
 </odoo>
