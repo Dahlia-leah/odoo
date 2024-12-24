@@ -7,21 +7,9 @@
                 <sheet>
                     <group>
                         <field name="name" string="Device Name" required="1"/>
-                        <field name="status" string="Status"/>
                     </group>
                 </sheet>
             </form>
-        </field>
-    </record>
-
-    <record id="view_x_device_tree" model="ir.ui.view">
-        <field name="name">x.device.tree</field>
-        <field name="model">x.device</field>
-        <field name="arch" type="xml">
-            <tree string="Devices">
-                <field name="name"/>
-                <field name="status"/>
-            </tree>
         </field>
     </record>
 </odoo>
