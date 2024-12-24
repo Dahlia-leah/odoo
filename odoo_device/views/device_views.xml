@@ -56,14 +56,18 @@
                                 <div>
                                     <small><field name="url"/></small>
                                 </div>
-                                 <button name="action_connect" 
-                                        string="Connect" 
-                                        type="object" 
-                                        class="btn btn-primary"/>
-                                <button name="action_remove_device" 
-                                        string="Delete" 
-                                        type="object" 
-                                        class="btn btn-danger"/>
+
+                                <!-- Buttons -->
+                                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                    <button name="action_connect" 
+                                            string="Connect" 
+                                            type="object" 
+                                            class="btn btn-primary"/>
+                                    <button name="action_remove_device" 
+                                            string="Delete" 
+                                            type="object" 
+                                            class="btn btn-danger"/>
+                                </div>
                             </div>                 
                         </t>
                     </templates>
@@ -85,11 +89,11 @@
                     </sheet>
                     <footer>
                         <!-- Container for buttons to manage alignment and spacing -->
-                        <div class="oe_button_box" name="button_box" style="display: flex; gap: 15px; justify-content: space-between;">
-                            <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary" style="width: 48%;"/>
-                            <button name="action_remove_device" string="Delete" type="object" class="btn btn-danger" style="width: 48%;"/>
+                        <div style="display: flex; gap: 15px;">
+                            <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary" style="flex: 1;"/>
+                            <button name="action_remove_device" string="Delete" type="object" class="btn btn-danger" style="flex: 1;"/>
                         </div>
-                        <button string="Cancel" class="btn btn-secondary" special="cancel" style="width: 100%; margin-top: 10px;"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel" style="margin-top: 10px; width: 100%;"/>
                     </footer>
                 </form>
             </field>
