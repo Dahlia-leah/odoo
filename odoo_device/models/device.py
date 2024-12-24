@@ -11,7 +11,7 @@ class Device(models.Model):
     _description = 'Device'
 
     # Fields for the Device Model
-    name = fields.Char(string='Device Name', required=True)
+    name = fields.Many2one('device', string='Device Name', required=True, domain="[('status', '=', 'active')]")
     status = fields.Selection([
         ('active', 'Active'),
         ('out_of_service', 'Out of Service'),
@@ -53,7 +53,7 @@ class Device(models.Model):
         else:
             # Store the JSON response in the json_data field
             self.json_data = json.dumps(data, indent=4)
-            self.status = 'active'
+            self.status = 'active'  # Update the status to active when JSON is fetched
 
             # Log the JSON data
             _logger.info(f"Fetched JSON Data from URL ({self.url}): {self.json_data}")
@@ -79,6 +79,7 @@ class Device(models.Model):
                     'sticky': False,
                 }
             }
+
 
 class DeviceParameter(models.Model):
     _name = 'device.parameter'

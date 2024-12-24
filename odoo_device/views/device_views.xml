@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
 
@@ -47,11 +46,19 @@
                 <form string="Device Form">
                     <sheet>
                         <group>
-                            <field name="name" string="Device Name" required="1"/>
+                            <!-- Device Name Dropdown -->
+                            <field name="name" string="Device Name" required="1" widget="many2one" domain="[('status', '=', 'active')]" options="{'no_create': True}"/>
+                            
+                            <!-- Status (Readonly) -->
                             <field name="status" readonly="1"/>
-                            <field name="url" string="URL" required="1"/>
+
+                            <!-- URL Input for Fetching JSON -->
+                            <field name="url" string="URL to fetch JSON from" required="1"/>
+
+                            <!-- JSON Data (Readonly) -->
                             <field name="json_data" widget="text" string="JSON Data" readonly="1"/>
                         </group>
+
                         <notebook>
                             <page string="Device Parameters">
                                 <field name="device_parameter_ids">
@@ -64,17 +71,13 @@
                         </notebook>
                     </sheet>
                     <footer>
+                        <!-- Submit Button -->
                         <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
+                        <!-- Cancel Button -->
                         <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                     </footer>
                 </form>
             </field>
-        </record>
-
-        <!-- Model for Device Parameters -->
-        <record id="model_device_parameter" model="ir.model">
-            <field name="name">device.parameter</field>
-            <field name="model">device.parameter</field>
         </record>
 
         <!-- Security Groups -->
