@@ -7,7 +7,7 @@
             <form string="Device">
                 <sheet>
                     <group>
-                        <field name="name" string="Device Name" />
+                        <!-- Removed 'name' field -->
                         <field name="status" string="Status" />
                         <field name="url" string="URL to Fetch JSON From" />
                         <field name="json_data" string="JSON Data" readonly="1" />
@@ -36,7 +36,7 @@
         <field name="model">device</field>
         <field name="arch" type="xml">
             <tree string="Devices">
-                <field name="name" />
+                <!-- Removed 'name' field -->
                 <field name="status" />
             </tree>
         </field>
