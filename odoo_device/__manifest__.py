@@ -9,7 +9,7 @@
     'depends': ['base', 'stock'],
     'data': [
         'views/device_views.xml',
-        'views/connection_views.xml.xml',
+        'views/connection_views.xml',
         'views/menu.xml',
         'security/ir.model.access.csv',
     ],
