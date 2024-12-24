@@ -11,7 +11,7 @@ class Device(models.Model):
     _description = 'Device'
 
     # Fields for the Device Model
-    name = fields.Char(string='Device Name', required=True)
+    name = fields.Char(string='Device Name', required=True)  # Just a text field for the name, not a foreign key
     status = fields.Selection([
         ('active', 'Active'),
         ('out_of_service', 'Out of Service'),
