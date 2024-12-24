@@ -80,7 +80,6 @@ class Device(models.Model):
                     'sticky': False,
                 }
             }
-
 class DeviceParameter(models.Model):
     _name = 'device.parameter'
     _description = 'Device Parameter'
