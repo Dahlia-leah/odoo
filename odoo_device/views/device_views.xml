@@ -1,52 +1,51 @@
 <odoo>
-<data>
-    <!-- Action to Display Devices -->
-    <record id="action_devices_list" model="ir.actions.act_window">
-        <field name="name">Devices</field>
-        <field name="res_model">device</field>
-        <field name="view_mode">tree,form</field>
-        <field name="help" type="html">
-            <p class="oe_view_nocontent_create">Create your first device record.</p>
-        </field>
-    </record>
+    <data>
+        <!-- Action to Display Devices -->
+        <record id="action_devices_list" model="ir.actions.act_window">
+            <field name="name">Devices</field>
+            <field name="res_model">device</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create your first device record.</p>
+            </field>
+        </record>
 
-    <!-- Device Tree View -->
-    <record id="view_device_tree" model="ir.ui.view">
-        <field name="name">device.tree</field>
-        <field name="model">device</field>
-        <field name="arch" type="xml">
-            <tree string="Devices">
-                <field name="name"/>
-                <field name="status"/>
-            </tree>
-        </field>
-    </record>
+        <!-- Device Tree View -->
+        <record id="view_device_tree" model="ir.ui.view">
+            <field name="name">device.tree</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <tree string="Devices">
+                    <field name="name"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
 
-    <!-- Device Form View -->
-    <record id="view_device_form" model="ir.ui.view">
-        <field name="name">device.form</field>
-        <field name="model">device</field>
-        <field name="arch" type="xml">
-            <form string="Device Form">
-                <sheet>
-                    <group>
-                        <field name="name" required="1"/>
-                        <field name="status" readonly="1"/>
-                        <field name="url" required="1"/>
-                        <field name="json_data" widget="text" readonly="1"/>
-                    </group>
-                </sheet>
-                <footer>
-                    <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
-                    <button string="Cancel" class="btn btn-secondary" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
+        <!-- Device Form View -->
+        <record id="view_device_form" model="ir.ui.view">
+            <field name="name">device.form</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <form string="Device Form">
+                    <sheet>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="status" readonly="1"/>
+                            <field name="url" required="1"/>
+                            <field name="json_data" widget="text" readonly="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 
-    <!-- Menu Items -->
-    <menuitem id="menu_devices_root" name="Devices" sequence="10"/>
-    <menuitem id="menu_devices_list" parent="menu_devices_root" action="action_devices_list" name="Devices" sequence="1"/>
-
-</data>
+        <!-- Menu Items -->
+        <menuitem id="menu_devices_root" name="Devices" sequence="10"/>
+        <menuitem id="menu_devices_list" parent="menu_devices_root" action="action_devices_list" name="Devices" sequence="1"/>
+    </data>
 </odoo>

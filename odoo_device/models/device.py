@@ -53,13 +53,22 @@ class Device(models.Model):
 
             parameters = data.get('parameters', [])
             if parameters:
+                # Unlink all existing device parameters first
                 self.device_parameter_ids.unlink()
-                for param in parameters:
-                    self.device_parameter_ids.create({
+
+                # Prepare data for batch creation
+                param_values = [
+                    {
                         'device_id': self.id,
                         'parameter_name': param.get('name'),
                         'parameter_value': param.get('value'),
-                    })
+                    }
+                    for param in parameters
+                ]
+
+                # Create all parameters in a single batch
+                if param_values:
+                    self.env['device.parameter'].create(param_values)
 
             return {
                 'type': 'ir.actions.client',
