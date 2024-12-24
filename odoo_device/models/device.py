@@ -47,6 +47,7 @@ class XDevice(models.Model):
     _name = 'x.device'
     _description = 'Device'
 
+    name = fields.Char(string='Device Name', required=True)
     status = fields.Selection([
         ('active', 'Active'),
         ('out_of_service', 'Out of Service'),
