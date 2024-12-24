@@ -14,16 +14,22 @@ class StockMove(models.Model):
 
     def fetch_and_update_scale_data(self):
         """
-        Fetches scale data from the external source defined in devices.connection with device_id = 1.
+        Fetches scale data from the external source defined in devices.connection related to device_id = 1.
         Updates stock move with weight and unit.
         """
         self.ensure_one()
 
-        # Fetch the device connection with device_id = 1
-        connection = self.env['devices.connection'].browse(1)
+        # Fetch the device record with device_id = 1 from the 'devices.device' model
+        device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
+
+        if not device:
+            raise UserError("Device with device_id = 1 not found.")
+
+        # Fetch the corresponding connection for the device
+        connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
 
         if not connection or connection.status != 'valid':
-            raise UserError("The connection with device_id = 1 is invalid or not found.")
+            raise UserError("The connection associated with device_id = 1 is invalid or not found.")
 
         try:
             # Sending GET request to the connection's URL
