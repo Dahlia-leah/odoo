@@ -1,5 +1,10 @@
 <odoo>
-    <menuitem id="menu_parent_device" name="Devices" sequence="1"/>
-    <menuitem id="menu_device_connection" name="Device Connections" parent="menu_parent_device" sequence="1"/>
-    <menuitem id="menu_device" name="Devices" parent="menu_parent_device" sequence="2"/>
+    <!-- Define the main menu item -->
+    <menuitem id="menu_x_device_root" name="Device Management" sequence="10"/>
+
+    <!-- Define the submenu for device -->
+    <menuitem id="menu_x_device" name="Devices" parent="menu_x_device_root" sequence="10"/>
+
+    <!-- Define the submenu for device connection -->
+    <menuitem id="menu_x_device_connection" name="Connections" parent="menu_x_device_root" sequence="20"/>
 </odoo>
