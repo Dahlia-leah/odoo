@@ -1,4 +1,5 @@
-access_device_manager,access_device_manager,model_x_device,base.group_user,1,1,1,1
-access_device_user,access_device_user,model_x_device,base.group_user,1,0,0,0
-access_device_connection_manager,access_device_connection_manager,model_x_device_connection,base.group_user,1,1,1,1
-access_device_connection_user,access_device_connection_user,model_x_device_connection,base.group_user,1,0,0,0
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_device_manager,Device Manager Access,model_x_device,base.group_user,1,1,1,1
+access_device_user,Device User Access,model_x_device,base.group_user,1,0,0,0
+access_device_connection_manager,Device Connection Manager Access,model_x_device_connection,base.group_user,1,1,1,1
+access_device_connection_user,Device Connection User Access,model_x_device_connection,base.group_user,1,0,0,0
