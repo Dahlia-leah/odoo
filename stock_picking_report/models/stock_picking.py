@@ -1,7 +1,5 @@
 import logging
-import requests
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -14,28 +12,36 @@ class StockMove(models.Model):
 
     def fetch_and_update_scale_data(self):
         """
-        Fetches scale data from the external source (e.g., reversed proxy).
+        Fetches scale data from the external source defined in devices.connection with ID 1.
         Updates stock move with weight and unit.
         """
         self.ensure_one()
 
+        # Fetch the URL from the devices.connection model
+        connection = self.env['devices.connection'].browse(1)
+        if not connection or connection.status != 'valid':
+            raise UserError("The connection with ID 1 is invalid or not found.")
+
         try:
-            # Sending GET request to the scale proxy
-            url = "http://localhost:5000/read-scale"
-            response = requests.get(url)
+            # Sending GET request to the connection's URL
+            headers = {
+                'User-Agent': 'PostmanRuntime/7.30.0',  # Mimic Postman behavior
+                'Accept': 'application/json',           # Request JSON response
+            }
+            response = requests.get(connection.url, headers=headers, timeout=10, verify=False)
 
             if response.status_code == 200:
                 # Parse the response data (assuming JSON format)
                 data = response.json()
-                weight = data.get("weight", "0.0")  # Default to 0 if weight is not found
-                unit = data.get("unit", "g")  # Default to 'g' if unit is not found
+                weight = data.get("weight", "")  # Default to 0 if weight is not found
+                unit = data.get("unit", "")       # Default to 'g' if unit is not found
 
                 # Update stock move with the fetched data
                 self.write({'external_weight': str(weight), 'external_unit': unit})
                 _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
 
             else:
-                raise UserError(f"Failed to fetch scale data: {response.status_code}")
+                raise UserError(f"Failed to fetch scale data: HTTP {response.status_code}")
 
         except requests.exceptions.RequestException as e:
             raise UserError(f"Error connecting to the scale service: {str(e)}")
