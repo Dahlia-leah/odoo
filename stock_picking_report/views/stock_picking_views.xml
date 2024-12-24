@@ -12,7 +12,7 @@
                     <!-- Add the external unit field after the external weight field -->
                     <field name="external_unit"/>
                     <!-- Add a button to fetch and print the report -->
-                    <button name="fetch_and_update_scale_data"
+                    <button name="action_print_report"
                             icon="fa-tag"
                             type="object"
                             title="Fetch weight from IoT device"
