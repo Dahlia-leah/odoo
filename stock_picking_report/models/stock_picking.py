@@ -1,5 +1,7 @@
 import logging
 from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+import requests
 
 _logger = logging.getLogger(__name__)
 
@@ -12,15 +14,16 @@ class StockMove(models.Model):
 
     def fetch_and_update_scale_data(self):
         """
-        Fetches scale data from the external source defined in devices.connection with ID 1.
+        Fetches scale data from the external source defined in devices.connection with device_id = 1.
         Updates stock move with weight and unit.
         """
         self.ensure_one()
 
-        # Fetch the URL from the devices.connection model
+        # Fetch the device connection with device_id = 1
         connection = self.env['devices.connection'].browse(1)
+
         if not connection or connection.status != 'valid':
-            raise UserError("The connection with ID 1 is invalid or not found.")
+            raise UserError("The connection with device_id = 1 is invalid or not found.")
 
         try:
             # Sending GET request to the connection's URL
@@ -28,13 +31,14 @@ class StockMove(models.Model):
                 'User-Agent': 'PostmanRuntime/7.30.0',  # Mimic Postman behavior
                 'Accept': 'application/json',           # Request JSON response
             }
+            _logger.info(f"Connecting to scale service at {connection.url}")
             response = requests.get(connection.url, headers=headers, timeout=10, verify=False)
 
             if response.status_code == 200:
                 # Parse the response data (assuming JSON format)
                 data = response.json()
-                weight = data.get("weight", "")  # Default to 0 if weight is not found
-                unit = data.get("unit", "")       # Default to 'g' if unit is not found
+                weight = data.get("weight", "")  # Default to empty if weight is not found
+                unit = data.get("unit", "")     # Default to empty if unit is not found
 
                 # Update stock move with the fetched data
                 self.write({'external_weight': str(weight), 'external_unit': unit})
