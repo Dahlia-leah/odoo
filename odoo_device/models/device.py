@@ -17,8 +17,15 @@ class Device(models.Model):
         ('out_of_service', 'Out of Service'),
         ('inactive', 'Inactive'),
     ], string='Status', default='active')
-    json_data = fields.Text(string="JSON Data")
+    json_data = fields.Text(string="JSON Data", readonly=True)
     url = fields.Char(string="URL to fetch JSON from", required=True)
+
+    # One2many relationship to manage parameters
+    device_parameter_ids = fields.One2many(
+        comodel_name='device.parameter',
+        inverse_name='device_id',
+        string='Device Parameters'
+    )
 
     def validate_json(self, url):
         """Validate if the URL returns valid JSON"""
@@ -31,15 +38,6 @@ class Device(models.Model):
             return None  # Invalid JSON
         except requests.exceptions.RequestException:
             return False  # Invalid URL or request failed
-
-    def action_connect(self):
-        """Open the form to input the URL."""
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'device',
-            'view_mode': 'form',
-            'target': 'new',
-        }
 
     def action_submit_url(self):
         """Handles the URL input, validates the JSON, stores it, or raises an error."""
@@ -60,6 +58,16 @@ class Device(models.Model):
             # Log the JSON data
             _logger.info(f"Fetched JSON Data from URL ({self.url}): {self.json_data}")
 
+            # Optionally, update device parameters from JSON data
+            parameters = data.get('parameters', [])
+            self.device_parameter_ids.unlink()  # Clear existing parameters
+            for param in parameters:
+                self.device_parameter_ids.create({
+                    'device_id': self.id,
+                    'parameter_name': param.get('name'),
+                    'parameter_value': param.get('value'),
+                })
+
             # Success message
             return {
                 'type': 'ir.actions.client',
@@ -72,19 +80,11 @@ class Device(models.Model):
                 }
             }
 
-    def action_remove_device(self):
-        """Allows removing a device record."""
-        self.ensure_one()  # Ensure only one record is being processed
-        device_name = self.name
-        self.unlink()
+class DeviceParameter(models.Model):
+    _name = 'device.parameter'
+    _description = 'Device Parameter'
 
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': "Device Removed",
-                'message': f"The device '{device_name}' has been removed successfully.",
-                'type': 'success',
-                'sticky': False,
-            }
-        }
+    # Fields for Device Parameters
+    device_id = fields.Many2one('device', string='Device', required=True, ondelete='cascade')
+    parameter_name = fields.Char(string='Parameter Name', required=True)
+    parameter_value = fields.Char(string='Parameter Value')
