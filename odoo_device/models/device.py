@@ -1,3 +1,11 @@
+from odoo import models, fields, api
+from odoo.exceptions import UserError
+import requests
+import json
+import logging
+
+_logger = logging.getLogger(__name__)
+
 class XDeviceConnection(models.Model):
     _name = 'x.device.connection'
     _description = 'Device Connection'
@@ -24,6 +32,7 @@ class XDeviceConnection(models.Model):
                 _logger.info(f"Connection to device {connection.device_id.name} established successfully.")
 
     def _fetch_json_data(self, url):
+        """Shared method to fetch JSON data from the given URL."""
         try:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -34,6 +43,7 @@ class XDeviceConnection(models.Model):
         except requests.exceptions.RequestException as e:
             _logger.error(f"Error while requesting {url}: {e}")
             return False
+
 
 class XDevice(models.Model):
     _name = 'x.device'
@@ -102,6 +112,7 @@ class XDevice(models.Model):
             }
 
     def _fetch_json_data(self, url):
+        """Shared method to fetch JSON data from the given URL."""
         try:
             response = requests.get(url, timeout=10)
             response.raise_for_status()
