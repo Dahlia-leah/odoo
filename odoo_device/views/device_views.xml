@@ -1,8 +1,8 @@
 <odoo>
     <data>
 
-        <!-- Action Definition -->
-        <record id="action_devices" model="ir.actions.act_window">
+        <!-- Action to Display Devices -->
+        <record id="action_devices_list" model="ir.actions.act_window">
             <field name="name">Devices</field>
             <field name="res_model">device</field>
             <field name="view_mode">tree,form</field>
@@ -13,18 +13,38 @@
             </field>
         </record>
 
-        <!-- Menu Definition -->
+        <!-- Action for Device Connections -->
+        <record id="action_device_connection" model="ir.actions.act_window">
+            <field name="name">Connection in Devices</field>
+            <field name="res_model">device.connection</field> <!-- Assuming there's a related model for device connections -->
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Manage device connections here.
+                </p>
+            </field>
+        </record>
+
+        <!-- Main Menu Item -->
         <menuitem id="menu_devices_root" 
                   name="Devices" 
                   sequence="10" 
                   web_icon="devices,static/description/icon.png" 
                   groups="base.group_user"/>
 
-        <menuitem id="menu_devices_action" 
+        <!-- Sub Menu Item for Devices -->
+        <menuitem id="menu_devices_list" 
                   parent="menu_devices_root" 
-                  action="action_devices" 
-                  name="Manage Devices" 
+                  action="action_devices_list" 
+                  name="Devices" 
                   sequence="1"/>
+
+        <!-- Sub Menu Item for Device Connections -->
+        <menuitem id="menu_device_connection" 
+                  parent="menu_devices_root" 
+                  action="action_device_connection" 
+                  name="Connection in Devices" 
+                  sequence="2"/>
 
         <!-- Tree View for Device List -->
         <record id="view_device_tree" model="ir.ui.view">
@@ -46,34 +66,48 @@
                 <form string="Device Form">
                     <sheet>
                         <group>
-                            <!-- Device Name Dropdown -->
-                            <field name="name" string="Device Name" required="1" widget="many2one" domain="[('status', '=', 'active')]" options="{'no_create': True}"/>
-                            
-                            <!-- Status (Readonly) -->
+                            <field name="name" string="Device Name" required="1"/>
                             <field name="status" readonly="1"/>
-
-                            <!-- URL Input for Fetching JSON -->
                             <field name="url" string="URL to fetch JSON from" required="1"/>
-
-                            <!-- JSON Data (Readonly) -->
                             <field name="json_data" widget="text" string="JSON Data" readonly="1"/>
                         </group>
-
-                        <notebook>
-                            <page string="Device Parameters">
-                                <field name="device_parameter_ids">
-                                    <tree editable="bottom">
-                                        <field name="parameter_name"/>
-                                        <field name="parameter_value"/>
-                                    </tree>
-                                </field>
-                            </page>
-                        </notebook>
                     </sheet>
                     <footer>
-                        <!-- Submit Button -->
                         <button name="action_submit_url" string="Submit" type="object" class="btn btn-primary"/>
-                        <!-- Cancel Button -->
+                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View for Device Connection List -->
+        <record id="view_device_connection_tree" model="ir.ui.view">
+            <field name="name">device.connection.tree</field>
+            <field name="model">device.connection</field> <!-- Assuming this model exists -->
+            <field name="arch" type="xml">
+                <tree string="Device Connections">
+                    <field name="connection_name"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View for Device Connection Details -->
+        <record id="view_device_connection_form" model="ir.ui.view">
+            <field name="name">device.connection.form</field>
+            <field name="model">device.connection</field> <!-- Assuming this model exists -->
+            <field name="arch" type="xml">
+                <form string="Device Connection Form">
+                    <sheet>
+                        <group>
+                            <field name="connection_name" string="Connection Name" required="1"/>
+                            <field name="status" readonly="1"/>
+                            <field name="device" widget="many2one" string="Device" required="1"/>
+                            <field name="connection_details" widget="text" string="Connection Details"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_submit_connection" string="Submit" type="object" class="btn btn-primary"/>
                         <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                     </footer>
                 </form>
@@ -89,6 +123,17 @@
         <record id="group_device_user" model="res.groups">
             <field name="name">Device User</field>
             <field name="category_id" ref="base.module_category_administration"/>
+        </record>
+
+        <!-- Access Control for Devices -->
+        <record id="device_model_access" model="ir.model.access">
+            <field name="name">device access</field>
+            <field name="model_id" ref="model_device"/>
+            <field name="group_id" ref="group_device_manager"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
         </record>
 
     </data>
