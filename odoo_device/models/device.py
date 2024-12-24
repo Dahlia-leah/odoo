@@ -59,7 +59,7 @@ class Device(models.Model):
                 # Prepare data for batch creation
                 param_values = [
                     {
-                        'device_id': self.id,
+                        'device_id': self.id,  # This is the correct reference to the device by ID
                         'parameter_name': param.get('name'),
                         'parameter_value': param.get('value'),
                     }
@@ -84,6 +84,6 @@ class DeviceParameter(models.Model):
     _name = 'device.parameter'
     _description = 'Device Parameter'
 
-    device_id = fields.Many2one('device', string='Device', required=True, ondelete='cascade')  # Correct reference to device by ID
+    device_id = fields.Many2one('device', string='Device', required=True, ondelete='cascade')  # Correctly referencing the device ID
     parameter_name = fields.Char(string='Parameter Name', required=True)
     parameter_value = fields.Char(string='Parameter Value')
