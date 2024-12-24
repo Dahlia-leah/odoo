@@ -74,29 +74,28 @@
 
     <!-- Menus -->
     <menuitem id="menu_parent_device" name="Devices"/>
-    
-    <!-- Device Menu -->
+
+    <!-- Device Connections Menu -->
     <menuitem id="menu_device_connection" name="Device Connections" parent="menu_parent_device"/>
-    
+
     <!-- Device Connections Action -->
     <record id="action_device_connection" model="ir.actions.act_window">
         <field name="name">Device Connections</field>
         <field name="res_model">x.device.connection</field>
         <field name="view_mode">tree,form</field>
     </record>
-    
+
     <menuitem id="menu_device_connections_action" name="Device Connections" parent="menu_device_connection" action="action_device_connection"/>
 
-    <!-- Device Menu -->
+    <!-- Devices Menu -->
     <menuitem id="menu_device" name="Devices" parent="menu_parent_device"/>
-    
-    <!-- Device Action -->
+
+    <!-- Devices Action -->
     <record id="action_device" model="ir.actions.act_window">
         <field name="name">Devices</field>
         <field name="res_model">x.device</field>
         <field name="view_mode">tree,form</field>
     </record>
-    
-    <menuitem id="menu_device_action" name="Devices" parent="menu_device" action="action_device"/>
 
+    <menuitem id="menu_device_action" name="Devices" parent="menu_device" action="action_device"/>
 </odoo>
