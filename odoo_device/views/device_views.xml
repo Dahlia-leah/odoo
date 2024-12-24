@@ -1,11 +1,4 @@
 <odoo>
-    <!-- Device Model -->
-    <record id="model_x_device" model="ir.model">
-        <field name="name">x.device</field>
-        <field name="model">x.device</field>
-    </record>
-
-    <!-- Device Form View -->
     <record id="view_x_device_form" model="ir.ui.view">
         <field name="name">x.device.form</field>
         <field name="model">x.device</field>
@@ -21,7 +14,6 @@
         </field>
     </record>
 
-    <!-- Device Tree View -->
     <record id="view_x_device_tree" model="ir.ui.view">
         <field name="name">x.device.tree</field>
         <field name="model">x.device</field>
@@ -32,13 +24,4 @@
             </tree>
         </field>
     </record>
-
-    <!-- Device Action -->
-    <record id="action_device" model="ir.actions.act_window">
-        <field name="name">Devices</field>
-        <field name="res_model">x.device</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem id="menu_device" name="Devices" parent="menu_parent_device" action="action_device" sequence="2"/>
 </odoo>

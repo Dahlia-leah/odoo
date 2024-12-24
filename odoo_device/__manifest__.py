@@ -1,12 +1,12 @@
 {
-    'name': 'Devices',
+    'name': 'Odoo Device',
     'version': '1.0',
-    'category': 'Inventory',  
-    'summary': 'Manage devices in the system',
+    'category': 'Inventory',
+    'summary': 'Manage Devices in the System',
     'description': """
-        This module helps you manage devices in the Odoo system.
+        This module helps you manage devices and their connections.
     """,
-    'depends': ['base', 'stock'],  
+    'depends': ['base', 'stock'],
     'data': [
         'views/device_views.xml',
         'views/connection_views.xml.xml',
