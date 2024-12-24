@@ -10,8 +10,8 @@ class Device(models.Model):
     _name = 'device'
     _description = 'Device'
 
-    # Field for the device name (no foreign key here)
-    name = fields.Char(string='Device Name', required=True)  # Just a Char field, not a foreign key
+    # Fields for device information
+    name = fields.Char(string='Device Name', required=True)  # Char field, no foreign key here
     status = fields.Selection([
         ('active', 'Active'),
         ('out_of_service', 'Out of Service'),
@@ -82,12 +82,3 @@ class Device(models.Model):
                     'sticky': False,
                 }
             }
-
-class DeviceParameter(models.Model):
-    _name = 'device.parameter'
-    _description = 'Device Parameter'
-
-    # Fields for Device Parameters
-    device_id = fields.Many2one('device', string='Device', required=True, ondelete='cascade')
-    parameter_name = fields.Char(string='Parameter Name', required=True)
-    parameter_value = fields.Char(string='Parameter Value')
