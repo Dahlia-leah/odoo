@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_connection_tree" model="ir.ui.view">
+        <field name="name">devices.connection.tree</field>
+        <field name="model">devices.connection</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="device_id"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_connection_form" model="ir.ui.view">
+        <field name="name">devices.connection.form</field>
+        <field name="model">devices.connection</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="device_id"/>
+                        <field name="url"/>
+                    </group>
+                    <group>
+                        <field name="status" readonly="1"/>
+                        <field name="json_data" readonly="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="menu_connection" name="Connections" parent="menu_devices_root" action="action_connection"/>
+    
+    <record id="action_connection" model="ir.actions.act_window">
+        <field name="name">Connections</field>
+        <field name="res_model">devices.connection</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
