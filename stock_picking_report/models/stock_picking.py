@@ -15,8 +15,7 @@ class StockMove(models.Model):
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit.
-        If no data is retrieved, display a warning window but allow the process to continue.
+        Updates stock move with weight and unit. Displays a warning if no data is retrieved.
         """
         self.ensure_one()
 
@@ -24,13 +23,13 @@ class StockMove(models.Model):
         device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
 
         if not device:
-            raise UserError("Device with device_id = 1 not found.")
+            raise UserError(_("Device with device_id = 1 not found."))
 
         # Fetch the corresponding connection for the device
         connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
 
         if not connection or connection.status != 'valid':
-            raise UserError("The connection associated with device_id = 1 is invalid or not found.")
+            raise UserError(_("The connection associated with device_id = 1 is invalid or not found."))
 
         try:
             # Sending GET request to the connection's URL
@@ -48,31 +47,17 @@ class StockMove(models.Model):
                 unit = data.get("unit", "")     # Default to empty if unit is not found
 
                 if not weight and not unit:
-                    return {
-                        'warning': {
-                            'title': _("Scale Data Missing"),
-                            'message': _("The scale service did not return weight or unit data. Proceeding without updating."),
-                        }
-                    }
-                else:
-                    # Update stock move with the fetched data
-                    self.write({'external_weight': str(weight), 'external_unit': unit})
-                    _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
+                    raise UserError(_("The scale service did not return weight or unit data. Proceeding without updating."))
+
+                # Update stock move with the fetched data
+                self.write({'external_weight': str(weight), 'external_unit': unit})
+                _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
+
             else:
-                return {
-                    'warning': {
-                        'title': _("Scale Data Fetch Error"),
-                        'message': _(f"Failed to fetch scale data: HTTP {response.status_code}. Proceeding without updating."),
-                    }
-                }
+                raise UserError(_(f"Failed to fetch scale data: HTTP {response.status_code}. Proceeding without updating."))
 
         except requests.exceptions.RequestException as e:
-            return {
-                'warning': {
-                    'title': _("Connection Error"),
-                    'message': _(f"Error connecting to the scale service: {str(e)}. Proceeding without updating."),
-                }
-            }
+            raise UserError(_(f"Error connecting to the scale service: {str(e)}. Proceeding without updating."))
 
     def action_print_report(self):
         """
@@ -80,15 +65,11 @@ class StockMove(models.Model):
         Fetch and update scale data before printing.
         """
         # Fetch and update scale data before printing the report
-        warning = self.fetch_and_update_scale_data()
-
-        # If a warning was returned, display it
-        if warning:
-            return warning
+        self.fetch_and_update_scale_data()
 
         # Proceed with printing the report
         report_action = self.env.ref('stock_picking_report.action_report_stock_picking', raise_if_not_found=False)
         if report_action:
             return report_action.report_action(self)
         else:
-            raise UserError("Report action not found.")
+            raise UserError(_("Report action not found."))
