@@ -36,8 +36,8 @@
                                 <td>Control No:</td>
                             </tr>
                             <tr>
-                                <td>Actual:<span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
-                                <td>Theoretical:</td>
+                                <td>Actual:<span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
+                                <td>Theoretical: <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
                             </tr>
                             <tr>
                                 <td>Dispenser:</td>
