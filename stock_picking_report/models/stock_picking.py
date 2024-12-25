@@ -16,6 +16,7 @@ class StockMove(models.Model):
         """
         Fetches scale data from the external source defined in devices.connection related to device_id = 1.
         Updates stock move with weight and unit.
+        If no data is retrieved, display a warning window but allow the process to continue.
         """
         self.ensure_one()
 
@@ -46,15 +47,32 @@ class StockMove(models.Model):
                 weight = data.get("weight", "")  # Default to empty if weight is not found
                 unit = data.get("unit", "")     # Default to empty if unit is not found
 
-                # Update stock move with the fetched data
-                self.write({'external_weight': str(weight), 'external_unit': unit})
-                _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
-
+                if not weight and not unit:
+                    return {
+                        'warning': {
+                            'title': _("Scale Data Missing"),
+                            'message': _("The scale service did not return weight or unit data. Proceeding without updating."),
+                        }
+                    }
+                else:
+                    # Update stock move with the fetched data
+                    self.write({'external_weight': str(weight), 'external_unit': unit})
+                    _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
             else:
-                raise UserError(f"Failed to fetch scale data: HTTP {response.status_code}")
+                return {
+                    'warning': {
+                        'title': _("Scale Data Fetch Error"),
+                        'message': _(f"Failed to fetch scale data: HTTP {response.status_code}. Proceeding without updating."),
+                    }
+                }
 
         except requests.exceptions.RequestException as e:
-            raise UserError(f"Error connecting to the scale service: {str(e)}")
+            return {
+                'warning': {
+                    'title': _("Connection Error"),
+                    'message': _(f"Error connecting to the scale service: {str(e)}. Proceeding without updating."),
+                }
+            }
 
     def action_print_report(self):
         """
@@ -62,7 +80,11 @@ class StockMove(models.Model):
         Fetch and update scale data before printing.
         """
         # Fetch and update scale data before printing the report
-        self.fetch_and_update_scale_data()
+        warning = self.fetch_and_update_scale_data()
+
+        # If a warning was returned, display it
+        if warning:
+            return warning
 
         # Proceed with printing the report
         report_action = self.env.ref('stock_picking_report.action_report_stock_picking', raise_if_not_found=False)
