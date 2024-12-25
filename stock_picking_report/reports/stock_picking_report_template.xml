@@ -1,55 +1,48 @@
 <odoo>
     <data>
-        <!-- Define A6 Paper Format -->
-        <record id="paperformat_a6" model="report.paperformat">
-            <field name="name">A6</field>
+        <!-- Define A7 Paper Format -->
+        <record id="paperformat_a7" model="report.paperformat">
+            <field name="name">A7</field>
             <field name="default" eval="False"/>
-            <field name="format">A6</field>
-            <field name="margin_top">5</field>
-            <field name="margin_bottom">5</field>
-            <field name="margin_left">5</field>
-            <field name="margin_right">5</field>
+            <field name="format">A7</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
         </record>
 
         <!-- Report Template -->
-        <template id="report_stock_picking_template">
-            <t t-call="web.html_container">
+        <template id="report_weighing_label_template">
+            <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div class="header">
-                        <h2 class="text-center">Stock Picking Report</h2>
-                    </div>
-                    <div class="page">
-                        <div class="two-columns">
-                            <div class="column">
-                                <h2>Product Name: <span t-esc="doc.product_id.name"/></h2>
-                                <h2>Batch Number: <span t-esc="doc.lot_ids.display_name"/></h2>
-                                <h2>Material Name: <span t-esc="doc.product_id.name"/></h2>
-                                <h2>Actual Weight: 
-                                    <span t-esc="doc.external_weight"/> 
-                                    <span t-esc="doc.external_unit"/>
-                                </h2>
-                                <h2>Time of Printing: <span t-field="doc.time_printing"/></h2>
-                            </div>
-                            <div class="column">
-                                <h2>Product ID: <span t-esc="doc.product_id.id"/></h2>
-                                <h2>Expected Weight: 
-                                    <span t-esc="doc.quantity"/> 
-                                    <span t-esc="doc.product_uom.name"/>
-                                </h2>
-                            </div>
-                        </div>
+                    <div style="font-size: 10px; line-height: 1.4; text-align: left;">
+                        <h4 style="text-align: center;">Weighing Label</h4>
+                        <p>Product: <span t-esc="doc.product_id.name"/> <span t-esc="doc.product_description"/></p>
+                        <p>ID: <span t-esc="doc.product_id.id"/></p>
+                        <p>Batch No: <span t-esc="doc.lot_ids.display_name"/></p>
+                        <p>Item: <span t-esc="doc.material_name"/></p>
+                        <p>ID: <span t-esc="doc.material_id"/></p>
+                        <p>Exp: <span t-esc="doc.exp_date"/></p>
+                        <p>Control No: <span t-esc="doc.control_number"/></p>
+                        <p>Gross: <span t-esc="doc.gross_weight"/> kg</p>
+                        <p>Tare: <span t-esc="doc.tare_weight"/> kg</p>
+                        <p>Net: <span t-esc="doc.net_weight"/> kg</p>
+                        <p>Dispenser: <span t-esc="doc.dispenser_name"/></p>
+                        <p>IPC: <span t-esc="doc.ipc_info"/></p>
+                        <p>Date: <span t-esc="doc.print_date"/></p>
+                        <p>QAP-09-052 <span t-esc="doc.page_number"/> of <span t-esc="doc.total_pages"/></p>
                     </div>
                 </t>
             </t>
         </template>
 
         <!-- Report Action -->
-        <record id="action_report_stock_picking" model="ir.actions.report">
-            <field name="name">Stock Picking Report</field>
+        <record id="action_report_weighing_label" model="ir.actions.report">
+            <field name="name">Weighing Label</field>
             <field name="model">stock.move</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">stock_picking_report.report_stock_picking_template</field>
-            <field name="paperformat_id" ref="paperformat_a6"/>
+            <field name="report_name">weighing_label.report_weighing_label_template</field>
+            <field name="paperformat_id" ref="paperformat_a7"/>
         </record>
     </data>
 </odoo>
