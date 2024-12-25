@@ -28,7 +28,7 @@
                         <p>Actual:  <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></p>
                         <p>Dispenser: </p>
                         <p>IPC: </p>
-                        <p>Date: <span t-esc="doc.print_date"/></p>
+                        <p>Date:  <span t-field="doc.time_printing"/></p>
                     </div>
                 </t>
             </t>
