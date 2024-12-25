@@ -17,20 +17,18 @@
                 <t t-foreach="docs" t-as="doc">
                     <div style="font-size: 10px; line-height: 1.4; text-align: left;">
                         <h4 style="text-align: center;">Weighing Label</h4>
-                        <p>Product: <span t-esc="doc.product_id.name"/> <span t-esc="doc.product_description"/></p>
+                        <p>Product: <span t-esc="doc.product_id.name"/></p>
                         <p>ID: <span t-esc="doc.product_id.id"/></p>
                         <p>Batch No: <span t-esc="doc.lot_ids.display_name"/></p>
-                        <p>Item: <span t-esc="doc.material_name"/></p>
-                        <p>ID: <span t-esc="doc.material_id"/></p>
-                        <p>Exp: <span t-esc="doc.exp_date"/></p>
-                        <p>Control No: <span t-esc="doc.control_number"/></p>
-                        <p>Gross: <span t-esc="doc.gross_weight"/> kg</p>
-                        <p>Tare: <span t-esc="doc.tare_weight"/> kg</p>
-                        <p>Net: <span t-esc="doc.net_weight"/> kg</p>
-                        <p>Dispenser: <span t-esc="doc.dispenser_name"/></p>
-                        <p>IPC: <span t-esc="doc.ipc_info"/></p>
+                        <p>Item: <span t-esc="doc.product_id.name"/></p>
+                        <p>ID: <span t-esc="doc.product_id.id"/></p>
+                        <p>Exp: </p>
+                        <p>Control No: </p>
+                        <p>theoretical: </p>
+                        <p>Actual:  <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></p>
+                        <p>Dispenser: </p>
+                        <p>IPC: </p>
                         <p>Date: <span t-esc="doc.print_date"/></p>
-                        <p>QAP-09-052 <span t-esc="doc.page_number"/> of <span t-esc="doc.total_pages"/></p>
                     </div>
                 </t>
             </t>
