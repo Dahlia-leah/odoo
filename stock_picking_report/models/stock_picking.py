@@ -1,9 +1,13 @@
 import logging
-from odoo import models, fields, api, _
+import urllib3
+from odoo import models, fields, _
 from odoo.exceptions import UserError
 import requests
 
 _logger = logging.getLogger(__name__)
+
+# Suppress InsecureRequestWarning for testing
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -44,9 +48,12 @@ class StockMove(models.Model):
 
                 if not weight and not unit:
                     return {
-                        'warning': {
-                            'title': _("Scale Data Warning"),
-                            'message': _("The scale service did not return weight or unit data. Proceeding without updating."),
+                        'type': 'ir.actions.act_window_close',
+                        'context': {
+                            'warning': {
+                                'title': _("Scale Data Warning"),
+                                'message': _("The scale service did not return weight or unit data. Proceeding without updating."),
+                            }
                         }
                     }
                 else:
@@ -55,17 +62,23 @@ class StockMove(models.Model):
 
             else:
                 return {
-                    'warning': {
-                        'title': _("Scale Data Fetch Error"),
-                        'message': _("Failed to fetch scale data: HTTP %s. Proceeding without updating." % response.status_code),
+                    'type': 'ir.actions.act_window_close',
+                    'context': {
+                        'warning': {
+                            'title': _("Scale Data Fetch Error"),
+                            'message': _("Failed to fetch scale data: HTTP %s. Proceeding without updating." % response.status_code),
+                        }
                     }
                 }
 
         except requests.exceptions.RequestException as e:
             return {
-                'warning': {
-                    'title': _("Scale Connection Error"),
-                    'message': _("Error connecting to the scale service: %s. Proceeding without updating." % str(e)),
+                'type': 'ir.actions.act_window_close',
+                'context': {
+                    'warning': {
+                        'title': _("Scale Connection Error"),
+                        'message': _("Error connecting to the scale service: %s. Proceeding without updating." % str(e)),
+                    }
                 }
             }
 
