@@ -15,7 +15,7 @@
         <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 20px; line-height: 1.2;">
+                    <div style="font-size: 20px; line-height: 2;">
                         <h4 style="text-align: center;">Weighing Label</h4>
                         <table style="width: 100%; table-layout: fixed;">
                             <tr>
@@ -36,11 +36,11 @@
                                 <td>Control No:</td>
                             </tr>
                             <tr>
-                                <td>Actual:<span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
-                                <td>Theoretical: <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
+                                <td>Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
+                                <td>Theoretical:  <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
                             </tr>
                             <tr>
-                                <td>Dispenser:</td>
+                                <td>Dispenser: </td>
                                 <td>IPC:</td>
                             </tr>
             
