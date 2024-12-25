@@ -19,64 +19,66 @@ class StockMove(models.Model):
         """
         self.ensure_one()
 
-        # Fetch the device record with device_id = 1 from the 'devices.device' model
         device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
 
         if not device:
             raise UserError(_("Device with device_id = 1 not found."))
 
-        # Fetch the corresponding connection for the device
         connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
 
         if not connection or connection.status != 'valid':
             raise UserError(_("The connection associated with device_id = 1 is invalid or not found."))
 
         try:
-            # Sending GET request to the connection's URL
             headers = {
-                'User-Agent': 'PostmanRuntime/7.30.0',  # Mimic Postman behavior
-                'Accept': 'application/json',           # Request JSON response
+                'User-Agent': 'PostmanRuntime/7.30.0',
+                'Accept': 'application/json',
             }
             _logger.info(f"Connecting to scale service at {connection.url}")
             response = requests.get(connection.url, headers=headers, timeout=10, verify=False)
 
             if response.status_code == 200:
-                # Parse the response data (assuming JSON format)
                 data = response.json()
-                weight = data.get("weight", "")  # Default to empty if weight is not found
-                unit = data.get("unit", "")     # Default to empty if unit is not found
+                weight = data.get("weight", "")
+                unit = data.get("unit", "")
 
                 if not weight and not unit:
-                    self.env.user.notify_warning(
-                        message=_("The scale service did not return weight or unit data. Proceeding without updating."),
-                        title=_("Scale Data Warning"),
-                    )
+                    return {
+                        'warning': {
+                            'title': _("Scale Data Warning"),
+                            'message': _("The scale service did not return weight or unit data. Proceeding without updating."),
+                        }
+                    }
                 else:
-                    # Update stock move with the fetched data
                     self.write({'external_weight': str(weight), 'external_unit': unit})
                     _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
 
             else:
-                self.env.user.notify_warning(
-                    message=_("Failed to fetch scale data: HTTP %s. Proceeding without updating." % response.status_code),
-                    title=_("Scale Data Fetch Error"),
-                )
+                return {
+                    'warning': {
+                        'title': _("Scale Data Fetch Error"),
+                        'message': _("Failed to fetch scale data: HTTP %s. Proceeding without updating." % response.status_code),
+                    }
+                }
 
         except requests.exceptions.RequestException as e:
-            self.env.user.notify_warning(
-                message=_("Error connecting to the scale service: %s. Proceeding without updating." % str(e)),
-                title=_("Scale Connection Error"),
-            )
+            return {
+                'warning': {
+                    'title': _("Scale Connection Error"),
+                    'message': _("Error connecting to the scale service: %s. Proceeding without updating." % str(e)),
+                }
+            }
 
     def action_print_report(self):
         """
         Trigger the printing of the report.
         Fetch and update scale data before printing.
         """
-        # Fetch and update scale data before printing the report
-        self.fetch_and_update_scale_data()
+        warning = self.fetch_and_update_scale_data()
 
-        # Proceed with printing the report
+        if warning:
+            return warning
+
         report_action = self.env.ref('stock_picking_report.action_report_stock_picking', raise_if_not_found=False)
         if report_action:
             return report_action.report_action(self)
