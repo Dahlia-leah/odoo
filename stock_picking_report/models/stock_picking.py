@@ -15,7 +15,7 @@ class StockMove(models.Model):
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit. Displays a warning if no data is retrieved.
+        Updates stock move with weight and unit, or logs a warning if no data is retrieved.
         """
         self.ensure_one()
 
@@ -47,17 +47,26 @@ class StockMove(models.Model):
                 unit = data.get("unit", "")     # Default to empty if unit is not found
 
                 if not weight and not unit:
-                    raise UserError(_("The scale service did not return weight or unit data. Proceeding without updating."))
-
-                # Update stock move with the fetched data
-                self.write({'external_weight': str(weight), 'external_unit': unit})
-                _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
+                    self.env.user.notify_warning(
+                        message=_("The scale service did not return weight or unit data. Proceeding without updating."),
+                        title=_("Scale Data Warning"),
+                    )
+                else:
+                    # Update stock move with the fetched data
+                    self.write({'external_weight': str(weight), 'external_unit': unit})
+                    _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
 
             else:
-                raise UserError(_(f"Failed to fetch scale data: HTTP {response.status_code}. Proceeding without updating."))
+                self.env.user.notify_warning(
+                    message=_("Failed to fetch scale data: HTTP %s. Proceeding without updating." % response.status_code),
+                    title=_("Scale Data Fetch Error"),
+                )
 
         except requests.exceptions.RequestException as e:
-            raise UserError(_(f"Error connecting to the scale service: {str(e)}. Proceeding without updating."))
+            self.env.user.notify_warning(
+                message=_("Error connecting to the scale service: %s. Proceeding without updating." % str(e)),
+                title=_("Scale Connection Error"),
+            )
 
     def action_print_report(self):
         """
