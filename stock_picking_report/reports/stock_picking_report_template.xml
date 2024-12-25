@@ -12,7 +12,7 @@
         </record>
 
         <!-- Report Template -->
-        <template id="report_weighing_label_template">
+        <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
                     <div style="font-size: 10px; line-height: 1.4; text-align: left;">
@@ -37,11 +37,11 @@
         </template>
 
         <!-- Report Action -->
-        <record id="action_report_weighing_label" model="ir.actions.report">
-            <field name="name">Weighing Label</field>
+        <record id="action_report_stock_picking" model="ir.actions.report">
+            <field name="name">Stock Picking Report</field>
             <field name="model">stock.move</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">weighing_label.report_weighing_label_template</field>
+            <field name="report_name">stock_picking_report.report_stock_picking_template</field>
             <field name="paperformat_id" ref="paperformat_a7"/>
         </record>
     </data>
