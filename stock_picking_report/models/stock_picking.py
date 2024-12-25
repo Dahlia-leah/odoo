@@ -1,13 +1,9 @@
 import logging
-import urllib3
-from odoo import models, fields, _
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import requests
 
 _logger = logging.getLogger(__name__)
-
-# Suppress InsecureRequestWarning for testing
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -16,71 +12,61 @@ class StockMove(models.Model):
     external_unit = fields.Char(string='External Unit', readonly=True)
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
-    def fetch_and_update_scale_data(self):
-        """
-        Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit, or logs a warning if no data is retrieved.
-        """
-        self.ensure_one()
+def fetch_and_update_scale_data(self):
+    """
+    Fetches scale data from an external source and updates stock move records.
+    """
+    self.ensure_one()
 
-        device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
+    device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
+    if not device:
+        raise UserError(_("Device with device_id = 1 not found."))
 
-        if not device:
-            raise UserError(_("Device with device_id = 1 not found."))
+    connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
+    if not connection or connection.status != 'valid':
+        raise UserError(_("The connection associated with device_id = 1 is invalid or not found."))
 
-        connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
+    try:
+        headers = {
+            'User-Agent': 'PostmanRuntime/7.30.0',
+            'Accept': 'application/json',
+        }
+        _logger.info(f"Connecting to scale service at {connection.url}")
+        response = requests.get(connection.url, headers=headers, timeout=10, verify=False)
 
-        if not connection or connection.status != 'valid':
-            raise UserError(_("The connection associated with device_id = 1 is invalid or not found."))
+        if response.status_code == 200:
+            data = response.json()
+            weight = data.get("weight", "")
+            unit = data.get("unit", "")
 
-        try:
-            headers = {
-                'User-Agent': 'PostmanRuntime/7.30.0',
-                'Accept': 'application/json',
-            }
-            _logger.info(f"Connecting to scale service at {connection.url}")
-            response = requests.get(connection.url, headers=headers, timeout=10, verify=False)
-
-            if response.status_code == 200:
-                data = response.json()
-                weight = data.get("weight", "")
-                unit = data.get("unit", "")
-
-                if not weight and not unit:
-                    return {
-                        'type': 'ir.actions.act_window_close',
-                        'context': {
-                            'warning': {
-                                'title': _("Scale Data Warning"),
-                                'message': _("The scale service did not return weight or unit data. Proceeding without updating."),
-                            }
-                        }
-                    }
-                else:
-                    self.write({'external_weight': str(weight), 'external_unit': unit})
-                    _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
-
+            if not weight and not unit:
+                self.env.user.notify_warning(
+                    message=_("The scale service did not return weight or unit data. Proceeding without updating."),
+                    title=_("Scale Data Warning"),
+                    sticky=False
+                )
             else:
-                return {
-                    'type': 'ir.actions.act_window_close',
-                    'context': {
-                        'warning': {
-                            'title': _("Scale Data Fetch Error"),
-                            'message': _("Failed to fetch scale data: HTTP %s. Proceeding without updating." % response.status_code),
-                        }
-                    }
-                }
+                self.write({'external_weight': str(weight), 'external_unit': unit})
+                _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
+                self.env.user.notify_success(
+                    message=_("Successfully updated weight and unit from scale."),
+                    title=_("Scale Data Updated"),
+                    sticky=False
+                )
 
-        except requests.exceptions.RequestException as e:
-            return {
-                'type': 'ir.actions.act_window_close',
-                'context': {
-                    'warning': {
-                        'title': _("Scale Connection Error"),
-                        'message': _("Error connecting to the scale service: %s. Proceeding without updating." % str(e)),
-                    }
-                }
-            }
+        else:
+            self.env.user.notify_warning(
+                message=_("Failed to fetch scale data: HTTP %s. Proceeding without updating." % response.status_code),
+                title=_("Scale Data Fetch Error"),
+                sticky=False
+            )
+
+    except requests.exceptions.RequestException as e:
+        self.env.user.notify_warning(
+            message=_("Error connecting to the scale service: %s. Proceeding without updating." % str(e)),
+            title=_("Scale Connection Error"),
+            sticky=False
+        )
 
     def action_print_report(self):
         """
