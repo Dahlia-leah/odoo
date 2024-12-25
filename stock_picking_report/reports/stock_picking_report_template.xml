@@ -15,20 +15,55 @@
         <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 10px; line-height: 1.4; text-align: left;">
+                    <div style="font-size: 10px; line-height: 1.2;">
                         <h4 style="text-align: center;">Weighing Label</h4>
-                        <p>Product: <span t-esc="doc.product_id.name"/></p>
-                        <p>ID: <span t-esc="doc.product_id.id"/></p>
-                        <p>Batch No: <span t-esc="doc.lot_ids.display_name"/></p>
-                        <p>Item: <span t-esc="doc.product_id.name"/></p>
-                        <p>ID: <span t-esc="doc.product_id.id"/></p>
-                        <p>Exp: </p>
-                        <p>Control No: </p>
-                        <p>theoretical: </p>
-                        <p>Actual:  <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></p>
-                        <p>Dispenser: </p>
-                        <p>IPC: </p>
-                        <p>Date:  <span t-field="doc.time_printing"/></p>
+                        <table style="width: 100%; table-layout: fixed;">
+                            <tr>
+                                <td style="width: 50%;">Product:</td>
+                                <td style="width: 50%;"><span t-esc="doc.product_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td>ID:</td>
+                                <td><span t-esc="doc.product_id.id"/></td>
+                            </tr>
+                            <tr>
+                                <td>Batch No:</td>
+                                <td><span t-esc="doc.lot_ids.display_name"/></td>
+                            </tr>
+                            <tr>
+                                <td>Item:</td>
+                                <td><span t-esc="doc.product_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td>Exp:</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td>Control No:</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td>Theoretical:</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td>Actual:</td>
+                                <td><span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
+                            </tr>
+                            <tr>
+                                <td>Dispenser:</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td>IPC:</td>
+                                <td> </td>
+                            </tr>
+                            <tr>
+                                <td>Date:</td>
+                                <td><span t-field="doc.time_printing"/></td>
+                            </tr>
+                            
+                        </table>
                     </div>
                 </t>
             </t>
@@ -36,7 +71,7 @@
 
         <!-- Report Action -->
         <record id="action_report_stock_picking" model="ir.actions.report">
-            <field name="name">Stock Picking Report</field>
+            <field name="name">Weighing Label</field>
             <field name="model">stock.move</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">stock_picking_report.report_stock_picking_template</field>
