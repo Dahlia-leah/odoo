@@ -1,7 +1,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from odoo.addons.odoo_device.models import devices_connection
+import logging
+from odoo.addons.odoo_device.models import devices
 
+_logger = logging.getLogger(__name__)
 
 class DeviceSelectionWizard(models.TransientModel):
     _name = 'devices.device.selection.wizard'
