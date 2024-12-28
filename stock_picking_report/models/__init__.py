@@ -1,2 +1,2 @@
 from . import stock_picking
-#from . import device_wizard
+from . import scale_wizard
