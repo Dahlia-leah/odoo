@@ -1,3 +1,2 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_device_selection_wizard,access.device.selection.wizard,model_device_selection_wizard,,1,1,1,1
-access_stock_move_extension,access.stock.move.extension,model_stock_move,base.group_user,1,1,1,1
+access_device_selection_wizard,access.device.selection.wizard,devices.device.selection.wizard,,1,1,1,1
+access_stock_move_extension,access.stock.move.extension,stock.move,base.group_user,1,1,1,1
