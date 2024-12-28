@@ -1,7 +1,8 @@
-import logging
 from odoo import models, fields, api, _
-import requests
 from odoo.exceptions import UserError
+from odoo.exceptions import RedirectWarning
+import requests
+import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -85,6 +86,17 @@ class StockMove(models.Model):
         Trigger the printing of the report.
         Fetch and update scale data before printing, but always proceed with printing.
         """
+
+        if not self.selected_device_id:
+            # Open the wizard for device selection
+            action = self.env.ref('stock_picking_report.device_selection_wizard_action').read()[0]
+            action['context'] = {'active_id': self.id}
+            raise RedirectWarning(
+                _("You need to select a device before printing."),
+                action['id'],
+                _("Select Device")
+        )
+
         # Attempt to fetch and update scale data
         self.fetch_and_update_scale_data()
 
@@ -95,10 +107,4 @@ class StockMove(models.Model):
         else:
             raise UserError(_("Report action not found."))
 
-    @api.model
-    def list_available_devices(self):
-        """
-        Lists all available devices for the user to select.
-        """
-        devices = self.env['devices.device'].search([])
-        return [{'id': device.id, 'name': device.name} for device in devices]
+    
