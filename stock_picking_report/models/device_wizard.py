@@ -6,12 +6,14 @@ class DeviceSelectionWizard(models.TransientModel):
     _description = 'Device Selection Wizard'
 
     device_id = fields.Many2one(
-        'devices.connection',
+        'devices.device',
         string='Select Device',
         required=True,
-        domain="[('status', '=', 'valid')]",
+        domain="[('status', '=', 'valid')]",  # Filters devices with valid status
         help="Select a device to fetch weight data."
     )
+
+    active = fields.Boolean(default=True)  # To handle archiving instead of deletion
 
     @api.model
     def default_get(self, fields_list):
@@ -19,7 +21,7 @@ class DeviceSelectionWizard(models.TransientModel):
         Populate default values for the wizard.
         """
         res = super(DeviceSelectionWizard, self).default_get(fields_list)
-        connected_devices = self.env['devices.connection'].search([('status', '=', 'valid')])
+        connected_devices = self.env['devices.device'].search([('status', '=', 'valid')])
         if not connected_devices:
             raise UserError(_("No connected devices found. Please connect a device before proceeding."))
         return res
@@ -63,5 +65,4 @@ class DeviceSelectionWizard(models.TransientModel):
                 # Archive the record instead of deleting it
                 record.active = False
                 return True
-
         return super(DeviceSelectionWizard, self).unlink()
