@@ -2,7 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import logging
 
-_logger = logging.getLogger(__name__)  # Logger initialization
+_logger = logging.getLogger(__name__)  
 
 class ScaleConnectionWizard(models.TransientModel):
     _name = 'scale.connection.wizard'
@@ -16,17 +16,16 @@ class ScaleConnectionWizard(models.TransientModel):
         Proceed with printing empty data.
         """
         self.ensure_one()
-        _logger.info("action_print_empty called for record ID: %s", self.id)
+        _logger.info("action_print_empty called for wizard ID: %s", self.id)
 
         # Ensure stock_move_id exists
         if not self.stock_move_id:
-            _logger.error("No stock_move_id set for record ID: %s", self.id)
+            _logger.error("No stock_move_id set for wizard ID: %s", self.id)
             raise UserError(_("No stock move record is associated with this wizard."))
 
         # Check if the method exists on stock.move and call it
         if hasattr(self.stock_move_id, 'action_force_empty_print'):
-            self.stock_move_id.action_force_empty_print()
-            _logger.info("action_force_empty_print successfully called on stock_move_id: %s", self.stock_move_id.id)
+            return self.stock_move_id.action_force_empty_print()
         else:
             _logger.error("The method 'action_force_empty_print' does not exist on stock.move.")
             raise UserError(_("The 'action_force_empty_print' method is not defined on the stock.move model."))
@@ -35,5 +34,5 @@ class ScaleConnectionWizard(models.TransientModel):
         """
         Cancel the operation and close the wizard.
         """
-        _logger.info("action_cancel called for record ID: %s", self.id)
+        _logger.info("action_cancel called for wizard ID: %s", self.id)
         return {'type': 'ir.actions.act_window_close'}
