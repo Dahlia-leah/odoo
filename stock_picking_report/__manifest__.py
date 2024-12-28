@@ -9,7 +9,7 @@
         'views/stock_picking_views.xml',
         #'views/device_selection_wizard_form.xml',
         'reports/stock_picking_report_template.xml',
-       # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': False,
