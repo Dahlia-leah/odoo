@@ -10,39 +10,43 @@ class StockMove(models.Model):
 
     external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
+    selected_device_id = fields.Many2one(
+        'devices.device', string='Selected Device',
+        help="The device selected for fetching weight data."
+    )
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
     def fetch_and_update_scale_data(self):
         """
-        Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit. Sends a notification if scale is not connected.
+        Fetches scale data from the selected device's associated connection.
+        Updates stock move with weight and unit. Sends a notification if the scale or connection is not valid.
         """
         self.ensure_one()
 
         # Reset fields to empty initially
         self.write({'external_weight': '', 'external_unit': ''})
 
-        # Fetch the device record with device_id = 1 from the 'devices.device' model
-        device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
-
-        if not device:
-            self._notify_user(_("Device with device_id = 1 not found. Printing will proceed with empty scale data."))
-            _logger.warning("Device with device_id = 1 not found.")
+        if not self.selected_device_id:
+            self._notify_user(_("No device selected. Please select a scale device before printing."))
+            _logger.warning("No device selected for fetching scale data.")
             return
 
-        # Fetch the corresponding connection for the device
-        connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
+        # Fetch the corresponding connection for the selected device
+        connection = self.env['devices.connection'].search([('device_id', '=', self.selected_device_id.id)], limit=1)
 
         if not connection or connection.status != 'valid':
-            self._notify_user(_("The connection associated with device_id = 1 is invalid or not found. Printing will proceed with empty scale data."))
-            _logger.warning("The connection associated with device_id = 1 is invalid or not found.")
+            self._notify_user(_(
+                f"The connection associated with device {self.selected_device_id.name} is invalid or not found. "
+                f"Printing will proceed with empty scale data."
+            ))
+            _logger.warning(f"Invalid or missing connection for device {self.selected_device_id.name}.")
             return
 
         try:
             # Sending GET request to the connection's URL
             headers = {
-                'User-Agent': 'PostmanRuntime/7.30.0',  # Mimic Postman behavior
-                'Accept': 'application/json',           # Request JSON response
+                'User-Agent': 'PostmanRuntime/7.30.0',
+                'Accept': 'application/json',
             }
             _logger.info(f"Connecting to scale service at {connection.url}")
             response = requests.get(connection.url, headers=headers, timeout=10, verify=False)
@@ -90,3 +94,11 @@ class StockMove(models.Model):
             return report_action.report_action(self)
         else:
             raise UserError(_("Report action not found."))
+
+    @api.model
+    def list_available_devices(self):
+        """
+        Lists all available devices for the user to select.
+        """
+        devices = self.env['devices.device'].search([])
+        return [{'id': device.id, 'name': device.name} for device in devices]
