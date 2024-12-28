@@ -6,11 +6,11 @@ class DeviceSelectionWizard(models.TransientModel):
     _description = 'Device Selection Wizard'
 
     device_id = fields.Many2one(
-        'devices.device',
+        'devices.connection',
         string='Select Device',
         required=True,
-        domain="[('status', '=', 'valid')]",  # Filters devices with valid status
-        help="Select a device to fetch weight data."
+        domain="[('device_id', '=', 1), ('status', '=', 'valid')]",
+        help="Select a valid device (ID 1) to fetch weight data."
     )
 
     active = fields.Boolean(default=True)  # To handle archiving instead of deletion
@@ -21,9 +21,17 @@ class DeviceSelectionWizard(models.TransientModel):
         Populate default values for the wizard.
         """
         res = super(DeviceSelectionWizard, self).default_get(fields_list)
-        connected_devices = self.env['devices.device'].search([('status', '=', 'valid')])
+
+        # Search for devices that are connected (valid) and related to the device ID 1
+        connected_devices = self.env['devices.connection'].search([
+            ('status', '=', 'valid'),
+            ('device_id', '=', 1)  # Filter by the device ID (ID 1)
+        ])
+
+        # If no devices are found, raise an error
         if not connected_devices:
-            raise UserError(_("No connected devices found. Please connect a device before proceeding."))
+            raise UserError(_("No valid devices with ID 1 found. Please connect such a device before proceeding."))
+        
         return res
 
     def confirm_selection(self):

@@ -4,7 +4,7 @@
     'license': 'LGPL-3',
     'category': 'Inventory',
     'summary': 'Add a button to fetch weight from IoT device and print stock picking reports.',
-    'depends': ['stock', 'iot'],
+    'depends': ['stock', 'odoo_device'],
     'data': [
         'views/stock_picking_views.xml',
         'reports/stock_picking_report_template.xml',
