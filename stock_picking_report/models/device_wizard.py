@@ -1,5 +1,8 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, RedirectWarning
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class DeviceSelectionWizard(models.TransientModel):
     _name = 'devices.device.selection.wizard'
@@ -14,6 +17,7 @@ class DeviceSelectionWizard(models.TransientModel):
     def action_confirm(self):
         """
         Check if the device is connected. If not, notify the user and proceed to print.
+        Also, fetch all devices connected via the devices.connection model.
         """
         if not self.selected_device_id:
             raise UserError(_("No device selected!"))
@@ -29,6 +33,12 @@ class DeviceSelectionWizard(models.TransientModel):
             )
             self.env.user.notify_warning(message)
             _logger.warning(message)
+
+        # Fetch all devices associated with valid connections
+        valid_connections = self.env['devices.connection'].search([('status', '=', 'valid')])
+        valid_devices = valid_connections.mapped('device_id')
+
+        _logger.info(f"Valid devices connected: {', '.join(device.name for device in valid_devices)}")
 
         # Trigger the printing action for the stock.move
         stock_move = self.env['stock.move'].browse(self._context.get('active_id'))
