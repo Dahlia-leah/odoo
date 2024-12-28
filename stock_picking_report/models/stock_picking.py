@@ -15,7 +15,7 @@ class StockMove(models.Model):
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit. Displays a warning if no data is retrieved.
+        Updates stock move with weight and unit. Logs and sends a notification if no data is retrieved.
         """
         self.ensure_one()
 
@@ -23,13 +23,17 @@ class StockMove(models.Model):
         device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
 
         if not device:
-            raise UserError(_("Device with device_id = 1 not found."))
+            _logger.warning("Device with device_id = 1 not found.")
+            self.env.user.notify_warning(_("Device with device_id = 1 not found. Printing will proceed without scale data."))
+            return
 
         # Fetch the corresponding connection for the device
         connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
 
         if not connection or connection.status != 'valid':
-            raise UserError(_("The connection associated with device_id = 1 is invalid or not found."))
+            _logger.warning("The connection associated with device_id = 1 is invalid or not found.")
+            self.env.user.notify_warning(_("The connection associated with device_id = 1 is invalid or not found. Printing will proceed without scale data."))
+            return
 
         try:
             # Sending GET request to the connection's URL
@@ -47,24 +51,27 @@ class StockMove(models.Model):
                 unit = data.get("unit", "")     # Default to empty if unit is not found
 
                 if not weight and not unit:
-                    raise UserError(_("The scale service did not return weight or unit data. Proceeding without updating."))
+                    _logger.warning("The scale service did not return weight or unit data.")
+                    self.env.user.notify_warning(_("The scale service did not return weight or unit data. Printing will proceed without updating."))
+                    return
 
                 # Update stock move with the fetched data
                 self.write({'external_weight': str(weight), 'external_unit': unit})
                 _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
-
             else:
-                raise UserError(_(f"Failed to fetch scale data: HTTP {response.status_code}. Proceeding without updating."))
+                _logger.error(f"Failed to fetch scale data: HTTP {response.status_code}.")
+                self.env.user.notify_warning(_(f"Failed to fetch scale data: HTTP {response.status_code}. Printing will proceed without scale data."))
 
         except requests.exceptions.RequestException as e:
-            raise UserError(_(f"Error connecting to the scale service: {str(e)}. Proceeding without updating."))
+            _logger.error(f"Error connecting to the scale service: {str(e)}")
+            self.env.user.notify_warning(_(f"Error connecting to the scale service: {str(e)}. Printing will proceed without scale data."))
 
     def action_print_report(self):
         """
         Trigger the printing of the report.
-        Fetch and update scale data before printing.
+        Fetch and update scale data before printing, but always proceed with printing.
         """
-        # Fetch and update scale data before printing the report
+        # Attempt to fetch and update scale data
         self.fetch_and_update_scale_data()
 
         # Proceed with printing the report
