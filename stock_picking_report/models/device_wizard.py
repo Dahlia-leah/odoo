@@ -6,7 +6,7 @@ class DeviceSelectionWizard(models.TransientModel):
     _description = 'Device Selection Wizard'
 
     device_id = fields.Many2one(
-        'devices.device',
+        'devices.connection',
         string='Select Device',
         required=True,
         domain="[('status', '=', 'valid')]",  # Filters devices with valid status
@@ -19,7 +19,7 @@ class DeviceSelectionWizard(models.TransientModel):
         Populate default values for the wizard.
         """
         res = super(DeviceSelectionWizard, self).default_get(fields_list)
-        connected_devices = self.env['devices.device'].search([('status', '=', 'valid')])
+        connected_devices = self.env['devices.connection'].search([('status', '=', 'valid')])
         if not connected_devices:
             raise UserError(_("No connected devices found. Please connect a device before proceeding."))
         return res
