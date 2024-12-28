@@ -9,7 +9,7 @@ class DeviceSelectionWizard(models.TransientModel):
         'devices.connection',
         string='Select Device',
         required=True,
-        domain="[('status', '=', 'valid')]",  # Filters devices with valid status
+        domain="[('status', '=', 'valid')]",
         help="Select a device to fetch weight data."
     )
 
@@ -50,3 +50,18 @@ class DeviceSelectionWizard(models.TransientModel):
 
         # Call the method to print the report
         stock_move.action_print_report()
+
+    @api.model
+    def unlink(self):
+        """
+        Override unlink to prevent deletion if the record is referenced elsewhere.
+        Instead of deleting, we archive the record.
+        """
+        for record in self:
+            if record.device_id:
+                # You can add additional checks for dependencies or actions to clean up
+                # Archive the record instead of deleting it
+                record.active = False
+                return True
+
+        return super(DeviceSelectionWizard, self).unlink()
