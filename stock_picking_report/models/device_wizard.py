@@ -63,14 +63,19 @@ class DeviceSelectionWizard(models.TransientModel):
 
     @api.model
     def unlink(self):
-        """
-        Override unlink to prevent deletion if the record is referenced elsewhere.
-        Instead of deleting, we archive the record.
-        """
-        for record in self:
-            if record.device_id:
-                # You can add additional checks for dependencies or actions to clean up
-                # Archive the record instead of deleting it
-                record.active = False
-                return True
-        return super(DeviceSelectionWizard, self).unlink()
+      """
+       Override unlink to prevent deletion if the record is referenced elsewhere.
+      Instead of deleting, we archive the record.
+       """
+      for record in self:
+          # Check if the device is referenced elsewhere (i.e., foreign key constraint)
+          if record.device_id:
+              # Check if the device is being referenced by another model (e.g., 'stock.move')
+              # Here we assume that 'stock.move' is referencing 'device.selection.wizard'
+              if self.env['stock.move'].search_count([('selected_device_id', '=', record.device_id.id)]) > 0:
+                  # Archive the record instead of deleting
+                  record.active = False
+                  return True
+      # Proceed with deletion if no references are found
+      return super(DeviceSelectionWizard, self).unlink()
+
