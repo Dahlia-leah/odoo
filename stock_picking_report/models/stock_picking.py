@@ -105,3 +105,16 @@ class StockMove(models.Model):
             return report_action.report_action(self)
         else:
             raise UserError(_("Report action not found."))
+        
+    def action_force_empty_print(self):
+        """
+        Force printing with empty data.
+        """
+        self.write({'external_weight': '', 'external_unit': ''})
+        # Trigger the report printing with empty data
+        report_action = self.env.ref('stock_picking_report.action_report_stock_picking', raise_if_not_found=False)
+        if report_action:
+            return report_action.report_action(self)
+        else:
+            raise UserError(_("Report action not found."))
+

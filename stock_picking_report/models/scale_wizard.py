@@ -1,4 +1,4 @@
-from odoo import models, fields, api, _
+from odoo import models, fields, api
 
 class ScaleConnectionWizard(models.TransientModel):
     _name = 'scale.connection.wizard'
@@ -12,11 +12,12 @@ class ScaleConnectionWizard(models.TransientModel):
         Proceed with printing empty data.
         """
         self.ensure_one()
-        # Call the method to print the report with empty data
-        return self.stock_move_id.action_print_with_empty_data()
+        if self.stock_move_id:
+            self.stock_move_id.action_force_empty_print()
+        return {'type': 'ir.actions.act_window_close'}
 
     def action_cancel(self):
         """
-        Cancel the operation.
+        Cancel the operation and close the wizard.
         """
         return {'type': 'ir.actions.act_window_close'}
