@@ -15,7 +15,7 @@ class StockMove(models.Model):
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit. Logs and sends a notification if no data is retrieved.
+        Updates stock move with weight and unit. Logs a warning if no data is retrieved.
         """
         self.ensure_one()
 
@@ -24,7 +24,7 @@ class StockMove(models.Model):
 
         if not device:
             _logger.warning("Device with device_id = 1 not found.")
-            self.env.user.notify_warning(_("Device with device_id = 1 not found. Printing will proceed without scale data."))
+            self._send_user_notification(_("Device with device_id = 1 not found. Printing will proceed without scale data."))
             return
 
         # Fetch the corresponding connection for the device
@@ -32,7 +32,7 @@ class StockMove(models.Model):
 
         if not connection or connection.status != 'valid':
             _logger.warning("The connection associated with device_id = 1 is invalid or not found.")
-            self.env.user.notify_warning(_("The connection associated with device_id = 1 is invalid or not found. Printing will proceed without scale data."))
+            self._send_user_notification(_("The connection associated with device_id = 1 is invalid or not found. Printing will proceed without scale data."))
             return
 
         try:
@@ -52,7 +52,7 @@ class StockMove(models.Model):
 
                 if not weight and not unit:
                     _logger.warning("The scale service did not return weight or unit data.")
-                    self.env.user.notify_warning(_("The scale service did not return weight or unit data. Printing will proceed without updating."))
+                    self._send_user_notification(_("The scale service did not return weight or unit data. Printing will proceed without updating."))
                     return
 
                 # Update stock move with the fetched data
@@ -60,11 +60,21 @@ class StockMove(models.Model):
                 _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
             else:
                 _logger.error(f"Failed to fetch scale data: HTTP {response.status_code}.")
-                self.env.user.notify_warning(_(f"Failed to fetch scale data: HTTP {response.status_code}. Printing will proceed without scale data."))
+                self._send_user_notification(_(f"Failed to fetch scale data: HTTP {response.status_code}. Printing will proceed without scale data."))
 
         except requests.exceptions.RequestException as e:
             _logger.error(f"Error connecting to the scale service: {str(e)}")
-            self.env.user.notify_warning(_(f"Error connecting to the scale service: {str(e)}. Printing will proceed without scale data."))
+            self._send_user_notification(_(f"Error connecting to the scale service: {str(e)}. Printing will proceed without scale data."))
+
+    def _send_user_notification(self, message):
+        """
+        Sends a notification to the user using the Odoo notification framework.
+        """
+        self.env['bus.bus']._sendone(
+            'res.users',
+            self.env.user.id,
+            {'type': 'simple_notification', 'title': _('Warning'), 'message': message}
+        )
 
     def action_print_report(self):
         """
