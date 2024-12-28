@@ -1,8 +1,8 @@
 # Access control for device selection wizard
-access_device_selection_wizard,access.device.selection.wizard,devices.device.selection.wizard,base.group_user,1,1,1,1
+access_stock_picking_report,access.device.selection.wizard,devices.device.selection.wizard,base.group_user,1,1,1,1
 
 # Access control for device connection (if not already defined)
-access_devices_connection,access.devices.connection,devices.connection,base.group_user,1,1,1,1
+access_odoo_device,access.devices.connection,devices.connection,base.group_user,1,1,1,1
 
 # Access control for stock move (if not already defined)
 access_stock_move_extension,access.stock.move.extension,stock.move,base.group_user,1,1,1,1
