@@ -14,7 +14,7 @@ class StockMove(models.Model):
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit. Sends a warning notification if scale is not connected.
+        Updates stock move with weight and unit. Sends a notification if scale is not connected.
         """
         self.ensure_one()
 
@@ -70,9 +70,10 @@ class StockMove(models.Model):
 
     def _notify_user(self, message):
         """
-        Sends a notification to the current user using Odoo's notification framework.
+        Sends a notification to the current user using the bus notification framework.
         """
-        self.env.user.notify_warning(message)
+        notifications = [(self.env.user.partner_id, 'simple_notification', {'message': message, 'type': 'warning'})]
+        self.env['bus.bus']._sendmany(notifications)
 
     def action_print_report(self):
         """
