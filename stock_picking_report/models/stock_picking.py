@@ -1,6 +1,5 @@
 import logging
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
 import requests
 
 _logger = logging.getLogger(__name__)
@@ -15,24 +14,27 @@ class StockMove(models.Model):
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the external source defined in devices.connection related to device_id = 1.
-        Updates stock move with weight and unit. Logs a warning if no data is retrieved.
+        Updates stock move with weight and unit. Sends a notification if scale is not connected.
         """
         self.ensure_one()
+
+        # Reset fields to empty initially
+        self.write({'external_weight': '', 'external_unit': ''})
 
         # Fetch the device record with device_id = 1 from the 'devices.device' model
         device = self.env['devices.device'].search([('device_id', '=', '1')], limit=1)
 
         if not device:
+            self._send_user_notification(_("Device with device_id = 1 not found. Printing will proceed with empty scale data."))
             _logger.warning("Device with device_id = 1 not found.")
-            self._send_user_notification(_("Device with device_id = 1 not found. Printing will proceed without scale data."))
             return
 
         # Fetch the corresponding connection for the device
         connection = self.env['devices.connection'].search([('device_id', '=', device.id)], limit=1)
 
         if not connection or connection.status != 'valid':
+            self._send_user_notification(_("The connection associated with device_id = 1 is invalid or not found. Printing will proceed with empty scale data."))
             _logger.warning("The connection associated with device_id = 1 is invalid or not found.")
-            self._send_user_notification(_("The connection associated with device_id = 1 is invalid or not found. Printing will proceed without scale data."))
             return
 
         try:
@@ -51,29 +53,34 @@ class StockMove(models.Model):
                 unit = data.get("unit", "")     # Default to empty if unit is not found
 
                 if not weight and not unit:
+                    self._send_user_notification(_("The scale service did not return weight or unit data. Printing will proceed with empty scale data."))
                     _logger.warning("The scale service did not return weight or unit data.")
-                    self._send_user_notification(_("The scale service did not return weight or unit data. Printing will proceed without updating."))
                     return
 
                 # Update stock move with the fetched data
                 self.write({'external_weight': str(weight), 'external_unit': unit})
                 _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
             else:
+                self._send_user_notification(_(f"Failed to fetch scale data: HTTP {response.status_code}. Printing will proceed with empty scale data."))
                 _logger.error(f"Failed to fetch scale data: HTTP {response.status_code}.")
-                self._send_user_notification(_(f"Failed to fetch scale data: HTTP {response.status_code}. Printing will proceed without scale data."))
 
         except requests.exceptions.RequestException as e:
+            self._send_user_notification(_(f"Error connecting to the scale service: {str(e)}. Printing will proceed with empty scale data."))
             _logger.error(f"Error connecting to the scale service: {str(e)}")
-            self._send_user_notification(_(f"Error connecting to the scale service: {str(e)}. Printing will proceed without scale data."))
 
     def _send_user_notification(self, message):
         """
-        Sends a notification to the user using the Odoo notification framework.
+        Sends a notification to the current user using the Odoo notification framework.
         """
         self.env['bus.bus']._sendone(
-            'res.users',
-            self.env.user.id,
-            {'type': 'simple_notification', 'title': _('Warning'), 'message': message}
+            'res.partner',  # Notify current user's partner
+            self.env.user.partner_id.id,
+            {
+                'type': 'simple_notification',
+                'title': _('Warning'),
+                'message': message,
+                'sticky': True,  # Ensure the message stays visible until dismissed
+            }
         )
 
     def action_print_report(self):
