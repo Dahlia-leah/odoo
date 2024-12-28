@@ -12,7 +12,7 @@
                     <!-- Add the external unit field after the external weight field -->
                     <field name="external_unit"/>
                     <!-- Add a button to fetch and print the report -->
-                    <button name="action_print_report"
+                    <button name="selected_device_id"
                             icon="fa-tag"
                             type="object"
                             title="Fetch weight from IoT device"
@@ -21,12 +21,12 @@
             </field>
         </record>
         
- <!-- Action to open the wizard -->
-        <record id="device_selection_wizard_action" model="ir.actions.act_window">
+       <!-- Action to open the wizard -->
+       <!--  <record id="device_selection_wizard_action" model="ir.actions.act_window">
         <field name="name">Select Device</field>
         <field name="res_model">devices.device.selection.wizard</field>
         <field name="view_mode">form</field>
-        <field name="target">new</field>
-        </record>
+       <field name="target">new</field>
+      </record>-->
     </data>
 </odoo>

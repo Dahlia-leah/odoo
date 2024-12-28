@@ -7,7 +7,7 @@
     'depends': ['stock', 'odoo_device'],
     'data': [
         'views/stock_picking_views.xml',
-        'views/device_selection_wizard_form.xml',
+        #'views/device_selection_wizard_form.xml',
         'reports/stock_picking_report_template.xml',
        # 'security/ir.model.access.csv',
     ],

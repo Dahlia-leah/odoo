@@ -10,12 +10,16 @@ class StockMove(models.Model):
 
     external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
-    selected_device_id = fields.Many2one(
-        'devices.device', string='Selected Device',
-        help="The device selected for fetching weight data."
-    )
+   
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
+    selected_device_id = fields.Many2one(
+        'devices.connection', 
+        string='Select Device', 
+        domain=[('status', '=', 'valid')],
+        required=True,  # Make this field required
+        help="Select the scale device to fetch weight and unit data."
+    )
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the selected device's associated connection.
@@ -84,21 +88,17 @@ class StockMove(models.Model):
         """
         notifications = [(self.env.user.partner_id, 'simple_notification', {'message': message, 'type': 'warning'})]
         self.env['bus.bus']._sendmany(notifications)
+
+
+        
     def action_print_report(self):
         """
         Trigger the printing of the report.
         Fetch and update scale data before printing, but always proceed with printing.
         """
+        if not self.selected_device_id:
+          raise UserError(_("No device selected. Please select a scale device before printing."))
 
-        if not self.selected_device_id or self.selected_device_id.connection_status != 'valid':
-            # Open the wizard for device selection
-            action = self.env.ref('stock_picking_report.device_selection_wizard_action').read()[0]
-            action['context'] = {'active_id': self.id}
-            raise RedirectWarning(
-                _("You need to select a valid device before printing."),
-                action['id'],
-                _("Select Device")
-            )
 
         # Attempt to fetch and update scale data
         self.fetch_and_update_scale_data()
