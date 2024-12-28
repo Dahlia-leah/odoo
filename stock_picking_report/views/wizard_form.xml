@@ -12,7 +12,7 @@
                     </div>
                 </sheet>
                 <footer>
-                    <button name="action_force_empty_print" type="object" string="Print Empty" class="btn-primary"/>
+                    <button name="action_print_empty" type="object" string="Print Empty" class="btn-primary"/>
                     <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"/>
                 </footer>
             </form>
