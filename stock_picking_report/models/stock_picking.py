@@ -1,5 +1,5 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError, RedirectWarning
+from odoo.exceptions import UserError
 import requests
 import logging
 
@@ -10,7 +10,7 @@ class StockMove(models.Model):
 
     external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
-   
+
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
     selected_device_id = fields.Many2one(
@@ -20,6 +20,7 @@ class StockMove(models.Model):
         required=True,  # Make this field required
         help="Select the scale device to fetch weight and unit data."
     )
+
     def fetch_and_update_scale_data(self):
         """
         Fetches scale data from the selected device's associated connection.
@@ -35,6 +36,8 @@ class StockMove(models.Model):
             _logger.warning("No device selected for fetching scale data.")
             return
 
+        _logger.debug(f"Selected device: {self.selected_device_id.name}, Device ID: {self.selected_device_id.id}")
+
         # If an empty device is selected, proceed with empty data
         if self.selected_device_id.status == 'empty':
             self._notify_user(_("No valid device selected. Printing will proceed with empty scale data."))
@@ -43,12 +46,19 @@ class StockMove(models.Model):
         # Fetch the corresponding connection for the selected device
         connection = self.env['devices.connection'].search([('device_id', '=', self.selected_device_id.id)], limit=1)
 
-        if not connection or connection.status != 'valid':
+        if not connection:
+            self._notify_user(_(f"No connection found for the selected device {self.selected_device_id.name}. Printing will proceed with empty scale data."))
+            _logger.warning(f"No connection found for the selected device {self.selected_device_id.name}.")
+            return
+
+        _logger.debug(f"Found connection for device {self.selected_device_id.name}: URL - {connection.url}")
+
+        if connection.status != 'valid':
             self._notify_user(_(
-                f"The connection associated with device {self.selected_device_id.name} is invalid or not found. "
+                f"The connection associated with device {self.selected_device_id.name} is invalid. "
                 f"Printing will proceed with empty scale data."
             ))
-            _logger.warning(f"Invalid or missing connection for device {self.selected_device_id.name}.")
+            _logger.warning(f"Invalid connection for device {self.selected_device_id.name}.")
             return
 
         try:
@@ -89,16 +99,13 @@ class StockMove(models.Model):
         notifications = [(self.env.user.partner_id, 'simple_notification', {'message': message, 'type': 'warning'})]
         self.env['bus.bus']._sendmany(notifications)
 
-
-        
     def action_print_report(self):
         """
         Trigger the printing of the report.
         Fetch and update scale data before printing, but always proceed with printing.
         """
         if not self.selected_device_id:
-          raise UserError(_("No device selected. Please select a scale device before printing."))
-
+            raise UserError(_("No device selected. Please select a scale device before printing."))
 
         # Attempt to fetch and update scale data
         self.fetch_and_update_scale_data()
