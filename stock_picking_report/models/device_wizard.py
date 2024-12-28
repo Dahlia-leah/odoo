@@ -8,7 +8,7 @@ class DeviceSelectionWizard(models.TransientModel):
     _description = 'Device Selection Wizard'
 
     selected_device_id = fields.Many2one(
-        'devices.device', string='Selected Device',
+        'devices.connection', string='Selected Device',
         help="The device selected for fetching weight data.",
         required=True
     )
