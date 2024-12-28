@@ -1,0 +1,17 @@
+<odoo>
+    <record id="view_device_selection_wizard_form" model="ir.ui.view">
+        <field name="name">devices.device.selection.wizard.form</field>
+        <field name="model">devices.device.selection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select Device">
+                <group>
+                    <field name="selected_device_id" widget="selection"/>
+                </group>
+                <footer>
+                    <button string="Confirm" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="Cancel" type="object" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

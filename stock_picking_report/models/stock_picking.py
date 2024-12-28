@@ -31,6 +31,11 @@ class StockMove(models.Model):
             _logger.warning("No device selected for fetching scale data.")
             return
 
+        # If an empty device is selected, proceed with empty data
+        if self.selected_device_id.status == 'empty':
+            self._notify_user(_("No valid device selected. Printing will proceed with empty scale data."))
+            return
+
         # Fetch the corresponding connection for the selected device
         connection = self.env['devices.connection'].search([('device_id', '=', self.selected_device_id.id)], limit=1)
 
@@ -79,7 +84,6 @@ class StockMove(models.Model):
         """
         notifications = [(self.env.user.partner_id, 'simple_notification', {'message': message, 'type': 'warning'})]
         self.env['bus.bus']._sendmany(notifications)
-
     def action_print_report(self):
         """
         Trigger the printing of the report.
