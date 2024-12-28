@@ -10,14 +10,13 @@ class StockMove(models.Model):
 
     external_weight = fields.Char(string='External Weight', readonly=True)
     external_unit = fields.Char(string='External Unit', readonly=True)
-
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
     selected_device_id = fields.Many2one(
-        'devices.connection', 
-        string='Select Device', 
+        'devices.connection',
+        string='Select Device',
         domain=[('status', '=', 'valid')],
-        required=True,  # Make this field required
+        required=True,
         help="Select the scale device to fetch weight and unit data."
     )
 
@@ -32,37 +31,23 @@ class StockMove(models.Model):
         self.write({'external_weight': '', 'external_unit': ''})
 
         if not self.selected_device_id:
-            self._notify_user(_("No device selected. Please select a scale device before printing."))
-            _logger.warning("No device selected for fetching scale data.")
-            return
+            raise UserError(_("No device selected. Please select a scale device before printing."))
 
-        _logger.debug(f"Selected device: {self.selected_device_id.name}, Device ID: {self.selected_device_id.id}")
+        # Log selected device information
+        _logger.debug(f"Selected device: {self.selected_device_id.name} (ID: {self.selected_device_id.id})")
 
-        # If an empty device is selected, proceed with empty data
-        if self.selected_device_id.status == 'empty':
-            self._notify_user(_("No valid device selected. Printing will proceed with empty scale data."))
-            return
-
-        # Fetch the corresponding connection for the selected device
-        connection = self.env['devices.connection'].search([('device_id', '=', self.selected_device_id.id)], limit=1)
-
-        if not connection:
-            self._notify_user(_(f"No connection found for the selected device {self.selected_device_id.name}. Printing will proceed with empty scale data."))
-            _logger.warning(f"No connection found for the selected device {self.selected_device_id.name}.")
-            return
-
-        _logger.debug(f"Found connection for device {self.selected_device_id.name}: URL - {connection.url}")
-
-        if connection.status != 'valid':
-            self._notify_user(_(
-                f"The connection associated with device {self.selected_device_id.name} is invalid. "
-                f"Printing will proceed with empty scale data."
+        # Fetch the URL from the selected device
+        connection = self.selected_device_id
+        if not connection or not connection.url:
+            raise UserError(_(
+                f"The selected device {self.selected_device_id.name} does not have a valid URL."
+                " Printing will proceed with empty scale data."
             ))
-            _logger.warning(f"Invalid connection for device {self.selected_device_id.name}.")
-            return
+
+        _logger.debug(f"Device URL: {connection.url}")
 
         try:
-            # Sending GET request to the connection's URL
+            # Send GET request to the device's URL
             headers = {
                 'User-Agent': 'PostmanRuntime/7.30.0',
                 'Accept': 'application/json',
@@ -73,31 +58,20 @@ class StockMove(models.Model):
             if response.status_code == 200:
                 # Parse the response data (assuming JSON format)
                 data = response.json()
-                weight = data.get("weight", "")  # Default to empty if weight is not found
-                unit = data.get("unit", "")     # Default to empty if unit is not found
+                weight = data.get("weight", "")
+                unit = data.get("unit", "")
 
                 if not weight and not unit:
-                    self._notify_user(_("The scale service did not return weight or unit data. Printing will proceed with empty scale data."))
-                    _logger.warning("The scale service did not return weight or unit data.")
-                    return
+                    raise UserError(_("The scale service did not return weight or unit data. Printing will proceed with empty scale data."))
 
-                # Update stock move with the fetched data
+                # Update stock move with fetched data
                 self.write({'external_weight': str(weight), 'external_unit': unit})
                 _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
             else:
-                self._notify_user(_(f"Failed to fetch scale data: HTTP {response.status_code}. Printing will proceed with empty scale data."))
-                _logger.error(f"Failed to fetch scale data: HTTP {response.status_code}.")
+                raise UserError(_(f"Failed to fetch scale data: HTTP {response.status_code}. Printing will proceed with empty scale data."))
 
         except requests.exceptions.RequestException as e:
-            self._notify_user(_(f"Error connecting to the scale service: {str(e)}. Printing will proceed with empty scale data."))
-            _logger.error(f"Error connecting to the scale service: {str(e)}")
-
-    def _notify_user(self, message):
-        """
-        Sends a notification to the current user using the bus notification framework.
-        """
-        notifications = [(self.env.user.partner_id, 'simple_notification', {'message': message, 'type': 'warning'})]
-        self.env['bus.bus']._sendmany(notifications)
+            raise UserError(_(f"Error connecting to the scale service: {str(e)}. Printing will proceed with empty scale data."))
 
     def action_print_report(self):
         """
@@ -107,7 +81,7 @@ class StockMove(models.Model):
         if not self.selected_device_id:
             raise UserError(_("No device selected. Please select a scale device before printing."))
 
-        # Attempt to fetch and update scale data
+        # Fetch and update scale data
         self.fetch_and_update_scale_data()
 
         # Proceed with printing the report
