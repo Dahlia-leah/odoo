@@ -8,6 +8,7 @@
     'data': [
         'views/stock_picking_views.xml',
         'reports/stock_picking_report_template.xml',
+        'security/ir.model.access.csv'
     ],
     'installable': True,
     'application': False,
