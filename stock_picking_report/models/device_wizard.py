@@ -1,7 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import logging
-from odoo.addons.odoo_device.models import devices
 
 _logger = logging.getLogger(__name__)
 
