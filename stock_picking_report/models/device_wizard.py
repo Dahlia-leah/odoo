@@ -1,81 +1,44 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, RedirectWarning
 
 class DeviceSelectionWizard(models.TransientModel):
-    _name = 'device.selection.wizard'
+    _name = 'devices.device.selection.wizard'
     _description = 'Device Selection Wizard'
 
-    device_id = fields.Many2one(
-        'devices.connection',
-        string='Select Device',
-        required=True,
-        domain="[('device_id', '=', 1), ('status', '=', 'valid')]",
-        help="Select a valid device (ID 1) to fetch weight data."
+    selected_device_id = fields.Many2one(
+        'devices.device', string='Selected Device',
+        help="The device selected for fetching weight data.",
+        required=True
     )
 
-    active = fields.Boolean(default=True)  # To handle archiving instead of deletion
-
-    @api.model
-    def default_get(self, fields_list):
+    def action_confirm(self):
         """
-        Populate default values for the wizard.
+        Check if the device is connected. If not, notify the user and proceed to print.
         """
-        res = super(DeviceSelectionWizard, self).default_get(fields_list)
-
-        # Search for devices that are connected (valid) and related to the device ID 1
-        connected_devices = self.env['devices.connection'].search([
-            ('status', '=', 'valid'),
-            ('device_id', '=', 1)  # Filter by the device ID (ID 1)
-        ])
-
-        # If no devices are found, raise an error
-        if not connected_devices:
-            raise UserError(_("No valid devices with ID 1 found. Please connect such a device before proceeding."))
+        if not self.selected_device_id:
+            raise UserError(_("No device selected!"))
         
-        return res
+        # Fetch the corresponding connection for the selected device
+        connection = self.env['devices.connection'].search([('device_id', '=', self.selected_device_id.id)], limit=1)
 
-    def confirm_selection(self):
-        """
-        Confirm the device selection and save it to the active stock move.
-        """
-        # Fetch the active stock move record from the context
-        active_id = self.env.context.get('active_id')
-        if not active_id:
-            raise UserError(_("No active record found to link the device to."))
+        if not connection or connection.status != 'valid':
+            # Notify the user that the scale is not connected
+            message = _(
+                f"The connection associated with the device {self.selected_device_id.name} is invalid or not found. "
+                "Printing will proceed with empty scale data."
+            )
+            self.env.user.notify_warning(message)
+            _logger.warning(message)
 
-        stock_move = self.env['stock.move'].browse(active_id)
-        if not stock_move.exists():
-            raise UserError(_("The selected stock move does not exist."))
+        # Trigger the printing action for the stock.move
+        stock_move = self.env['stock.move'].browse(self._context.get('active_id'))
+        if stock_move:
+            # Proceed to print the report regardless of the connection status
+            stock_move.fetch_and_update_scale_data()
+            report_action = self.env.ref('stock_picking_report.action_report_stock_picking', raise_if_not_found=False)
+            if report_action:
+                return report_action.report_action(stock_move)
+            else:
+                raise UserError(_("Report action not found."))
 
-        # Check if `selected_device_id` field exists on the stock move model
-        if not hasattr(stock_move, 'selected_device_id'):
-            raise UserError(_("The stock move does not support device selection."))
-
-        # Set the selected device on the stock move
-        stock_move.selected_device_id = self.device_id
-
-        # Check if `action_print_report` method exists
-        if not hasattr(stock_move, 'action_print_report'):
-            raise UserError(_("The stock move does not have a method to print the report."))
-
-        # Call the method to print the report
-        stock_move.action_print_report()
-
-    @api.model
-    def unlink(self):
-      """
-       Override unlink to prevent deletion if the record is referenced elsewhere.
-      Instead of deleting, we archive the record.
-       """
-      for record in self:
-          # Check if the device is referenced elsewhere (i.e., foreign key constraint)
-          if record.device_id:
-              # Check if the device is being referenced by another model (e.g., 'stock.move')
-              # Here we assume that 'stock.move' is referencing 'device.selection.wizard'
-              if self.env['stock.move'].search_count([('selected_device_id', '=', record.device_id.id)]) > 0:
-                  # Archive the record instead of deleting
-                  record.active = False
-                  return True
-      # Proceed with deletion if no references are found
-      return super(DeviceSelectionWizard, self).unlink()
-
+        return True

@@ -20,12 +20,13 @@
                 </xpath>
             </field>
         </record>
+        
+ <!-- Action to open the wizard -->
         <record id="device_selection_wizard_action" model="ir.actions.act_window">
-        <field name="name">Select Device</field>
-        <field name="res_model">device.selection.wizard</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
+            <field name="name">Select Device</field>
+            <field name="res_model">devices.device.selection.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
         </record>
-
     </data>
 </odoo>
