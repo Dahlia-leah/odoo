@@ -1,6 +1,5 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
-from odoo.exceptions import RedirectWarning
+from odoo.exceptions import UserError, RedirectWarning
 import requests
 import logging
 
@@ -87,14 +86,14 @@ class StockMove(models.Model):
         Fetch and update scale data before printing, but always proceed with printing.
         """
 
-        if not self.selected_device_id or self.selected_device_id.connection_status != 'connected':
+        if not self.selected_device_id or self.selected_device_id.connection_status != 'valid':
             # Open the wizard for device selection
             action = self.env.ref('stock_picking_report.device_selection_wizard_action').read()[0]
             action['context'] = {'active_id': self.id}
             raise RedirectWarning(
-                _("You need to select a connected device before printing."),
-            action['id'],
-            _("Select Device")
+                _("You need to select a valid device before printing."),
+                action['id'],
+                _("Select Device")
             )
 
         # Attempt to fetch and update scale data
@@ -106,5 +105,3 @@ class StockMove(models.Model):
             return report_action.report_action(self)
         else:
             raise UserError(_("Report action not found."))
-
-    
