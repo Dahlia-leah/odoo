@@ -31,7 +31,7 @@ class StockMove(models.Model):
         self.write({'external_weight': '', 'external_unit': ''})
 
         if not self.selected_device_id:
-            self._open_scale_error_wizard(_("No device selected. Please select a scale device before printing."))
+            return self._open_scale_error_wizard(_("No device selected. Please select a scale device before printing."))
 
         # Log selected device information
         _logger.debug(f"Selected device: {self.selected_device_id.name} (ID: {self.selected_device_id.id})")
@@ -39,7 +39,7 @@ class StockMove(models.Model):
         # Fetch the URL from the selected device
         connection = self.selected_device_id
         if not connection or not connection.url:
-            self._open_scale_error_wizard(_("The selected device does not have a valid URL."))
+            return self._open_scale_error_wizard(_("The selected device does not have a valid URL."))
 
         _logger.debug(f"Device URL: {connection.url}")
 
@@ -59,32 +59,31 @@ class StockMove(models.Model):
                 unit = data.get("unit", "")
 
                 if not weight and not unit:
-                    self._open_scale_error_wizard(_("The scale service did not return weight or unit data."))
+                    return self._open_scale_error_wizard(_("The scale service did not return weight or unit data."))
 
                 # Update stock move with fetched data
                 self.write({'external_weight': str(weight), 'external_unit': unit})
                 _logger.info(f"Updated stock move with weight: {weight} and unit: {unit}")
             else:
-                self._open_scale_error_wizard(_(f"Failed to fetch scale data: HTTP {response.status_code}."))
+                return self._open_scale_error_wizard(_(f"Failed to fetch scale data: HTTP {response.status_code}."))
 
         except requests.exceptions.RequestException as e:
-            self._open_scale_error_wizard(_(f"Error connecting to the scale service: {str(e)}."))
+            return self._open_scale_error_wizard(_(f"Error connecting to the scale service: {str(e)}."))
 
     def _open_scale_error_wizard(self, message):
-       """
-       Opens the wizard for handling scale connection errors.
-      """
-       return {
-          'type': 'ir.actions.act_window',
-          'res_model': 'scale.connection.wizard',
-          'view_mode': 'form',
-          'target': 'new',
-          'context': {
-              'default_message': message,
-              'default_stock_move_id': self.id,
-           },
-       }
-
+        """
+        Opens the wizard for handling scale connection errors.
+        """
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'scale.connection.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_message': message,
+                'default_stock_move_id': self.id,
+            },
+        }
 
     def action_print_report(self):
         """
@@ -92,10 +91,13 @@ class StockMove(models.Model):
         Fetch and update scale data before printing, but always proceed with printing.
         """
         if not self.selected_device_id:
-            raise UserError(_("No device selected. Please select a scale device before printing."))
+            return self._open_scale_error_wizard(_("No device selected. Please select a scale device before printing."))
 
         # Fetch and update scale data
-        self.fetch_and_update_scale_data()
+        fetch_result = self.fetch_and_update_scale_data()
+        if fetch_result:
+            # Return the wizard action if there's a scale error
+            return fetch_result
 
         # Proceed with printing the report
         report_action = self.env.ref('stock_picking_report.action_report_stock_picking', raise_if_not_found=False)
