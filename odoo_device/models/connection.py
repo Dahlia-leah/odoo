@@ -10,30 +10,27 @@ class Connection(models.Model):
     _name = 'devices.connection'
     _description = 'Device Connection'
     _order = 'name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(string='Connection Name', required=True, index=True)
-    device_id = fields.Many2one('devices.device', string='Device', required=True, ondelete='cascade')
-    url = fields.Char(string='Connection URL', required=True)
+    name = fields.Char(string='Connection Name', required=True, index=True, tracking=True)
+    device_id = fields.Many2one('devices.device', string='Device', required=True, ondelete='cascade', tracking=True)
+    url = fields.Char(string='Connection URL', required=True, tracking=True)
     json_data = fields.Text(string='JSON Data', readonly=True)
     status = fields.Selection(
         [('valid', 'Valid'), ('invalid', 'Invalid')],
         string='Status',
         readonly=True,
-        default='invalid'
+        default='invalid',
+        tracking=True
     )
-    active = fields.Boolean(default=True, string="Active")
+    active = fields.Boolean(default=True, string="Active", tracking=True)
 
-    # Ensure each device can only have one connection
     _sql_constraints = [
         ('unique_device_connection', 'UNIQUE(device_id)', 'Each device can only have one connection!')
     ]
 
     @api.constrains('url')
     def _check_json_in_url(self):
-        """
-        Validate the URL by attempting to fetch JSON data from it.
-        Update the connection status and JSON data based on the result.
-        """
         for record in self:
             headers = {
                 'User-Agent': 'PostmanRuntime/7.30.0',
@@ -42,7 +39,7 @@ class Connection(models.Model):
             try:
                 _logger.info(f"Attempting to fetch JSON from URL: {record.url}")
                 response = requests.get(record.url, headers=headers, timeout=10, verify=False)
-                response.raise_for_status()  # Raises an HTTPError for bad responses
+                response.raise_for_status()
                 try:
                     json_data = response.json()
                     record.status = 'valid'
@@ -57,9 +54,6 @@ class Connection(models.Model):
                 raise ValidationError(_("Failed to fetch URL: %s") % str(e))
 
     def delete_connection(self):
-        """
-        Delete the connection if it's not being used in any stock moves.
-        """
         self.ensure_one()
         if self.env['stock.move'].search_count([('selected_device_id', '=', self.id)]) > 0:
             raise ValidationError(_("Cannot delete this connection because it is being used in stock moves. Please archive it instead."))
@@ -67,9 +61,6 @@ class Connection(models.Model):
         return self.unlink()
 
     def archive_connection(self):
-        """
-        Archive the connection by setting it as inactive.
-        """
         self.ensure_one()
         self.active = False
         _logger.info(f"Archived connection: {self.name}")
@@ -77,33 +68,21 @@ class Connection(models.Model):
 
     @api.model
     def create(self, vals):
-        """
-        Override create method to validate the URL when creating a new connection.
-        """
         record = super(Connection, self).create(vals)
         record._check_json_in_url()
         return record
 
     def write(self, vals):
-        """
-        Override write method to validate the URL when updating a connection.
-        """
         result = super(Connection, self).write(vals)
         if 'url' in vals:
             self._check_json_in_url()
         return result
 
     def name_get(self):
-        """
-        Custom name_get method to display both connection name and device name.
-        """
         return [(record.id, f"{record.name} ({record.device_id.name})") for record in self]
 
     @api.model
     def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        """
-        Custom search method to allow searching by both connection name and device name.
-        """
         args = args or []
         domain = []
         if name:
