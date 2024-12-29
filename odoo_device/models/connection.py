@@ -58,13 +58,14 @@ class Connection(models.Model):
 
     @api.model
     def unlink(self):
-        # Override to bypass foreign key check
-        for record in self:
-            # Manually unlink dependent stock moves (if any)
-            stock_moves = self.env['stock.move'].search([('connection_id', '=', record.id)])
-            stock_moves.unlink()  # Unlink the dependent stock moves
-
-        return super(Connection, self).unlink()  # Call the parent unlink method
+      # Override to bypass foreign key check
+      for record in self:
+          # Manually unlink dependent stock moves (if any)
+          stock_moves = self.env['stock.move'].search([('connection_id', '=', record.id)])
+          stock_moves.unlink()  # Unlink the dependent stock moves
+  
+      # Ensure that super is called with no extra arguments
+      return super(Connection, self).unlink()
 
     @api.model
     def refresh_connections_cron(self):
