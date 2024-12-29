@@ -91,13 +91,21 @@ class StockMove(models.Model):
         Fetch and update scale data before printing, but always proceed with printing.
         """
         if not self.selected_device_id:
-            
-            return self._open_scale_error_wizard(_("No device selected. Please select a scale device before printing."))
+            # If no device is selected, open the wizard to select a device
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'device.selection.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_selected_device_id': self.selected_device_id.id if self.selected_device_id else False,
+                    'active_id': self.id,  # Pass the current stock move ID to the wizard
+                }
+            }
 
-        # Fetch and update scale data
+        # If a device is already selected, fetch data and print
         fetch_result = self.fetch_and_update_scale_data()
         if fetch_result:
-            # Return the wizard action if there's a scale error
             return fetch_result
 
         # Proceed with printing the report
