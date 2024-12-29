@@ -37,11 +37,12 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <field name="active" invisible="1"/>
                     <button name="archive_connection" string="Archive" type="object" 
-                            attrs="{'invisible': [('active', '=', False)]}" 
+                            invisible="active == False"
                             class="oe_highlight" confirm="Are you sure you want to archive this connection?"/>
                     <button name="archive_connection" string="Unarchive" type="object" 
-                            attrs="{'invisible': [('active', '=', True)]}" 
+                            invisible="active == True"
                             class="oe_highlight"/>
                 </header>
                 <sheet>
