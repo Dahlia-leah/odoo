@@ -12,48 +12,47 @@
         </record>
   
         <!-- Report Template -->
-        <template id="report_stock_picking_template">
-            <t t-call="web.basic_layout">
-                <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 18px; line-height: 2;">
-                        <h4 style=" font-size: 22px; text-align: center;">Weighing Label</h4>
-                        <table style="width: 100%; table-layout: fixed; ">
-                            <tr>
-                                <td style="width: 50%;">Product: <span t-esc="doc.product_id.name"/> </td>
-                                <td style="width: 50%;"> ID: <span t-esc="doc.product_id.id"/></td>
-                            </tr>
+       <!-- Report Template -->
+<template id="report_stock_picking_template">
+    <t t-call="web.basic_layout">
+        <t t-foreach="docs" t-as="doc">
+            <div style="font-size: 18px; line-height: 2;">
+                <h4 style="font-size: 22px; text-align: center; font-weight: bold;">Weighing Label</h4>
+                <table style="width: 100%; table-layout: fixed;">
+                    <tr style="border: none; visibility: hidden;">
+                        <td style="width: 50%; font-weight: bold;">Product: <span t-esc="doc.product_id.name"/></td>
+                        <td style="width: 50%; font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
+                    </tr>
+                    <tr style="border: none; visibility: hidden;">
+                        <td style="font-weight: bold;">Batch No: <span t-esc="doc.lot_ids.display_name"/></td>
+                        <td></td>
+                    </tr>
+                    <tr style="border: none; visibility: hidden;">
+                        <td style="font-weight: bold;">Item: <span t-esc="doc.product_id.name"/></td>
+                        <td style="font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
+                    </tr>
+                    <tr style="border: none; visibility: hidden;">
+                        <td style="font-weight: bold;">Exp:</td>
+                        <td style="font-weight: bold;">Control No:</td>
+                    </tr>
+                    <tr style="border: none; visibility: hidden;">
+                        <td style="font-weight: bold;">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
+                        <td style="font-weight: bold;">Theoretical: <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
+                    </tr>
+                    <tr style="border: none; visibility: hidden;">
+                        <td style="font-weight: bold;">Dispenser:</td>
+                        <td style="font-weight: bold;">IPC:</td>
+                    </tr>
+                    <tr style="border: none; visibility: hidden;">
+                        <td style="font-weight: bold;">Date:<span t-esc="doc.time_printing"/></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </t>
+</template>
 
-                            <tr>
-                                <td>Batch No: <span t-esc="doc.lot_ids.display_name"/></td>
-                                <td> </td>
-                            </tr>
-                            <tr>
-                                <td>Item: <span t-esc="doc.product_id.name"/></td>
-                                <td>ID: <span t-esc="doc.product_id.id"/></td>
-                            </tr>
-                            <tr>
-                                <td>Exp:</td>
-                                <td>Control No:</td>
-                            </tr>
-                            <tr>
-                                <td>Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
-                                <td>Theoretical:  <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
-                            </tr>
-                            <tr>
-                                <td>Dispenser: </td>
-                                <td>IPC:</td>
-                            </tr>
-            
-                            <tr>
-                                <td>Date:<span t-fProductield="doc.time_printing"/></td>
-                                <td></td>
-                            </tr>
-                            
-                        </table>
-                    </div>
-                </t>
-            </t>
-        </template>
 
         <!-- Report Action -->
         <record id="action_report_stock_picking" model="ir.actions.report">
