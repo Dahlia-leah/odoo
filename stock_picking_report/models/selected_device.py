@@ -11,6 +11,7 @@ class DeviceSelectionWizard(models.TransientModel):
         string='Select Device',
         domain=[('status', '=', 'valid')],
         required=True,
+        ondelete='cascade',
         help="Select the scale device to fetch weight and unit data."
     )
 
