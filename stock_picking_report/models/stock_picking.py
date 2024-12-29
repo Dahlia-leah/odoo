@@ -71,19 +71,22 @@ class StockMove(models.Model):
             return self._open_scale_error_wizard(_(f"Error connecting to the scale service: {str(e)}."))
 
     def _open_scale_error_wizard(self, message):
-        """
-        Opens the wizard for handling scale connection errors.
-        """
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'scale.connection.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_message': message,
-                'default_stock_move_id': self.id,
-            },
-        }
+      """
+      Opens the wizard for handling scale connection errors.
+      Clears the current selected device to prompt the user to reselect.
+      """
+      self.write({'selected_device_id': False})  # Clear the current device selection
+      return {
+          'type': 'ir.actions.act_window',
+          'res_model': 'scale.connection.wizard',
+          'view_mode': 'form',
+          'target': 'new',
+          'context': {
+              'default_message': message,
+              'default_stock_move_id': self.id,
+          },
+      }
+
 
     def action_print_report(self):
         """
