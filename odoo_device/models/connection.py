@@ -39,7 +39,7 @@ class Connection(models.Model):
                 # Handle network-related issues
                 record.status = 'invalid'
                 raise ValidationError(f"Failed to fetch URL: {e}")
-                
+
     @api.model
     def unlink(self):
         for record in self:
@@ -50,4 +50,4 @@ class Connection(models.Model):
                 raise ValidationError("Cannot delete this connection because it is being used in stock moves. Please archive it instead.")
             else:
                 # Proceed with the deletion if no references are found
-                super(Connection, record).unlink()
+                return super(Connection, record).unlink()
