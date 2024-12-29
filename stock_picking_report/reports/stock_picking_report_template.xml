@@ -15,8 +15,8 @@
         <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 15px; line-height: 1.5;">
-                        <h4 style="text-align: center;">Weighing Label</h4>
+                    <div style="font-size: 15px; line-height: 1.8;">
+                        <h4 style=" font-size: 18px; text-align: center;">Weighing Label</h4>
                         <table style="width: 100%; table-layout: fixed;">
                             <tr>
                                 <td style="width: 50%;">Product: <span t-esc="doc.product_id.name"/> </td>
