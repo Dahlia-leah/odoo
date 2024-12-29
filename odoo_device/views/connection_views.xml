@@ -39,7 +39,19 @@
             </form>
         </field>
     </record>
-
+    
+    <data noupdate="1">
+        <record id="ir_cron_refresh_device_connections" model="ir.cron">
+            <field name="name">Refresh Device Connections</field>
+            <field name="model_id" ref="model_devices_connection"/>
+            <field name="state">code</field>
+            <field name="code">model.refresh_connections_cron()</field>
+            <field name="interval_number">10</field>
+            <field name="interval_type">seconds</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+    </data>
     <!-- Menu Items -->
     <menuitem id="menu_devices_root" name="Devices" sequence="1" web_icon="odoo_device,static/description/icon.png" />
     <menuitem id="menu_connection" name="Connections" parent="menu_devices_root" action="action_connection"/>
