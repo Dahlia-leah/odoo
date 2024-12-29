@@ -34,24 +34,14 @@
                     <group>
                         <field name="status" readonly="1"/>
                         <field name="json_data" readonly="1" widget="text"/>
+                        <button name="archive_connection" string="Archive" type="object" class="btn-primary"/>
+                        <button name="delete_connection" string="Delete" type="object" class="btn-danger"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-   <record id="view_connection_form" model="ir.ui.view">
-     <field name="name">devices.connection.form</field>
-     <field name="model">devices.connection</field>
-     <field name="arch" type="xml">
-         <form>
-             <header>
-                 <button name="archive_connection" string="Archive" type="object" class="btn-primary"/>
-                 <button name="delete_connection" string="Delete" type="object" class="btn-danger"/>
-             </header>
-         </form>
-      </field>
-    </record>
 
 
     <!-- Menu Items -->
