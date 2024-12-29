@@ -42,7 +42,7 @@ class Connection(models.Model):
                 raise ValidationError(f"Failed to fetch URL: {e}")
 
     @api.model
-    def delete_connection(self):
+    def delete_connection(self, args):
         """Delete connection only if it's not referenced in stock moves."""
         for record in self:
             # Check if the connection is being used in any stock move
@@ -55,7 +55,7 @@ class Connection(models.Model):
                 record.unlink()
 
     @api.model
-    def archive_connection(self):
+    def archive_connection(self, args):
         """Archive the connection by setting 'active' to False."""
         for record in self:
             record.active = False
