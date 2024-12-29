@@ -36,23 +36,32 @@ class Connection(models.Model):
                 response = requests.get(record.url, headers=headers, timeout=10, verify=False)
                 response.raise_for_status()  # Ensure HTTP status code is 2xx
 
+                # Validate JSON response
                 try:
                     json_data = response.json()
+                    record.status = 'valid'
+                    record.json_data = json.dumps(json_data, indent=4)
+                    _logger.info(f"Valid JSON received for {record.name}")  # Log valid JSON
                 except ValueError:
+                    # If the response isn't JSON, mark it as invalid and remove it
                     _logger.warning(f"Invalid JSON from {record.url}")  # Log invalid JSON
                     record.status = 'invalid'
                     record.json_data = False
                     record.unlink()  # Delete invalid record
-                    continue
-
-                record.status = 'valid'
-                record.json_data = json.dumps(json_data, indent=4)
-                _logger.info(f"Valid JSON received for {record.name}")  # Log valid JSON
 
             except requests.exceptions.RequestException as e:
+                # Handle request failure, mark as invalid and delete record
                 _logger.error(f"Request failed for {record.name} ({record.url}): {str(e)}")  # Log request failure
                 record.status = 'invalid'
                 record.json_data = False
                 record.unlink()  # Delete invalid record
 
-  
+    @api.model
+    def refresh_connections_cron(self):
+        """
+        Scheduled action to refresh the status of all connections.
+        Removes connections that fail validation or don't return JSON.
+        """
+        _logger.info("Refreshing device connections...")  # Log cron execution
+        all_connections = self.search([])  # Get all connection records
+        all_connections.check_and_refresh_url()  # Refresh all connections with the above method
