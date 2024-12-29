@@ -1,7 +1,10 @@
 import requests
 import json
+import logging
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)  # Initialize logger
 
 class Connection(models.Model):
     _name = 'devices.connection'
@@ -29,29 +32,28 @@ class Connection(models.Model):
         }
         for record in self:
             try:
-                # Fetch the URL content
+                _logger.info(f"Checking URL for {record.name}: {record.url}")  # Log URL check
                 response = requests.get(record.url, headers=headers, timeout=10, verify=False)
                 response.raise_for_status()  # Ensure HTTP status code is 2xx
 
-                # Validate and parse the response as JSON
                 try:
                     json_data = response.json()
                 except ValueError:
-                    # If response is not valid JSON, remove the record
+                    _logger.warning(f"Invalid JSON from {record.url}")  # Log invalid JSON
                     record.status = 'invalid'
                     record.json_data = False
-                    record.unlink()
+                    record.unlink()  # Delete invalid record
                     continue
 
-                # Update record with valid JSON data
                 record.status = 'valid'
                 record.json_data = json.dumps(json_data, indent=4)
+                _logger.info(f"Valid JSON received for {record.name}")  # Log valid JSON
 
-            except (requests.exceptions.RequestException, Exception):
-                # Handle request or other exceptions
+            except requests.exceptions.RequestException as e:
+                _logger.error(f"Request failed for {record.name} ({record.url}): {str(e)}")  # Log request failure
                 record.status = 'invalid'
                 record.json_data = False
-                record.unlink()
+                record.unlink()  # Delete invalid record
 
     @api.model
     def refresh_connections_cron(self):
@@ -59,5 +61,7 @@ class Connection(models.Model):
         Scheduled action to refresh the status of all connections.
         Removes connections that fail validation or don't return JSON.
         """
+        _logger.info("Refreshing device connections...")  # Log cron execution
         all_connections = self.search([])
-        all_connections.check_and_refresh_url()
+        all_connections.check_and_refresh_url()  # Refresh all connections
+
