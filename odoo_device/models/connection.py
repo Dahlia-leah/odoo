@@ -43,21 +43,20 @@ class Connection(models.Model):
                 record.status = 'invalid'
                 raise ValidationError(f"Failed to fetch URL: {e}")
 
-    @api.model
     def delete_connection(self):
         """Delete connection only if it's not referenced in stock moves."""
-        for record in self:
-            # Check if the connection is being used in any stock move
-            stock_moves = self.env['stock.move'].search([('device_id', '=', record.device_id.id)])
-            if stock_moves:
-                # Raise an error if the connection is being referenced
-                raise ValidationError("Cannot delete this connection because it is being used in stock moves. Please archive it instead.")
-            else:
-                # Proceed with deletion if no references are found
-                record.unlink()
+        self.ensure_one()  # Ensure this method is called on a single record
+        # Check if the connection is being used in any stock move
+        stock_moves = self.env['stock.move'].search([('device_id', '=', self.device_id.id)])
+        if stock_moves:
+            # Raise an error if the connection is being referenced
+            raise ValidationError("Cannot delete this connection because it is being used in stock moves. Please archive it instead.")
+        else:
+            # Proceed with deletion if no references are found
+            self.unlink()
 
-    @api.model
     def archive_connection(self):
         """Archive the connection by setting 'active' to False."""
-        for record in self:
-            record.active = False
+        self.ensure_one()  # Ensure this method is called on a single record
+        self.active = False
+
