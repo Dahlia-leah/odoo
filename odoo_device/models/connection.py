@@ -34,7 +34,7 @@ class Connection(models.Model):
                 # Attempt to parse the response content as JSON
                 try:
                     json_data = response.json()
-                    
+
                 except ValueError as e:
                     record.status = 'invalid'
                     record.json_data = False
@@ -48,14 +48,14 @@ class Connection(models.Model):
                 # Check if the JSON parsing succeeded regardless of HTTP status
                 record.status = 'valid'
                 record.json_data = json.dumps(json_data, indent=4)
-           
+
             except requests.exceptions.RequestException as e:
                 # Handle network-related issues
-                record.status = 'invalid'
                 record.status = 'invalid'
                 record.json_data = False
                 record.unlink()  # Delete invalid record
                 raise ValidationError(f"Failed to fetch URL: {e}")
+
     @api.model
     def unlink(self):
         # Override to bypass foreign key check
@@ -64,9 +64,8 @@ class Connection(models.Model):
             stock_moves = self.env['stock.move'].search([('connection_id', '=', record.id)])
             stock_moves.unlink()  # Unlink the dependent stock moves
 
-        return super(Connection, self).unlink()
+        return super(Connection, self).unlink()  # Call the parent unlink method
 
-            
     @api.model
     def refresh_connections_cron(self):
         """
