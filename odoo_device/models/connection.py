@@ -1,5 +1,3 @@
-import requests
-import json
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
@@ -41,3 +39,15 @@ class Connection(models.Model):
                 # Handle network-related issues
                 record.status = 'invalid'
                 raise ValidationError(f"Failed to fetch URL: {e}")
+                
+    @api.model
+    def unlink(self):
+        for record in self:
+            # Check if there are any stock moves referencing the device
+            stock_moves = self.env['stock.move'].search([('device_id', '=', record.device_id.id)])
+            if stock_moves:
+                # If stock moves exist, raise an error or archive instead of deleting
+                raise ValidationError("Cannot delete this connection because it is being used in stock moves. Please archive it instead.")
+            else:
+                # Proceed with the deletion if no references are found
+                super(Connection, record).unlink()
