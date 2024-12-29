@@ -55,13 +55,4 @@ class Connection(models.Model):
                 record.json_data = False
                 record.unlink()  # Delete invalid record
 
-    @api.model
-    def refresh_connections_cron(self):
-        """
-        Scheduled action to refresh the status of all connections.
-        Removes connections that fail validation or don't return JSON.
-        """
-        _logger.info("Refreshing device connections...")  # Log cron execution
-        all_connections = self.search([])
-        all_connections.check_and_refresh_url()  # Refresh all connections
-
+  
