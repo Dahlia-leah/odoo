@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 import requests
 import json
 import logging
+from datetime import datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -24,34 +25,53 @@ class Connection(models.Model):
         tracking=True
     )
     active = fields.Boolean(default=True, string="Active", tracking=True)
+    last_checked = fields.Datetime(string="Last Checked", readonly=True)
 
     _sql_constraints = [
         ('unique_device_connection', 'UNIQUE(device_id)', 'Each device can only have one connection!')
     ]
 
-    @api.constrains('url')
     def _check_json_in_url(self):
-        for record in self:
-            headers = {
-                'User-Agent': 'PostmanRuntime/7.30.0',
-                'Accept': 'application/json',
-            }
+        self.ensure_one()
+        headers = {
+            'User-Agent': 'PostmanRuntime/7.30.0',
+            'Accept': 'application/json',
+        }
+        try:
+            _logger.info(f"Attempting to fetch JSON from URL: {self.url}")
+            response = requests.get(self.url, headers=headers, timeout=10, verify=False)
+            response.raise_for_status()
             try:
-                _logger.info(f"Attempting to fetch JSON from URL: {record.url}")
-                response = requests.get(record.url, headers=headers, timeout=10, verify=False)
-                response.raise_for_status()
-                try:
-                    json_data = response.json()
-                    record.status = 'valid'
-                    record.json_data = json.dumps(json_data, indent=4)
-                    _logger.info(f"Successfully fetched and validated JSON for connection: {record.name}")
-                except ValueError as e:
-                    record.status = 'invalid'
-                    raise ValidationError(_("The response is not valid JSON: %s") % str(e))
-            except requests.exceptions.RequestException as e:
-                record.status = 'invalid'
-                _logger.error(f"Failed to fetch URL for connection {record.name}: {str(e)}")
-                raise ValidationError(_("Failed to fetch URL: %s") % str(e))
+                json_data = response.json()
+                self.write({
+                    'status': 'valid',
+                    'json_data': json.dumps(json_data, indent=4),
+                    'last_checked': fields.Datetime.now(),
+                })
+                _logger.info(f"Successfully fetched and validated JSON for connection: {self.name}")
+            except ValueError as e:
+                self.write({
+                    'status': 'invalid',
+                    'last_checked': fields.Datetime.now(),
+                })
+                _logger.error(f"Invalid JSON for connection {self.name}: {str(e)}")
+        except requests.exceptions.RequestException as e:
+            self.write({
+                'status': 'invalid',
+                'last_checked': fields.Datetime.now(),
+            })
+            _logger.error(f"Failed to fetch URL for connection {self.name}: {str(e)}")
+
+    @api.model
+    def _cron_check_connections(self):
+        connections = self.search([('active', '=', True)])
+        for connection in connections:
+            connection._check_json_in_url()
+
+    @api.constrains('url')
+    def _check_url_constraint(self):
+        for record in self:
+            record._check_json_in_url()
 
     def delete_connection(self):
         self.ensure_one()

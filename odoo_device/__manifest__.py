@@ -11,6 +11,7 @@
         'security/ir.model.access.csv',
         'views/connection_views.xml',
         'views/device_views.xml',
+        'data/ir_cron_data.xml',
     ],
     'installable': True,
     'application': True,
