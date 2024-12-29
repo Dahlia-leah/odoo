@@ -41,6 +41,8 @@
     </record>
 
     <!-- Menu Items -->
-    <menuitem id="menu_devices_root" name="Devices" sequence="1"/>
+    <menuitem id="menu_devices_root" name="Devices" sequence="1"> 
+      <img src="icon.png" alt="Devices Icon"/>
+    </menuitem>
     <menuitem id="menu_connection" name="Connections" parent="menu_devices_root" action="action_connection"/>
 </odoo>
