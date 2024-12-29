@@ -10,14 +10,14 @@
             <field name="margin_left">3</field>
             <field name="margin_right">3</field>
         </record>
-
+  
         <!-- Report Template -->
         <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 15px; line-height: 1.8;">
-                        <h4 style=" font-size: 18px; text-align: center;">Weighing Label</h4>
-                        <table style="width: 100%; table-layout: fixed;">
+                    <div style="font-size: 18px; line-height: 2;">
+                        <h4 style=" font-size: 22px; text-align: center;">Weighing Label</h4>
+                        <table style="width: 100%; table-layout: fixed; ">
                             <tr>
                                 <td style="width: 50%;">Product: <span t-esc="doc.product_id.name"/> </td>
                                 <td style="width: 50%;"> ID: <span t-esc="doc.product_id.id"/></td>
