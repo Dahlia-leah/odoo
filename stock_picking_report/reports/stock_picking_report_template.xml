@@ -16,7 +16,7 @@
 <template id="report_stock_picking_template">
     <t t-call="web.basic_layout">
         <t t-foreach="docs" t-as="doc">
-            <div style="font-size: 18px; line-height: 2;">
+            <div style="font-size: 16px; line-height: 1.5;">
                 <h4 style="font-size: 22px; text-align: center; font-weight: bold;">Weighing Label</h4>
                 <table style="width: 100%; table-layout: fixed;">
                     <tr style="border: none;">
