@@ -40,17 +40,19 @@
         </field>
     </record>
 
-    <!-- Cron Job for Refreshing Device Connections -->
-    <record id="ir_cron_refresh_device_connections" model="ir.cron">
-        <field name="name">Refresh Device Connections</field>
-        <field name="model_id" ref="model_devices_connection"/>
-        <field name="state">code</field>
-        <field name="code">model.refresh_connections_cron()</field>
-        <field name="interval_number">1</field>
-        <field name="interval_type">minutes</field> 
-        <field name="numbercall">-1</field>
-        <field name="active">True</field>
+   <record id="view_connection_form" model="ir.ui.view">
+     <field name="name">devices.connection.form</field>
+     <field name="model">devices.connection</field>
+     <field name="arch" type="xml">
+         <form>
+             <header>
+                 <button name="archive_connection" string="Archive" type="object" class="btn-primary"/>
+                 <button name="delete_connection" string="Delete" type="object" class="btn-danger"/>
+             </header>
+         </form>
+      </field>
     </record>
+
 
     <!-- Menu Items -->
     <menuitem id="menu_devices_root" name="Devices" sequence="1" web_icon="odoo_device,static/description/icon.png" />

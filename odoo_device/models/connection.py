@@ -14,6 +14,7 @@ class Connection(models.Model):
         string='Status',
         readonly=True
     )
+    active = fields.Boolean(default=True)  # For archiving instead of deletion
 
     @api.constrains('url')
     def _check_json_in_url(self):
@@ -41,13 +42,20 @@ class Connection(models.Model):
                 raise ValidationError(f"Failed to fetch URL: {e}")
 
     @api.model
-    def unlink(self):
+    def delete_connection(self):
+        """Delete connection only if it's not referenced in stock moves."""
         for record in self:
-            # Check if there are any stock moves referencing the device
+            # Check if the connection is being used in any stock move
             stock_moves = self.env['stock.move'].search([('device_id', '=', record.device_id.id)])
             if stock_moves:
-                # If stock moves exist, raise an error or archive instead of deleting
+                # Raise an error if the connection is being referenced
                 raise ValidationError("Cannot delete this connection because it is being used in stock moves. Please archive it instead.")
             else:
-                # Proceed with the deletion if no references are found
-                return super(Connection, record).unlink()
+                # Proceed with deletion if no references are found
+                record.unlink()
+
+    @api.model
+    def archive_connection(self):
+        """Archive the connection by setting 'active' to False."""
+        for record in self:
+            record.active = False
