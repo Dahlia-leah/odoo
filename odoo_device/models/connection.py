@@ -17,45 +17,34 @@ class Connection(models.Model):
     status = fields.Selection(
         [('valid', 'Valid'), ('invalid', 'Invalid')],
         string='Status',
-        readonly=True,
-        default='invalid'
+        readonly=True
     )
 
-    def check_and_refresh_url(self):
-        """
-        Checks the connection URL and updates its status and JSON data.
-        Removes records if the response is not valid JSON.
-        """
-        headers = {
-            'User-Agent': 'PostmanRuntime/7.30.0',  # Mimic Postman behavior
-            'Accept': 'application/json',           # Request JSON response
-        }
+    @api.constrains('url')
+    def _check_json_in_url(self):
         for record in self:
+            headers = {
+                'User-Agent': 'PostmanRuntime/7.30.0',  # Mimic Postman behavior
+                'Accept': 'application/json',           # Request JSON response
+            }
             try:
-                _logger.info(f"Checking URL for {record.name}: {record.url}")  # Log URL check
+                # Fetch the URL content
                 response = requests.get(record.url, headers=headers, timeout=10, verify=False)
-                response.raise_for_status()  # Ensure HTTP status code is 2xx
 
-                # Validate JSON response
+                # Attempt to parse the response content as JSON
                 try:
                     json_data = response.json()
-                    record.status = 'valid'
-                    record.json_data = json.dumps(json_data, indent=4)
-                    _logger.info(f"Valid JSON received for {record.name}")  # Log valid JSON
-                except ValueError:
-                    # If the response isn't JSON, mark it as invalid and remove it
-                    _logger.warning(f"Invalid JSON from {record.url}")  # Log invalid JSON
-                    record.status = 'invalid'
-                    record.json_data = False
-                    record.unlink()  # Delete invalid record
+                except ValueError as e:
+                    raise ValidationError("The response is not valid JSON.")
 
+                # Check if the JSON parsing succeeded regardless of HTTP status
+                record.status = 'valid'
+                record.json_data = json.dumps(json_data, indent=4)
             except requests.exceptions.RequestException as e:
-                # Handle request failure, mark as invalid and delete record
-                _logger.error(f"Request failed for {record.name} ({record.url}): {str(e)}")  # Log request failure
+                # Handle network-related issues
                 record.status = 'invalid'
-                record.json_data = False
-                record.unlink()  # Delete invalid record
-
+                raise ValidationError(f"Failed to fetch URL: {e}")
+            
     @api.model
     def refresh_connections_cron(self):
         """
