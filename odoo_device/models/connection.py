@@ -26,10 +26,7 @@ class Connection(models.Model):
     )
     active = fields.Boolean(default=True, string="Active", tracking=True)
     last_checked = fields.Datetime(string="Last Checked", readonly=True)
-
-    _sql_constraints = [
-        ('unique_device_connection', 'UNIQUE(device_id)', 'Each device can only have one connection!')
-    ]
+       
 
     def _check_json_in_url(self):
         self.ensure_one()
@@ -102,10 +99,16 @@ class Connection(models.Model):
         return [(record.id, f"{record.name} ({record.device_id.name})") for record in self]
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = args or []
-        domain = []
-        if name:
-            domain = ['|', ('name', operator, name), ('device_id.name', operator, name)]
-        return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
-
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None, **kwargs):
+       # Remove the 'order' argument if it exists
+       if 'order' in kwargs:
+           del kwargs['order']
+    
+       args = args or []
+       domain = []
+    
+       if name:
+           domain = ['|', ('name', operator, name), ('device_id.name', operator, name)]
+    
+       # Perform the search with the domain and other arguments
+       return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
