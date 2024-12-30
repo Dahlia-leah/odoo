@@ -31,8 +31,8 @@ class Connection(models.Model):
     def create(self, vals):
         if 'url' in vals:
             partial_url = vals['url']
-            # Check if the URL is a full URL or just a partial URL
-            if not partial_url.startswith('https://'):
+            # Ensure that the URL has a schema (https://) if it's missing
+            if not partial_url.startswith('http://') and not partial_url.startswith('https://'):
                 # Append the fixed part of the URL for partial URLs
                 vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
             else:
@@ -45,8 +45,8 @@ class Connection(models.Model):
     def write(self, vals):
         if 'url' in vals:
             partial_url = vals['url']
-            # Check if the URL is a full URL or just a partial URL
-            if not partial_url.startswith('https://'):
+            # Ensure that the URL has a schema (https://) if it's missing
+            if not partial_url.startswith('http://') and not partial_url.startswith('https://'):
                 # Append the fixed part of the URL for partial URLs
                 vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
             else:
@@ -55,6 +55,7 @@ class Connection(models.Model):
                     vals['url'] = partial_url.rstrip('/') + '/read-scale'
             _logger.info(f"Updated URL: {vals['url']}")  # Logging for debugging
         return super(OdooDevice, self).write(vals)
+
 
     
     def _check_json_in_url(self):
