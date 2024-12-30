@@ -12,12 +12,12 @@
                     <!-- Add the external unit field after the external weight field -->
                     <!--<field name="external_unit"/>-->
                     <!-- Add a button to fetch and print the report -->
-                   <!-- <field name="selected_device_id"/>                             invisible="picking_type_id != 6 or location_id != 203 or location_dest_id != 17 or state != 'assigned'"
--->
+                   <!-- <field name="selected_device_id"/>-->
                     <button name="action_print_report"
                             icon="fa-tag"
                             type="object"
                             title="Fetch weight from IoT device"
+                            invisible="picking_type_id != 6 or location_id != 203 or location_dest_id != 17 or state != 'assigned'"
                             class="btn-primary"/>
                 </xpath>
             </field>
