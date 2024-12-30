@@ -17,11 +17,6 @@
                             icon="fa-tag"
                             type="object"
                             title="Fetch weight from IoT device"
-                            invisible="['&amp;', '&amp;', '&amp;', 
-                ('picking_type_id', '=', 6), 
-                ('location_id', '=', 203), 
-                ('location_dest_id', '=', 17), 
-                ('state', '=', 'assigned')]"
                             class="btn-primary"/>
                 </xpath>
             </field>
