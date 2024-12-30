@@ -1,14 +1,15 @@
 <odoo>
     <data>
-        <!-- Define A7 Paper Format -->
-        <record id="paperformat_a7" model="report.paperformat">
-            <field name="name">A7</field>
-            <field name="default" eval="False"/>
-            <field name="format">A7</field>
-            <field name="margin_top">3</field>
-            <field name="margin_bottom">3</field>
-            <field name="margin_left">3</field>
-            <field name="margin_right">3</field>
+            <!-- Define Label Paper Format (Portrait Orientation) -->
+        <record id="paperformat_label_4_5_9_5" model="report.paperformat">
+            <field name="name">Label 4.5x9.5 Portrait</field>
+            <field name="format">custom</field>
+            <field name="page_height">95</field> <!-- Height in mm -->
+            <field name="page_width">45</field> <!-- Width in mm -->
+            <field name="margin_top">2</field>
+            <field name="margin_bottom">2</field>
+            <field name="margin_left">2</field>
+            <field name="margin_right">2</field>
         </record>
   
         <!-- Report Template -->
@@ -24,7 +25,7 @@
                         <td style="width: 50%; font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
                     </tr>
                     <tr style="border: none; ">
-                        <td style="font-weight: bold;">Batch No: <span t-esc="doc.lot_ids.display_name"/></td>
+                        <td style="font-weight: bold;">Batch No: </td>
                         <td></td>
                     </tr>
                     <tr style="border: none;  ">
@@ -33,7 +34,7 @@
                     </tr>
                     <tr style="border: none; ">
                         <td style="font-weight: bold;">Exp:</td>
-                        <td style="font-weight: bold;">Control No:</td>
+                        <td style="font-weight: bold;">Control No: <span t-esc="doc.lot_ids.display_name"/> </td>
                     </tr>
                     <tr style="border: none; ">
                         <td style="font-weight: bold;">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
@@ -46,6 +47,10 @@
                     <tr style="border: none; en;">
                         <td style="font-weight: bold;">Date:<span t-esc="doc.time_printing"/></td>
                         <td></td>
+                    </tr>
+                    <tr style="border: none; en;">
+                        <td style="font-weight: bold;">QAP-09-052</td>
+                        <td>(1)of(1)</td>
                     </tr>
                 </table>
             </div>
