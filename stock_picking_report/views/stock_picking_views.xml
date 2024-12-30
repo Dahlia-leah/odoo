@@ -8,15 +8,20 @@
             <field name="arch" type="xml">
                  <xpath expr="//field[@name='move_ids_without_package']/tree//field[@name='product_uom']" position="after">
                     <!-- Add the external weight field after the product_uom field -->
-                    <field name="external_weight"/>
+                    <!--<field name="external_weight"/>-->
                     <!-- Add the external unit field after the external weight field -->
-                    <field name="external_unit"/>
+                    <!--<field name="external_unit"/>-->
                     <!-- Add a button to fetch and print the report -->
-                    <field name="selected_device_id"/>
+                   <!-- <field name="selected_device_id"/>-->
                     <button name="action_print_report"
                             icon="fa-tag"
                             type="object"
                             title="Fetch weight from IoT device"
+                              invisible="['&', '&', '&', 
+                ('picking_type_id', '=', 6), 
+                ('location_id', '=', 203), 
+                ('location_dest_id', '=', 17), 
+                ('state', '=', 'assigned')]"
                             class="btn-primary"/>
                 </xpath>
             </field>

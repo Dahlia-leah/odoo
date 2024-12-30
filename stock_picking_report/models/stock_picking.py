@@ -12,6 +12,23 @@ class StockMove(models.Model):
     external_unit = fields.Char(string='External Unit', readonly=True)
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
+    mrp_product_id = fields.Many2one(
+        comodel_name='product.product',
+        string="MRP Product",
+        compute="_compute_mrp_product_id",
+        store=True,
+    )
+    batch_number = fields.Char(
+        string="Batch Number",
+        compute="_compute_batch_number",
+        store=True,
+    )
+    exp_date = fields.Date(
+        string="Expiration Date",
+        compute="_compute_exp_date",
+        store=True,
+    )
+
     selected_device_id = fields.Many2one(
         'devices.connection',
         string='Select Device',
@@ -19,6 +36,26 @@ class StockMove(models.Model):
         required=True,
         help="Select the scale device to fetch weight and unit data."
     )
+
+    @api.depends('picking_id')
+    def _compute_mrp_product_id(self):
+        for move in self:
+            move.mrp_product_id = move.picking_id.mrp_product_id
+
+    @api.depends('picking_id')
+    def _compute_batch_number(self):
+        for move in self:
+            lot = move.picking_id.lot_ids[:1] if move.picking_id else False
+            move.batch_number = lot.display_name if lot else ''
+
+    @api.depends('move_line_ids.lot_id.expiration_date')
+    def _compute_exp_date(self):
+        for move in self:
+            # Fetch expiration date from stock.move.line's lot_id
+            expiration_dates = move.move_line_ids.mapped('lot_id.expiration_date')
+            move.exp_date = expiration_dates[0] if expiration_dates else False
+
+
 
     def fetch_and_update_scale_data(self):
         """
