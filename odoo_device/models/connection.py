@@ -31,16 +31,31 @@ class Connection(models.Model):
     def create(self, vals):
         if 'url' in vals:
             partial_url = vals['url']
-            # Append the fixed part of the URL
-            vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
-        return super(odoo_device, self).create(vals)
+            # Check if the URL is a full URL or just a partial URL
+            if not partial_url.startswith('https://'):
+                # Append the fixed part of the URL for partial URLs
+                vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
+            else:
+                # If it's already a full URL, ensure the `/read-scale` path is appended
+                if not partial_url.endswith('/read-scale'):
+                    vals['url'] = partial_url.rstrip('/') + '/read-scale'
+            _logger.info(f"Created URL: {vals['url']}")  # Logging for debugging
+        return super(OdooDevice, self).create(vals)
 
     def write(self, vals):
         if 'url' in vals:
             partial_url = vals['url']
-            # Append the fixed part of the URL
-            vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
-        return super(odoo_device, self).write(vals)
+            # Check if the URL is a full URL or just a partial URL
+            if not partial_url.startswith('https://'):
+                # Append the fixed part of the URL for partial URLs
+                vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
+            else:
+                # If it's already a full URL, ensure the `/read-scale` path is appended
+                if not partial_url.endswith('/read-scale'):
+                    vals['url'] = partial_url.rstrip('/') + '/read-scale'
+            _logger.info(f"Updated URL: {vals['url']}")  # Logging for debugging
+        return super(OdooDevice, self).write(vals)
+
     
     def _check_json_in_url(self):
         self.ensure_one()
