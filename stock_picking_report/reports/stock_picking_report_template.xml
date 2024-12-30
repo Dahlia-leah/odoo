@@ -15,36 +15,36 @@
         <!-- Report Template -->
         <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
-                <t t-foreach="doc.move_lines" t-as="move">
+                <t t-foreach="docs" t-as="doc">
                     <div style="font-size: 22px; line-height: 1.3;">
                         <h4 style="font-size: 22px; text-align: center; font-weight: bold;">Weighing Label</h4>
                         <table style="width: 100%; table-layout: fixed;">
                             <tr style="border: none;">
-                                <td style="width: 50%; font-weight: bold;">Product: <span t-esc="move.product_id.name"/></td>
-                                <td style="width: 50%; font-weight: bold;">ID: <span t-esc="move.product_id.id"/></td>
+                                <td style="width: 50%; font-weight: bold;">Product: <span t-esc="doc.picking_id.mrp_product_id.name"></td>
+                                <td style="width: 50%; font-weight: bold;">ID: <span t-esc="doc.picking_id.mrp_product_id.id"></td>
                             </tr>
                             <tr style="border: none;">
-                                <td style="font-weight: bold;">Batch No: </td>
+                                <td style="font-weight: bold;">Batch No: <span t-esc="doc.picking_id.batch"/></td>
                                 <td></td>
                             </tr>
                             <tr style="border: none;">
-                                <td style="font-weight: bold;">Item: <span t-esc="move.product_id.name"/></td>
-                                <td style="font-weight: bold;">ID: <span t-esc="move.product_id.id"/></td>
+                                <td style="font-weight: bold;">Item: <span t-esc="doc.product_id.name"/></td>
+                                <td style="font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
                             </tr>
                             <tr style="border: none;">
-                                <td style="font-weight: bold;">Exp:</td>
-                                <td style="font-weight: bold;">Control No: <span t-esc="move.lot_ids.display_name"/> </td>
+                                <td style="font-weight: bold;">Exp: <span t-esc="doc.product_id.id"/> </td>
+                                <td style="font-weight: bold;">Control No: <span t-esc="doc.lot_ids.display_name"/> </td>
                             </tr>
                             <tr style="border: none;">
-                                <td style="font-weight: bold;">Actual: <span t-esc="move.external_weight"/> <span t-esc="move.external_unit"/></td>
-                                <td style="font-weight: bold;">Theoretical: <span t-esc="move.quantity"/> <span t-esc="move.product_uom.name"/></td>
+                                <td style="font-weight: bold;">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
+                                <td style="font-weight: bold;">Theoretical: <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
                             </tr>
                             <tr style="border: none;">
                                 <td style="font-weight: bold;">Dispenser:</td>
                                 <td style="font-weight: bold;">IPC:</td>
                             </tr>
                             <tr style="border: none;">
-                                <td style="font-weight: bold;">Date:<span t-esc="move.time_printing"/></td>
+                                <td style="font-weight: bold;">Date:<span t-esc="doc.time_printing"/></td>
                                 <td></td>
                             </tr>
                             <tr style="border: none;">
@@ -60,7 +60,7 @@
         <!-- Report Action -->
         <record id="action_report_stock_picking" model="ir.actions.report">
             <field name="name">Weighing Label</field>
-            <field name="model">stock.move</field>
+            <field name="model">stock.move.line</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">stock_picking_report.report_stock_picking_template</field>
             <field name="paperformat_id" ref="paperformat_label_4_5_9_5"/>
