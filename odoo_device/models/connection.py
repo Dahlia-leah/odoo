@@ -39,7 +39,7 @@ class Connection(models.Model):
         if 'url' in vals:
             partial_url = vals['url']
             # Append the fixed part of the URL
-            vals['url'] = f'https://{partial_url}.ngrok-free.app'
+            vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
         return super(odoo_device, self).write(vals)
     
     def _check_json_in_url(self):
