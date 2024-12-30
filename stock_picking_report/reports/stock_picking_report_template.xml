@@ -20,11 +20,11 @@
                         <h4 style="font-size: 22px; text-align: center; font-weight: bold;">Weighing Label</h4>
                         <table style="width: 100%; table-layout: fixed;">
                             <tr style="border: none;">
-                                <td style="width: 50%; font-weight: bold;">Product: <span t-esc="doc.picking_id.mrp_product_id.name"/></td>
-                                <td style="width: 50%; font-weight: bold;">ID: <span t-esc="doc.picking_id.mrp_product_id.id"/></td>
+                                <td style="width: 50%; font-weight: bold;">Product: </td>
+                                <td style="width: 50%; font-weight: bold;">ID: </td>
                             </tr>
                             <tr style="border: none;">
-                                <td style="font-weight: bold;">Batch No: <span t-esc="doc.picking_id.batch"/></td>
+                                <td style="font-weight: bold;">Batch No: </td>
                                 <td></td>
                             </tr>
                             <tr style="border: none;">
@@ -32,7 +32,7 @@
                                 <td style="font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
                             </tr>
                             <tr style="border: none;">
-                                <td style="font-weight: bold;">Exp: <span t-esc="doc.product_id.id"/> </td>
+                                <td style="font-weight: bold;">Exp: </td>
                                 <td style="font-weight: bold;">Control No: <span t-esc="doc.lot_ids.display_name"/> </td>
                             </tr>
                             <tr style="border: none;">
