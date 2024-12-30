@@ -6,7 +6,7 @@
     'description': """
         This module helps you manage devices and their connections.
     """,
-    'depends': ['base', 'stock'],
+    'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
         'views/connection_views.xml',
