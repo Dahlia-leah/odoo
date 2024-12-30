@@ -1,54 +1,58 @@
 <odoo>
     <data>
-        <!-- Define Label Paper Format (Portrait Orientation) -->
-        <record id="paperformat_label_4_5_9_5" model="report.paperformat">
-            <field name="name">Label 4.5x9.5 Portrait</field>
+        <!-- Define A7 Paper Format -->
+        <record id="paperformat_a7" model="report.paperformat">
+            <field name="name">A7</field>
             <field name="default" eval="False"/>
-            <field name="format">custom</field>
-            <field name="page_height">95</field> <!-- Height in mm -->
-            <field name="page_width">45</field> <!-- Width in mm -->
-            <field name="margin_top">2</field>
-            <field name="margin_bottom">2</field>
-            <field name="margin_left">2</field>
-            <field name="margin_right">2</field>
+            <field name="format">A7</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
         </record>
   
         <!-- Report Template -->
-        <template id="report_stock_picking_template">
-            <t t-call="web.basic_layout">
-                <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 12px; line-height: 1.2; text-align: left;">
-                        <h4 style="font-size: 14px; text-align: center; font-weight: bold; margin-bottom: 5px;">Weighing Label</h4>
-                        <table style="width: 100%; table-layout: fixed; font-size: 11px; border: none;">
-                            <tr style="border-collapse: collapse; border: none;">
-                                <td style="font-weight: bold;">Product:</td>
-                                <td><span t-esc="doc.product_id.name"/></td>
-                            </tr>
-                            <tr style="border-collapse: collapse; border: none;">
-                                <td style="font-weight: bold;">ID:</td>
-                                <td><span t-esc="doc.product_id.id"/></td>
-                            </tr>
-                            <tr style="border-collapse: collapse; border: none;">
-                                <td style="font-weight: bold;">Batch No:</td>
-                                <td><span t-esc="doc.lot_ids.display_name"/></td>
-                            </tr>
-                            <tr style="border-collapse: collapse; border: none;">
-                                <td style="font-weight: bold;">Actual:</td>
-                                <td><span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
-                            </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Theoretical:</td>
-                                <td><span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
-                            </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Date:</td>
-                                <td><span t-esc="doc.time_printing"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                </t>
-            </t>
-        </template>
+       <!-- Report Template -->
+<template id="report_stock_picking_template">
+    <t t-call="web.basic_layout">
+        <t t-foreach="docs" t-as="doc">
+            <div style="font-size: 22px; line-height: 1.3;">
+                <h4 style="font-size: 22px; text-align: center; font-weight: bold;">Weighing Label</h4>
+                <table style="width: 100%; table-layout: fixed;">
+                    <tr style="border: none;">
+                        <td style="width: 50%; font-weight: bold;">Product: <span t-esc="doc.product_id.name"/></td>
+                        <td style="width: 50%; font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
+                    </tr>
+                    <tr style="border: none; ">
+                        <td style="font-weight: bold;">Batch No: <span t-esc="doc.lot_ids.display_name"/></td>
+                        <td></td>
+                    </tr>
+                    <tr style="border: none;  ">
+                        <td style="font-weight: bold;">Item: <span t-esc="doc.product_id.name"/></td>
+                        <td style="font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
+                    </tr>
+                    <tr style="border: none; ">
+                        <td style="font-weight: bold;">Exp:</td>
+                        <td style="font-weight: bold;">Control No:</td>
+                    </tr>
+                    <tr style="border: none; ">
+                        <td style="font-weight: bold;">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
+                        <td style="font-weight: bold;">Theoretical: <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
+                    </tr>
+                    <tr style="border: none; ">
+                        <td style="font-weight: bold;">Dispenser:</td>
+                        <td style="font-weight: bold;">IPC:</td>
+                    </tr>
+                    <tr style="border: none; en;">
+                        <td style="font-weight: bold;">Date:<span t-esc="doc.time_printing"/></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </t>
+</template>
+
 
         <!-- Report Action -->
         <record id="action_report_stock_picking" model="ir.actions.report">
@@ -56,7 +60,7 @@
             <field name="model">stock.move</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">stock_picking_report.report_stock_picking_template</field>
-            <field name="paperformat_id" ref="paperformat_label_4_5_9_5"/>
+            <field name="paperformat_id" ref="paperformat_a7"/>
         </record>
     </data>
 </odoo>
