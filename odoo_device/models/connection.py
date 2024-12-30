@@ -15,7 +15,7 @@ class Connection(models.Model):
 
     name = fields.Char(string='Connection Name', required=True, index=True, tracking=True)
     device_id = fields.Many2one('devices.device', string='Device', required=True, ondelete='cascade', tracking=True)
-    url = fields.Char(string='Connection URL', required=True, tracking=True)
+    url = fields.Char(string='Connection code', required=True, tracking=True)
     json_data = fields.Text(string='JSON Data', readonly=True)
     status = fields.Selection(
         [('valid', 'Valid'), ('invalid', 'Invalid')],
@@ -27,7 +27,21 @@ class Connection(models.Model):
     active = fields.Boolean(default=True, string="Active", tracking=True)
     last_checked = fields.Datetime(string="Last Checked", readonly=True)
        
+    @api.model
+    def create(self, vals):
+        if 'url' in vals:
+            partial_url = vals['url']
+            # Append the fixed part of the URL
+            vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
+        return super(odoo_device, self).create(vals)
 
+    def write(self, vals):
+        if 'url' in vals:
+            partial_url = vals['url']
+            # Append the fixed part of the URL
+            vals['url'] = f'https://{partial_url}.ngrok-free.app'
+        return super(odoo_device, self).write(vals)
+    
     def _check_json_in_url(self):
         self.ensure_one()
         headers = {
