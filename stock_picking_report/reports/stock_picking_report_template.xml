@@ -16,12 +16,12 @@
         <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 22px; line-height: 1.3;">
-                        <h4 style="font-size: 22px; text-align: center; font-weight: bold;">Weighing Label</h4>
+                    <div style="font-size: 15px; line-height: 1.3;">
+                        <h4 style="font-size: 15px; text-align: center; font-weight: bold;">Weighing Label</h4>
                         <table style="width: 100%; table-layout: fixed;">
                             <tr style="border: none;">
-                                <td style="width: 50%; font-weight: bold;">Product: </td>
-                                <td style="width: 50%; font-weight: bold;">ID: </td>
+                                <td style="width: 50%; font-weight: bold;">Product: <span t-esc="doc.product_id.name"/></td>
+                                <td style="width: 50%; font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
                             </tr>
                             <tr style="border: none;">
                                 <td style="font-weight: bold;">Batch No: </td>
