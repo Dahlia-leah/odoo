@@ -12,10 +12,6 @@ class StockMove(models.Model):
     external_unit = fields.Char(string='External Unit', readonly=True)
     time_printing = fields.Datetime(string="Time Printing", default=fields.Datetime.now)
 
-   # mrp_product_id = fields.Many2one      comodel_name='product.product',    string="MRP Product",     compute="_compute_mrp_product_id", store=True,  )
-   # batch_number = fields.Char(string="Batch Number",compute="_compute_batch_number",store=True,)
-    #exp_date = fields.Date(  string="Expiration Date", compute="_compute_exp_date",store=True, )
-
     selected_device_id = fields.Many2one(
         'devices.connection',
         string='Select Device',
@@ -23,9 +19,6 @@ class StockMove(models.Model):
         required=True,
         help="Select the scale device to fetch weight and unit data."
     )
-
-
-
 
     def fetch_and_update_scale_data(self):
         """

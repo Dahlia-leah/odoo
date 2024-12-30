@@ -21,11 +21,11 @@
                         <h4 style="font-size: 14px; text-align: center; font-weight: bold; margin-bottom: 5px;">Weighing Label</h4>
                         <table style="width: 100%; table-layout: fixed; font-size: 11px; border: none;">
                             <tr style="border-collapse: collapse; border: none;">
-                                <td style="font-weight: bold;">Product:  <span t-esc="doc.product_id.name"/></td>
-                                <td> ID:<span t-esc="doc.product_id.id"/></td>
+                                <td style="font-weight: bold;">Product:  <span t-esc="doc.product_id.name"/> </td>
+                                <td> ID: <span t-esc="doc.product_id.id"/> </td>
                             </tr>
                             <tr style="border-collapse: collapse; border: none;">
-                               <td style="font-weight: bold;">Batch No:  </td>
+                               <td style="font-weight: bold;">Batch No:  <span t-esc="doc.lot_ids.display_name"/></td>
                                <td>  </td>
 
                             </tr>
@@ -35,8 +35,8 @@
                             </tr>
 
                             <tr style="border-collapse: collapse; border: none;">
-                                <td>Exp: </td>
-                                <td>Control No: <span t-esc="doc.lot_ids.id"/></td>
+                                <td>Exp:</td>
+                                <td>Control No: </td>
                             </tr>
                             <tr>
                             <tr style="border-collapse: collapse; border: none;">
@@ -53,7 +53,7 @@
                             </tr>
                             <tr style="border-collapse: collapse; border: none;">
                                 <td style="font-weight: bold;">QAP-09-052 </td>
-                                <td style="font-weight: bold;">(1)of(1)</td>
+                                <td style="font-weight: bold;"> </td>
                             </tr>
                         </table>
                     </div>
