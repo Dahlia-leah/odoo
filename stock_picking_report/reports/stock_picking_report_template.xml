@@ -14,7 +14,7 @@
 
         <!-- Report Template -->
         <template id="report_stock_picking_template">
-            <t t-call="web.basic_layout">
+            <!-- <t t-call="web.basic_layout"> -->
                 <t t-foreach="docs" t-as="doc">
                     <div style="font-size: 15px; line-height: 1;">
                         <h4 style="font-size: 15px; text-align: center; font-weight: bold;">Weighing Label</h4>
@@ -53,7 +53,7 @@
                             </tr>
                         </table>
                     </div>
-                </t>
+                <!-- </t> -->
             </t>
         </template>
 
