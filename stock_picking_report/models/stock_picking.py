@@ -15,17 +15,17 @@ class StockMove(models.Model):
     mrp_product_id = fields.Many2one(
         comodel_name='product.product',
         string="MRP Product",
-        compute="_compute_mrp_product_id",
+       # compute="_compute_mrp_product_id",
         store=True,
     )
     batch_number = fields.Char(
         string="Batch Number",
-        compute="_compute_batch_number",
+       # compute="_compute_batch_number",
         store=True,
     )
     exp_date = fields.Date(
         string="Expiration Date",
-        compute="_compute_exp_date",
+       # compute="_compute_exp_date",
         store=True,
     )
 
