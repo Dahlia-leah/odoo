@@ -68,7 +68,7 @@
                     font-family: Arial, sans-serif;
                 }
                 .label-title {
-                    font-size: 3mm;
+                    font-size: 20mm;
                     text-align: center;
                     font-weight: bold;
                     margin: 0 0 1mm 0;
@@ -79,7 +79,8 @@
                     border-collapse: collapse;
                 }
                 .label-cell {
-                    font-size: 2mm;
+                    font-size: 20mm;
+                    font-weight: bold;
                     line-height: 1.2;
                     padding: 0.5mm 0;
                     white-space: nowrap;
