@@ -8,7 +8,7 @@
             <field name="page_width">45</field>
             <field name="margin_top">1</field>
             <field name="margin_bottom">1</field>
-            <field name="margin_left">2</field>
+            <field name="margin_left">4</field>
             <field name="margin_right">2</field>
             <field name="dpi">300</field>
         </record>
@@ -79,7 +79,7 @@
                     border-collapse: collapse;
                 }
                 .label-cell {
-                    font-size: 9mm;
+                    font-size: 12mm;
                     font-weight: bold;
                     line-height: 1.2;
                     padding: 0.5mm 0;
