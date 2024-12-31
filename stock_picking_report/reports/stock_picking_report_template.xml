@@ -6,55 +6,91 @@
             <field name="format">custom</field>
             <field name="page_height">95</field> <!-- Height in mm -->
             <field name="page_width">45</field> <!-- Width in mm -->
-            <field name="margin_top">2</field>
-            <field name="margin_bottom">2</field>
-            <field name="margin_left">2</field>
-            <field name="margin_right">2</field>
+            <field name="margin_top">1</field>
+            <field name="margin_bottom">1</field>
+            <field name="margin_left">1</field>
+            <field name="margin_right">1</field>
         </record>
 
         <!-- Report Template -->
         <template id="report_stock_picking_template">
             <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div style="font-size: 12px; line-height: 1;">
-                        <h4 style="font-size: 12px; text-align: center; font-weight: bold;">Weighing Label</h4>
-                        <table style="width: 100%; table-layout: fixed;">
-                            <tr style="border: none;">
-                                <td style="width: 50%; font-weight: bold;">Product: <span t-esc="doc.product_id.name"/></td>
-                                <td style="width: 50%; font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
+                     <div class="label-container">
+                        <h4 class="label-title">Weighing Label</h4>
+                        <table class="label-table">
+                            <tr>
+                                <td class="label-cell" colspan="2">Product: <span t-esc="doc.picking_id.product_id.name"/></td>
                             </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Batch No: </td>
-                                <td></td>
+                            <tr>
+                                <td class="label-cell" colspan="2">ID: <span t-esc="doc.picking_id.product_id.id"/></td>
                             </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Item: <span t-esc="doc.product_id.name"/></td>
-                                <td style="font-weight: bold;">ID: <span t-esc="doc.product_id.id"/></td>
+                            <tr>
+                                <td class="label-cell" colspan="2">Batch No: <span t-esc="doc.picking_id.lot_id.name"/></td>
                             </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Exp: </td>
-                                <td style="font-weight: bold;">Control No: <span t-esc="doc.lot_ids.display_name"/> </td>
+                            <tr>
+                                <td class="label-cell" colspan="2">Exp: <span t-esc="doc.picking_id.lot_id.expiration_date" t-options='{"widget": "date"}'/></td>
                             </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
-                                <td style="font-weight: bold;">Theoretical: <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
+                            <tr>
+                                <td class="label-cell" colspan="2">Control No: <span t-esc="doc.picking_id.lot_id.name"/></td>
                             </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Dispenser:</td>
-                                <td style="font-weight: bold;">IPC:</td>
+                            <tr>
+                                <td class="label-cell">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
+                                <td class="label-cell">Theoretical: <span t-esc="doc.quantity"/> <span t-esc="doc.product_uom.name"/></td>
                             </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">Date:<span t-esc="doc.time_printing"/></td>
-                                <td></td>
+                            <tr>
+                                <td class="label-cell">Dispenser:</td>
+                                <td class="label-cell">IPC:</td>
                             </tr>
-                            <tr style="border: none;">
-                                <td style="font-weight: bold;">QAP-09-052</td>
-                                <td>(1)of(1)</td>
+                            <tr>
+                                <td class="label-cell" colspan="2">Date: <span t-esc="doc.picking_id.scheduled_date" t-options='{"widget": "date"}'/></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">QAP-09-052</td>
+                                <td class="label-cell">(1)of(1)</td>
                             </tr>
                         </table>
                     </div>
                 </t>
             </t>
+        </template>
+        <!-- CSS Styles -->
+        <template id="report_stock_picking_styles" name="Stock Picking Label Styles">
+            <style>
+                @page {
+                    size: 45mm 95mm;
+                    margin: 1mm;
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    font-size: 10pt;
+                    line-height: 1.2;
+                }
+                .label-container {
+                    width: 43mm;
+                    height: 93mm;
+                    padding: 1mm;
+                }
+                .label-title {
+                    font-size: 12pt;
+                    text-align: center;
+                    font-weight: bold;
+                }
+                .label-table {
+                    width: 100%;
+                    table-layout: fixed;
+                    border-collapse: collapse;
+                }
+                .label-cell {
+                    padding: 1mm 0;
+                    vertical-align: top;
+                }
+                @media print {
+                    .label-container {
+                        page-break-inside: avoid;
+                    }
+                }
+            </style>
         </template>
 
         <!-- Report Action -->
