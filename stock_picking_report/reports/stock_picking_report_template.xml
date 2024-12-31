@@ -22,11 +22,11 @@
                         <h4 class="label-title">Weighing Label</h4>
                         <table class="label-table">
                             <tr>
-                                <td class="label-cell">Product: <span t-esc="doc.picking_id.product_id.name"/></td>
-                                <td class="label-cell">ID: <span t-esc="doc.picking_id.product_id.id"/></td>
+                                <td class="label-cell">Product: <span t-esc="doc.picking_id.mrp_product_id.name"/></td>
+                                <td class="label-cell">ID: <span t-esc="doc.picking_id.mrp_product_id.id"/></td>
                             </tr>
                             <tr>
-                                <td class="label-cell" colspan="2">Batch No: <span t-esc="doc.picking_id.lot_id.name"/></td>
+                                <td class="label-cell" colspan="2">Batch No: <span t-esc="doc.picking_id.batch"/></td>
                             </tr>
                             <tr>
                                 <td class="label-cell">Item: <span t-esc="doc.picking_id.product_id.name"/></td>
@@ -34,7 +34,7 @@
                             </tr>
                             <tr>
                                 <td class="label-cell">Exp: <span t-esc="doc.picking_id.lot_id.expiration_date" t-options='{"widget": "date"}'/></td>
-                                <td class="label-cell">Control No: <span t-esc="doc.picking_id.lot_id.name"/></td>
+                                <td class="label-cell">Control No: <span t-esc="doc.lot_ids.name"/></td>
                             </tr>
                             <tr>
                                 <td class="label-cell">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
