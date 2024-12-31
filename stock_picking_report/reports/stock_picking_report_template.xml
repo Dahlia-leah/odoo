@@ -71,7 +71,7 @@
                     font-size: 12mm;
                     text-align: center;
                     font-weight: bold;
-                    margin: 0 0 1mm 0;
+                    margin: 2mm 2mm 2mm 2mm;
                 }
                 .label-table {
                     width: 100%;
@@ -80,7 +80,7 @@
                 .label-cell {
                     font-size: 9mm;
                     font-weight: bold;
-                    line-height: 1.2;
+                    line-height: 1.4;
                     padding: 0.5mm 0;
                     
                 }
