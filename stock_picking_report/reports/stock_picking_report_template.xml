@@ -76,18 +76,14 @@
                 .label-table {
                     width: 100%;
                     table-layout: fixed;
-                    border-collapse: collapse;
                 }
                 .label-cell {
-                    font-size: 12mm;
+                    font-size: 9mm;
                     font-weight: bold;
                     line-height: 1.2;
                     padding: 0.5mm 0;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+                    
                 }
-               
             </style>
         </template>
 
