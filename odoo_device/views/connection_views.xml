@@ -24,7 +24,7 @@
             <tree decoration-success="status=='valid'" decoration-danger="status=='invalid'">
                 <field name="name"/>
                 <field name="device_id"/>
-                <field name="url"/>
+                <field name="connection_code"/>
                 <field name="status"/>
                 <field name="last_checked"/>
                 <field name="active" invisible="1"/>
@@ -59,7 +59,7 @@
                     <group>
                         <group>
                             <field name="device_id"/>
-                            <field name="url"/>
+                            <field name="connection_code"/>
                         </group>
                         <group>
                             <field name="status" readonly="1"/>
