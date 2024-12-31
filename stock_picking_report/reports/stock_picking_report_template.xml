@@ -16,6 +16,7 @@
         <!-- Report Template -->
         <template id="report_stock_picking_template">
             <t t-call="web.html_container">
+                <t t-call="stock_picking_report.report_stock_picking_styles"/>
                 <t t-foreach="docs" t-as="doc">
                     <div class="label-container">
                         <h4 class="label-title">Weighing Label</h4>
@@ -93,14 +94,13 @@
             </style>
         </template>
 
-
         <!-- Report Action -->
         <record id="action_report_stock_picking" model="ir.actions.report">
             <field name="name">Weighing Label</field>
             <field name="model">stock.move</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name"> stock_picking_report.report_stock_picking_template</field>
-            <field name="report_file"> stock_picking_report.report_stock_picking_template</field>
+            <field name="report_name">stock_picking_report.report_stock_picking_template</field>
+            <field name="report_file">stock_picking_report.report_stock_picking_template</field>
             <field name="print_report_name">'Weighing Label - %s' % (object.picking_id.name)</field>
             <field name="binding_model_id" ref="stock.model_stock_move"/>
             <field name="binding_type">report</field>
