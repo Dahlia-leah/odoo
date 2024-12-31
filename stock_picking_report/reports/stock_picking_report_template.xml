@@ -87,11 +87,7 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
-                @media print {
-                    .label-container {
-                        page-break-inside: avoid;
-                    }
-                }
+               
             </style>
         </template>
 
