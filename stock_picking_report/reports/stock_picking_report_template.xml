@@ -4,8 +4,8 @@
         <record id="paperformat_label_4_5_9_5" model="report.paperformat">
             <field name="name">Label 4.5x9.5 Portrait</field>
             <field name="format">custom</field>
-            <field name="page_height">95</field> <!-- Height in mm -->
-            <field name="page_width">45</field> <!-- Width in mm -->
+            <field name="page_height">95</field>
+            <field name="page_width">45</field>
             <field name="margin_top">1</field>
             <field name="margin_bottom">1</field>
             <field name="margin_left">1</field>
@@ -15,7 +15,7 @@
 
         <!-- Report Template -->
         <template id="report_stock_picking_template">
-            <t t-call="web.basic_layout">
+            <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
                     <div class="label-container">
                         <h4 class="label-title">Weighing Label</h4>
@@ -57,50 +57,53 @@
         </template>
 
         <!-- CSS Styles -->
-        <template id="report_stock_picking_styles" inherit_id="web.report_assets_common">
-            <xpath expr="." position="inside">
-                <style>
+        <template id="report_stock_picking_styles" name="Stock Picking Label Styles">
+            <style>
+                .label-container {
+                    width: 100%;
+                    height: 100%;
+                    padding: 1mm;
+                    box-sizing: border-box;
+                    font-family: Arial, sans-serif;
+                }
+                .label-title {
+                    font-size: 3mm;
+                    text-align: center;
+                    font-weight: bold;
+                    margin: 0 0 1mm 0;
+                }
+                .label-table {
+                    width: 100%;
+                    table-layout: fixed;
+                    border-collapse: collapse;
+                }
+                .label-cell {
+                    font-size: 2mm;
+                    line-height: 1.2;
+                    padding: 0.5mm 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                @media print {
                     .label-container {
-                        width: 100%;
-                        height: 100%;
-                        padding: 1mm;
-                        box-sizing: border-box;
-                        font-family: Arial, sans-serif;
+                        page-break-inside: avoid;
                     }
-                    .label-title {
-                        font-size: 3mm;
-                        text-align: center;
-                        font-weight: bold;
-                        margin: 0 0 1mm 0;
-                    }
-                    .label-table {
-                        width: 100%;
-                        table-layout: fixed;
-                        border-collapse: collapse;
-                    }
-                    .label-cell {
-                        font-size: 2mm;
-                        line-height: 1.2;
-                        padding: 0.5mm 0;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-                    @media print {
-                        .label-container {
-                            page-break-inside: avoid;
-                        }
-                    }
-                </style>
-            </xpath>
+                }
+            </style>
         </template>
+
 
         <!-- Report Action -->
         <record id="action_report_stock_picking" model="ir.actions.report">
             <field name="name">Weighing Label</field>
             <field name="model">stock.move</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">stock_picking_report.report_stock_picking_template</field>
+            <field name="report_name"> stock_picking_report.report_stock_picking_template</field>
+            <field name="report_file"> stock_picking_report.report_stock_picking_template</field>
+            <field name="print_report_name">'Weighing Label - %s' % (object.picking_id.name)</field>
+            <field name="binding_model_id" ref="stock.model_stock_move"/>
+            <field name="binding_type">report</field>
             <field name="paperformat_id" ref="paperformat_label_4_5_9_5"/>
         </record>
     </data>
