@@ -5,6 +5,7 @@
         <field name="name">Connections</field>
         <field name="res_model">devices.connection</field>
         <field name="view_mode">tree,form,kanban</field>
+        <field name="context">{'search_default_my_connections': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create a new connection
@@ -90,6 +91,8 @@
                 <field name="name"/>
                 <field name="device_id"/>
                 <field name="url"/>
+                <field name="user_id"/>
+                <filter string="My Connections" name="my_connections" domain="[('user_id', '=', uid)]"/>
                 <filter string="Valid Connections" name="valid" domain="[('status', '=', 'valid')]"/>
                 <filter string="Invalid Connections" name="invalid" domain="[('status', '=', 'invalid')]"/>
                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>

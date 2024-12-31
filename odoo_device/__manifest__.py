@@ -10,6 +10,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/connection_views.xml',
+        'security/connection_security.xml',
         'views/device_views.xml',
         'data/ir_cron_data.xml',
     ],

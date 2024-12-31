@@ -15,7 +15,8 @@ class Connection(models.Model):
 
     name = fields.Char(string='Connection Name', required=True, index=True, tracking=True)
     device_id = fields.Many2one('devices.device', string='Device', required=True, ondelete='cascade', tracking=True)
-    url = fields.Char(string='Connection code', required=True, tracking=True)
+    connection_code = fields.Char(string='Connection Code', required=True, tracking=True)
+    url = fields.Char(string='URL', compute='_compute_url', store=True, readonly=True, tracking=True)
     json_data = fields.Text(string='JSON Data', readonly=True)
     status = fields.Selection(
         [('valid', 'Valid'), ('invalid', 'Invalid')],
@@ -26,38 +27,16 @@ class Connection(models.Model):
     )
     active = fields.Boolean(default=True, string="Active", tracking=True)
     last_checked = fields.Datetime(string="Last Checked", readonly=True)
-       
-    @api.model
-    def create(self, vals):
-        if 'url' in vals:
-            partial_url = vals['url']
-            # Ensure that the URL has a schema (https://) if it's missing
-            if not partial_url.startswith('http://') and not partial_url.startswith('https://'):
-                # Append the fixed part of the URL for partial URLs
-                vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
+    user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user, required=True, tracking=True)
+
+    @api.depends('connection_code')
+    def _compute_url(self):
+        for record in self:
+            if record.connection_code:
+                record.url = f"https://{record.connection_code}.ngrok-free.app/read-scale"
             else:
-                # If it's already a full URL, ensure the `/read-scale` path is appended
-                if not partial_url.endswith('/read-scale'):
-                    vals['url'] = partial_url.rstrip('/') + '/read-scale'
-            _logger.info(f"Created URL: {vals['url']}")  # Logging for debugging
-        return super(OdooDevice, self).create(vals)
+                record.url = False
 
-    def write(self, vals):
-        if 'url' in vals:
-            partial_url = vals['url']
-            # Ensure that the URL has a schema (https://) if it's missing
-            if not partial_url.startswith('http://') and not partial_url.startswith('https://'):
-                # Append the fixed part of the URL for partial URLs
-                vals['url'] = f'https://{partial_url}.ngrok-free.app/read-scale'
-            else:
-                # If it's already a full URL, ensure the `/read-scale` path is appended
-                if not partial_url.endswith('/read-scale'):
-                    vals['url'] = partial_url.rstrip('/') + '/read-scale'
-            _logger.info(f"Updated URL: {vals['url']}")  # Logging for debugging
-        return super(OdooDevice, self).write(vals)
-
-
-    
     def _check_json_in_url(self):
         self.ensure_one()
         headers = {
@@ -95,7 +74,7 @@ class Connection(models.Model):
         for connection in connections:
             connection._check_json_in_url()
 
-    @api.constrains('url')
+    @api.constrains('connection_code')
     def _check_url_constraint(self):
         for record in self:
             record._check_json_in_url()
@@ -121,7 +100,7 @@ class Connection(models.Model):
 
     def write(self, vals):
         result = super(Connection, self).write(vals)
-        if 'url' in vals:
+        if 'connection_code' in vals:
             self._check_json_in_url()
         return result
 
@@ -130,15 +109,14 @@ class Connection(models.Model):
 
     @api.model
     def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None, **kwargs):
-       # Remove the 'order' argument if it exists
-       if 'order' in kwargs:
-           del kwargs['order']
-    
-       args = args or []
-       domain = []
-    
-       if name:
-           domain = ['|', ('name', operator, name), ('device_id.name', operator, name)]
-    
-       # Perform the search with the domain and other arguments
-       return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+        if 'order' in kwargs:
+            del kwargs['order']
+        
+        args = args or []
+        domain = []
+        
+        if name:
+            domain = ['|', ('name', operator, name), ('device_id.name', operator, name)]
+        
+        return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+
