@@ -5,7 +5,7 @@
             <field name="name">Label 4.5x9.5 Portrait</field>
             <field name="format">custom</field>
             <field name="page_height">95</field>
-            <field name="page_width">45</field>
+            <field name="page_width">95</field>
             <field name="margin_top">1</field>
             <field name="margin_bottom">1</field>
             <field name="margin_left">4</field>
@@ -68,7 +68,7 @@
                     font-family: Arial, sans-serif;
                 }
                 .label-title {
-                    font-size: 12mm;
+                    font-size: 15mm;
                     text-align: center;
                     font-weight: bold;
                     margin: 2mm 2mm 2mm 2mm;
@@ -78,7 +78,7 @@
                     table-layout: fixed;
                 }
                 .label-cell {
-                    font-size: 9mm;
+                    font-size: 13mm;
                     font-weight: bold;
                     line-height: 1.4;
                     padding: 0.5mm 0;
