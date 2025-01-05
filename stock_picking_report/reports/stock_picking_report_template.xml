@@ -33,10 +33,10 @@
                                 <td class="label-cell">ID: <span t-esc="doc.picking_id.product_id.id"/></td>
                             </tr>
                             <tr>
-                                <td class="label-cell">Ex : <span t-if="doc.move_line_ids.filtered(lambda line: line.lot_id == doc.lot_id) and doc.move_line_ids.filtered(lambda line: line.lot_id == doc.lot_id)[0].expiration_date" 
-                                t-esc="doc.move_line_ids.filtered(lambda line: line.lot_id == doc.lot_id)[0].expiration_date" 
-                                t-options='{"widget": "date"}' /> </td>
-                                <td class="label-cell">Control No: <span t-esc="doc.lot_ids.name"/></td>
+                                <td class="label-cell">Ex :  <span t-if="doc.move_line_ids and doc.move_line_ids[0].lot_id and doc.move_line_ids[0].lot_id.expiration_date" 
+              t-esc="doc.move_line_ids[0].lot_id.expiration_date" 
+              t-options='{"widget": "date"}' /> </td>
+                                <td class="label-cell">Control No: <span t-esc="doc.move_line_ids[0].lot_id.name" /></td>
                             </tr>
                             <tr>
                                 <td class="label-cell">Actual: <span t-esc="doc.external_weight"/> <span t-esc="doc.external_unit"/></td>
