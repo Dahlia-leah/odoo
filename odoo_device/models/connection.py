@@ -108,20 +108,21 @@ class Connection(models.Model):
 
     @api.model
     def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None, **kwargs):
-        if 'order' in kwargs:
-            del kwargs['order']
-        
+        # Modify args safely, without affecting search logic
         args = args or []
         domain = []
         
         if name:
             domain = ['|', ('name', operator, name), ('device_id.name', operator, name)]
+
+        # Add user-based domain filter before performing the search
+        domain += [('user_id', '=', self.env.user.id)]
         
-        return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+        return super(Connection, self)._search(domain + args, limit=limit, access_rights_uid=name_get_uid, **kwargs)
 
     def read(self, fields=None, load='_classic_read'):
-        user = self.env.user
         # Check if the current user is trying to access a connection that belongs to them
+        user = self.env.user
         for record in self:
             if record.user_id != user:
                 raise UserError(_("You do not have access to this connection. Please enter a new scale to proceed."))
@@ -129,7 +130,6 @@ class Connection(models.Model):
 
     @api.model
     def _search(self, domain, limit=None, access_rights_uid=None, **kwargs):
-        # Restrict search results to the current user's connections only
-        user = self.env.user
-        domain += [('user_id', '=', user.id)]  # Add user filter
+        # Add user-specific domain filter to restrict search results
+        domain += [('user_id', '=', self.env.user.id)]  # Ensure user-specific filtering
         return super(Connection, self)._search(domain, limit, access_rights_uid, **kwargs)
