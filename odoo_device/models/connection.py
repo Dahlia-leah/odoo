@@ -130,6 +130,8 @@ class Connection(models.Model):
 
     @api.model
     def _search(self, domain, limit=None, access_rights_uid=None, **kwargs):
-        # Add user-specific domain filter to restrict search results
-        domain += [('user_id', '=', self.env.user.id)]  # Ensure user-specific filtering
-        return super(Connection, self)._search(domain, limit, access_rights_uid, **kwargs)
+     # Add user-specific domain filter to restrict search results
+      domain += [('user_id', '=', self.env.user.id)]  # Ensure user-specific filtering
+    
+      # Pass the domain, limit, access_rights_uid, and kwargs correctly to avoid conflicts
+      return super(Connection, self)._search(domain, limit=limit, access_rights_uid=access_rights_uid, **kwargs)
