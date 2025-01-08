@@ -1,16 +1,16 @@
 <odoo>
     <data>
         <!-- Define Label Paper Format (Portrait Orientation) -->
-        <record id="paperformat_label_4_5_9_5" model="report.paperformat">
-            <field name="name">Label 4.5x9.5 Portrait</field>
-            <field name="format">custom</field>
-            <field name="page_height">95</field>
-            <field name="page_width">95</field>
-            <field name="margin_top">1</field>
-            <field name="margin_bottom">1</field>
-            <field name="margin_left">4</field>
-            <field name="margin_right">2</field>
-            <field name="dpi">300</field>
+        <record id="paperformat_label_9_5x9_5" model="report.paperformat">
+         <field name="name">Label 9.5x9.5 Portrait</field>
+         <field name="format">custom</field>
+         <field name="page_height">95</field>
+         <field name="page_width">95</field>
+         <field name="margin_top">1</field>
+         <field name="margin_bottom">1</field>
+         <field name="margin_left">4</field>
+         <field name="margin_right">2</field>
+         <field name="dpi">300</field>
         </record>
 
         <!-- Report Template -->
@@ -82,7 +82,7 @@
                 .label-cell {
                     font-size: 13mm;
                     font-weight: bold;
-                    line-height: 1.4;
+                    line-height: 1.8;
                     padding: 0.5mm 0;
                     
                 }
@@ -99,7 +99,7 @@
             <field name="print_report_name">'Weighing Label - %s' % (object.picking_id.name)</field>
             <field name="binding_model_id" ref="stock.model_stock_move"/>
             <field name="binding_type">report</field>
-            <field name="paperformat_id" ref="paperformat_label_4_5_9_5"/>
+            <field name="paperformat_id" ref="paperformat_label_9_5x9_5"/>
         </record>
     </data>
 </odoo>
