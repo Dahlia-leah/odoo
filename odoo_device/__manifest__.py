@@ -12,6 +12,7 @@
         'views/connection_views.xml',
         'security/connection_security.xml',
         'views/device_views.xml',
+        'data/device_data.xml', 
         'data/ir_cron_data.xml',
     ],
     'installable': True,

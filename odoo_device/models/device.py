@@ -9,7 +9,10 @@ class Device(models.Model):
 
     @api.model
     def create(self, vals):
-        raise exceptions.UserError("You cannot create new Device records.")
+        # Restrict creation to ensure only one record exists
+        if self.env['devices.device'].search_count([]) > 0:
+            raise exceptions.UserError("You cannot create new Device records.")
+        return super(Device, self).create(vals)
 
     def unlink(self):
         raise exceptions.UserError("You cannot delete Device records.")
