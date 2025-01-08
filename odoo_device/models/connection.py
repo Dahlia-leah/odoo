@@ -1,9 +1,8 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
+import logging
 import requests
 import json
-import logging
-from datetime import datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -120,3 +119,17 @@ class Connection(models.Model):
         
         return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
 
+    def read(self, fields=None, load='_classic_read'):
+        user = self.env.user
+        # Check if the current user is trying to access a connection that belongs to them
+        for record in self:
+            if record.user_id != user:
+                raise UserError(_("You do not have access to this connection. Please enter a new scale to proceed."))
+        return super(Connection, self).read(fields, load)
+
+    @api.model
+    def _search(self, domain, limit=None, access_rights_uid=None, **kwargs):
+        # Restrict search results to the current user's connections only
+        user = self.env.user
+        domain += [('user_id', '=', user.id)]  # Add user filter
+        return super(Connection, self)._search(domain, limit, access_rights_uid, **kwargs)
