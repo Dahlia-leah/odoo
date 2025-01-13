@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Tree View for Helpdesk Ticket -->
+        <record id="view_helpdesk_ticket_tree" model="ir.ui.view">
+            <field name="name">helpdesk.ticket.tree</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="arch" type="xml">
+                <tree string="Helpdesk Tickets">
+                    <field name="name"/>
+                    <field name="team_id"/>
+                    <field name="assigned_to"/>
+                    <field name="task_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View for Helpdesk Ticket -->
+        <record id="view_helpdesk_ticket_form" model="ir.ui.view">
+            <field name="name">helpdesk.ticket.form</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="arch" type="xml">
+                <form string="Helpdesk Ticket">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="team_id"/>
+                            <field name="assigned_to" domain="[('id', 'in', team_member_ids)]"/>
+                            <field name="team_member_ids" invisible="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="description"/>
+                            </page>
+                            <page string="Related Task">
+                                <field name="task_id"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for Helpdesk Ticket -->
+        <record id="action_helpdesk_ticket" model="ir.actions.act_window">
+            <field name="name">Helpdesk Tickets</field>
+            <field name="res_model">helpdesk.ticket</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Menu Item for Helpdesk Ticket -->
+        <menuitem id="menu_helpdesk_ticket"
+                  name="Tickets"
+                  parent="helpdesk.helpdesk_menu_main"
+                  action="action_helpdesk_ticket"
+                  sequence="10"/>
+    </data>
+</odoo>
+
