@@ -2,6 +2,7 @@
     'name': 'Custom Helpdesk',
     'version': '1.0',
     'category': 'Services/Helpdesk',
+    'license': 'LGPL-3',
     'summary': 'Custom Helpdesk module with team-based ticket assignment and task creation',
     'description': """
         This module extends the Helpdesk functionality:

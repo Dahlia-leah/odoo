@@ -2,6 +2,7 @@
     'name': 'Odoo Device',
     'version': '1.0',
     'category': 'Inventory',
+    'license': 'LGPL-3',
     'summary': 'Manage Devices in the System',
     'description': """
         This module helps you manage devices and their connections.
