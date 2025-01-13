@@ -12,6 +12,7 @@ class HelpdeskTicket(models.Model):
 
     member_ids = fields.Many2many(
         related='team_id.member_ids',
+        domain="[('id', 'in', employee_id)]",
         string="Team Members",
         readonly=True
     )
