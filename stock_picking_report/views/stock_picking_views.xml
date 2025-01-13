@@ -17,6 +17,7 @@
                             icon="fa-tag"
                             type="object"
                             title="Fetch weight from IoT device"
+                            invisible = "(picking_type_id != 6) or ((location_id != 203 and location_id != 4) or (location_dest_id != 17 and location_dest_id != 9)) or picking_type_code != 'incoming' or state != 'assigned'"
                             class="btn-primary"/>
                 </xpath>
             </field>
