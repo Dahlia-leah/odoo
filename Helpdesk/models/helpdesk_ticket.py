@@ -10,6 +10,12 @@ class HelpdeskTicket(models.Model):
         help="Only members of the Helpdesk Team can be assigned."
     )
 
+    member_ids = fields.Many2many(
+        related='team_id.member_ids',
+        string="Team Members",
+        readonly=True
+    )
+
     @api.model
     def create(self, vals):
         ticket = super(HelpdeskTicket, self).create(vals)
