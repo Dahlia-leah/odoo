@@ -3,36 +3,32 @@ from odoo import api, fields, models
 class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
-    assigned_employee_id = fields.Many2one(
-        'hr.employee',
+    assigned_user_id = fields.Many2one(
+        'res.users',
         string="Assigned To",
-        domain="[('id', 'in', helpdesk.ticket.member_ids.ids)]",
+        domain="[('id', 'in', member_ids)]",
         help="Only members of the Helpdesk Team can be assigned."
     )
 
     member_ids = fields.Many2many(
-        'hr.employee',
+        related='team_id.member_ids',
+        domain="[('id', 'in', employee_id)]",
         string="Team Members",
-        readonly=True,
-        related='helpdesk.ticket.member_ids'
+        readonly=True
     )
 
     @api.model
     def create(self, vals):
         ticket = super(HelpdeskTicket, self).create(vals)
 
-        # Find or create the "Helpdesk" project
-        helpdesk_project = self.env['project.project'].search([('name', '=', 'Helpdesk')], limit=1)
-        if not helpdesk_project:
-            helpdesk_project = self.env['project.project'].create({'name': 'Helpdesk'})
-
-        # Create a task in the "Helpdesk" project
-        task = self.env['project.task'].create({
-            'name': f"Task for Ticket: {ticket.name}",
-            'project_id': helpdesk_project.id,
-            'description': ticket.description or "",
-            'user_ids': [(6, 0, [ticket.assigned_employee_id.user_id.id])],
-            'helpdesk_ticket_id': ticket.id,
-        })
+        # Auto-create task for new Helpdesk ticket
+        if ticket.team_id and ticket.team_id.project_id:
+            self.env['project.task'].create({
+                'name': f"Task for Ticket: {ticket.name}",
+                'project_id': ticket.team_id.project_id.id,
+                'description': ticket.description or "",
+                'user_id': ticket.assigned_user_id.id,
+                'helpdesk_ticket_id': ticket.id,
+            })
 
         return ticket
