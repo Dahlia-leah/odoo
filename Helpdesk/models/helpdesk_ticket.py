@@ -16,18 +16,4 @@ class HelpdeskTicket(models.Model):
         readonly=True
     )
 
-    @api.model
-    def create(self, vals):
-        ticket = super(HelpdeskTicket, self).create(vals)
-
-        # Auto-create task for the new Helpdesk ticket
-        if ticket.team_id and ticket.team_id.project_id:
-            self.env['project.task'].create({
-                'name': f"Task for Ticket: {ticket.name}",
-                'project_id': ticket.team_id.project_id.id,
-                'description': ticket.description or "",
-                'assigned_user_id': ticket.assigned_user_id.id,  # Updated field name
-                'helpdesk_ticket_id': ticket.id,
-            })
-
-        return ticket
+   
