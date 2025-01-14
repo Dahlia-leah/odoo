@@ -10,7 +10,6 @@ class HelpdeskTicket(models.Model):
     )
 
     member_ids = fields.Many2many(
-        'hr.employee',
         related='team_id.member_ids',
         string="Team Members",
         readonly=True
