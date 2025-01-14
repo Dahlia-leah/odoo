@@ -4,17 +4,17 @@ class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
     assigned_user_id = fields.Many2one(
-         'hr.employee',
+          'hr.employee',
         string="Assigned Employee",
-        domain="[('id', 'in', member_ids)]",
+        domain="[('id', 'in', member_ids.ids)]",
         help="Only team members can be assigned."
     )
 
     member_ids = fields.Many2many(
         'hr.employee',
+        related='team_id.member_ids',
         string="Team Members",
-        compute="_compute_team_members",
-        store=True
+        readonly=True
     )
 
     @api.depends('team_id')
