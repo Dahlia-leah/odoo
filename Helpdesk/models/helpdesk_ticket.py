@@ -3,18 +3,17 @@ from odoo import api, fields, models
 class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
-    assigned_user_id = fields.Many2one(
+     assigned_user_id = fields.Many2one(
         'res.users',
-        string="Assigned Employee",
+        string="Assigned To",
         domain="[('id', 'in', member_ids)]",
-        help="Only team members can be assigned."
+        help="Only members of the Helpdesk Team can be assigned."
     )
 
     member_ids = fields.Many2many(
-        'hr.employee',  # Reference to the Employee model
-        'helpdesk_ticket_employee_rel',  # Name of the relationship table
-        'ticket_id',  # Column in the relationship table for this model
-        'employee_id',  # Column in the relationship table for the related model
+        'hr.employee',
         string="Team Members",
-        store=True,  # Store the relationship in the database
+        readonly=True
+        related='team_id.member_ids',
+        domain="[('id', 'in', employee_id)]",
     )
