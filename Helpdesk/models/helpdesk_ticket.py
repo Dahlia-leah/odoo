@@ -12,10 +12,12 @@ class HelpdeskTicket(models.Model):
     )
 
     member_ids = fields.Many2many(
-        'hr.employee',
-        compute="_compute_team_members",
+        'hr.employee',  # Model to which the field points (employees)
+        'helpdesk_ticket_employee_rel',  # The name of the relation table
+        'ticket_id',  # Field name for the current model (HelpdeskTicket)
+        'employee_id',  # Field name for the related model (Employee)
         string="Team Members",
-        store=False,
+        store=True,  # Store the relationship in the database
     )
 
     @api.depends('team_id')
