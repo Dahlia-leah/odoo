@@ -20,13 +20,13 @@ class HelpdeskTicket(models.Model):
     def create(self, vals):
         ticket = super(HelpdeskTicket, self).create(vals)
 
-        # Auto-create task for new Helpdesk ticket
+        # Auto-create task for the new Helpdesk ticket
         if ticket.team_id and ticket.team_id.project_id:
             self.env['project.task'].create({
                 'name': f"Task for Ticket: {ticket.name}",
                 'project_id': ticket.team_id.project_id.id,
                 'description': ticket.description or "",
-                'user_id': ticket.assigned_user_id.id,
+                'assigned_user_id': ticket.assigned_user_id.id,  # Updated field name
                 'helpdesk_ticket_id': ticket.id,
             })
 
