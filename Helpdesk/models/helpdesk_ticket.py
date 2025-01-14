@@ -6,7 +6,7 @@ class HelpdeskTicket(models.Model):
     assigned_employee_id = fields.Many2one(
         'hr.employee',
         string="Assigned To",
-        domain="[('id', 'in', team_id.member_ids.ids)]",
+        domain="[('id', 'in', helpdesk.ticket.member_ids.ids)]",
         help="Only members of the Helpdesk Team can be assigned."
     )
 
@@ -14,7 +14,7 @@ class HelpdeskTicket(models.Model):
         'hr.employee',
         string="Team Members",
         readonly=True,
-        related='team_id.member_ids'
+        related='helpdesk.ticket.member_ids'
     )
 
     @api.model
