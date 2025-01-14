@@ -34,5 +34,5 @@ class HelpdeskTicket(models.Model):
             'user_ids': [(6, 0, [ticket.assigned_employee_id.user_id.id])],
             'helpdesk_ticket_id': ticket.id,
         })
-
+        
         return ticket
