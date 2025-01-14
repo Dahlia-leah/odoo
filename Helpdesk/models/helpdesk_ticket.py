@@ -3,7 +3,7 @@ from odoo import api, fields, models
 class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
-    assigned_employee_id = fields.Many2one(
+    assigned_user_id = fields.Many2one(
         'hr.employee',
         string="Assigned Employee",
         domain="[('id', 'in', member_ids)]",
