@@ -3,6 +3,12 @@ from odoo import api, fields, models
 class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
+    team_id = fields.Many2one(
+        'helpdesk.team',
+        string="Helpdesk Team",
+        required=True
+    )
+
     assigned_employee_id = fields.Many2one(
         'hr.employee',
         string="Assigned To",
@@ -34,5 +40,5 @@ class HelpdeskTicket(models.Model):
             'user_ids': [(6, 0, [ticket.assigned_employee_id.user_id.id])],
             'helpdesk_ticket_id': ticket.id,
         })
-        
+
         return ticket
