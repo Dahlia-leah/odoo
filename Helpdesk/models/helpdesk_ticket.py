@@ -6,7 +6,7 @@ class HelpdeskTicket(models.Model):
     assigned_employee_id = fields.Many2one(
         'hr.employee',
         string="Assigned To",
-        domain="[('id', 'in', team_id.member_ids.ids)]",
+        domain="[('id', 'in', member_ids)]",
         help="Only members of the Helpdesk Team can be assigned."
     )
 
