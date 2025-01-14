@@ -31,9 +31,8 @@ class HelpdeskTicket(models.Model):
             'name': f"Task for Ticket: {ticket.name}",
             'project_id': helpdesk_project.id,
             'description': ticket.description or "",
-            'user_ids': [(6, 0, [ticket.assigned_employee_id.user_id.id])],  # Corrected field name
+            'user_ids': [(6, 0, [ticket.assigned_employee_id.user_id.id])],
             'helpdesk_ticket_id': ticket.id,
         })
-
 
         return ticket
