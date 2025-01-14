@@ -16,6 +16,5 @@ class HelpdeskTicket(models.Model):
         'ticket_id',  # Column in the relationship table for this model
         'employee_id',  # Column in the relationship table for the related model
         string="Team Members",
-        domain=[('active', '=', True)],  # Optional: Only show active employees
         store=True,  # Store the relationship in the database
     )
