@@ -1,6 +1,5 @@
 from odoo import api, fields, models
 
-
 class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
@@ -11,7 +10,7 @@ class HelpdeskTicket(models.Model):
         help="Only team members can be assigned."
     )
 
-     member_ids = fields.Many2many(
+    member_ids = fields.Many2many(
         'hr.employee',  # Reference to the Employee model
         'helpdesk_ticket_employee_rel',  # Name of the relationship table
         'ticket_id',  # Column in the relationship table for this model
@@ -20,5 +19,3 @@ class HelpdeskTicket(models.Model):
         domain=[('active', '=', True)],  # Optional: Only show active employees
         store=True,  # Store the relationship in the database
     )
-
-   
