@@ -3,18 +3,18 @@ from odoo import api, fields, models
 class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
-    assigned_user_id = fields.Many2one(
-        'res.users',
+    assigned_employee_id = fields.Many2one(
+        'hr.employee',
         string="Assigned To",
         domain="[('id', 'in', member_ids)]",
         help="Only members of the Helpdesk Team can be assigned."
     )
 
     member_ids = fields.Many2many(
-        related='team_id.member_ids',
-        domain="[('id', 'in', employee_id)]",
+        'hr.employee',
         string="Team Members",
-        readonly=True
+        readonly=True,
+        related='team_id.member_ids'
     )
 
     @api.model
@@ -31,7 +31,7 @@ class HelpdeskTicket(models.Model):
             'name': f"Task for Ticket: {ticket.name}",
             'project_id': helpdesk_project.id,
             'description': ticket.description or "",
-            'user_ids': [(6, 0, [ticket.assigned_user_id.id])],  # Corrected field name
+            'user_ids': [(6, 0, [ticket.assigned_employee_id.user_id.id])],  # Corrected field name
             'helpdesk_ticket_id': ticket.id,
         })
 
