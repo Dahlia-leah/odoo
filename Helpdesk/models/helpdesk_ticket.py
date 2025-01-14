@@ -35,14 +35,5 @@ class HelpdeskTicket(models.Model):
             'helpdesk_ticket_id': ticket.id,
         })
 
-        # Create subtasks for each ticket
-        self.env['project.task'].create({
-            'name': f"Subtask for Ticket: {ticket.name}",
-            'project_id': helpdesk_project.id,
-            'description': ticket.description or "",
-            'parent_id': task.id,
-            'user_ids': [(6, 0, [ticket.assigned_user_id.id])],  # Corrected field name
-            'helpdesk_ticket_id': ticket.id,
-        })
 
         return ticket
