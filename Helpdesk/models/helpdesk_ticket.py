@@ -29,8 +29,3 @@ class HelpdeskTicket(models.Model):
             else:
                 ticket.member_ids = [(5,)]  # Clear if no team is set
 
-    def _domain_assigned_user_id(self):
-        # Dynamically generate a domain for the assigned_user_id field
-        analytic_lines = self.env['account.analytic.line'].search([])
-        employee_ids = analytic_lines.mapped('employee_id.id')
-        return [('id', 'in', employee_ids)]
