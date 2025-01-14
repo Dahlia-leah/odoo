@@ -4,7 +4,7 @@ class HelpdeskTicket(models.Model):
     _inherit = "helpdesk.ticket"
 
     assigned_user_id = fields.Many2one(
-        'res.users',
+        'hr.employee',
         string="Assigned To",
         domain="[('employee_ids', 'in', member_ids)]",
         help="Only members of the Helpdesk Team can be assigned."
