@@ -10,4 +10,10 @@ class HelpdeskSLA(models.Model):
         help='The company this SLA applies to.'
     )
 
+    stage_id = fields.Many2one(
+        'helpdesk.stage',
+        string='Stage',
+        help='The stage this SLA applies to.'
+    )
+
     # Other fields and methods for the HelpdeskSLA model
