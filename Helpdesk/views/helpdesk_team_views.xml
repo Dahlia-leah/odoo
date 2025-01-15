@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='member_ids']" position="attributes">
                 <attribute name="widget">many2many_tags</attribute>
+                <attribute name="options">{'no_create_edit': True}</attribute>
             </xpath>
             <xpath expr="//field[@name='member_ids']" position="replace">
                 <field name="employee_member_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
