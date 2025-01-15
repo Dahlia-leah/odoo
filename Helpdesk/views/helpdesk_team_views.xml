@@ -1,13 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="helpdesk_team_view_form_inherit" model="ir.ui.view">
+    <!-- Customizing the Helpdesk Team Model -->
+    <record id="view_helpdesk_team_inherit_form" model="ir.ui.view">
         <field name="name">helpdesk.team.form.inherit</field>
         <field name="model">helpdesk.team</field>
         <field name="inherit_id" ref="helpdesk.helpdesk_team_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='member_ids']" position="attributes">
+                <attribute name="widget">many2many_tags</attribute>
+            </xpath>
             <xpath expr="//field[@name='member_ids']" position="replace">
-                <field name="member_ids" widget="many2many_tags" 
-                       options="{'no_quick_create': True}" string="Team Members"/>
+                <field name="employee_member_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
             </xpath>
         </field>
+    </record>
+
+    <!-- Add employee_member_ids field in the Helpdesk Team Model -->
+    <record id="helpdesk_team_model_inherit" model="ir.model.fields">
+        <field name="name">employee_member_ids</field>
+        <field name="model">helpdesk.team</field>
+        <field name="relation">hr.employee</field>
+        <field name="field_description">Employees</field>
+        <field name="ttype">many2many</field>
+    </record>
+
+    <!-- Updating the Mass Mail Action for Helpdesk -->
+    <record id="action_helpdesk_ticket_mass_mail" model="ir.actions.act_window">
+        <field name="name">Send Email</field>
+        <field name="res_model">mail.compose.message</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context" eval="{
+            'default_composition_mode': 'mass_mail',
+            'default_partner_to': object.partner_id and object.partner_id.id or '',
+        }"/>
+        <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket"/>
+        <field name="binding_view_types">list</field>
     </record>
 </odoo>
