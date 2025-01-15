@@ -1,22 +1,18 @@
-from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo import api, fields, models
 
 class HelpdeskTicket(models.Model):
-    _inherit = 'helpdesk.ticket'
+    _inherit = "helpdesk.ticket"
 
-    # Define the team members field as a many2many relation to the hr.employee model
+    assigned_user_id = fields.Many2one(
+        'res.users',
+        string="Assigned To",
+        domain="[('id', 'in', member_ids)]",
+        help="Only members of the Helpdesk Team can be assigned."
+    )
+
     member_ids = fields.Many2many(
-        'hr.employee', 
-        string='Team Members', 
-        domain=[('is_active', '=', True)],  # Only active employees can be part of the team
+        related='team_id.member_ids',
+        domain="[('id', 'in', employee_id)]",
+        string="Team Members",
+        readonly=True
     )
-
-    # Override the assigned user field to restrict to team members
-    assigned_employee_id = fields.Many2one(
-        'hr.employee', 
-        string='Assigned Team Member',
-        domain="[('id', 'in', member_ids)]",  # Limit assignment to team members only
-        track_visibility='onchange',
-    )
-
-
