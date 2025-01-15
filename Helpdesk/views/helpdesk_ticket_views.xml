@@ -6,7 +6,7 @@
             <form string="Helpdesk Ticket">
                 <sheet>
                     <group>
-                        <field name="team_member_ids" widget="many2many_tags"/>
+                        <field name="member_ids" widget="many2many_tags"/>
                         <field name="assigned_employee_id"/>
                     </group>
                 </sheet>
