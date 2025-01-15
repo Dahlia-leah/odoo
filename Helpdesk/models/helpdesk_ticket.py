@@ -10,19 +10,4 @@ class HelpdeskTeam(models.Model):
         help='Employees that are members of this helpdesk team.'
     )
     
-    description = fields.Text(
-        string='Description',
-        help='Description of the helpdesk team.'
-    )
-
-class HelpdeskTicket(models.Model):
-    _name = 'helpdesk.ticket'
-    _description = 'Helpdesk Ticket'
-
-
-    assigned_user_id = fields.Many2one(
-        'helpdesk.team',
-        string='Assigned Employee',
-        domain="[('id', 'in', member_ids)]",
-        help='Employee assigned to this ticket.'
-    )
+    
